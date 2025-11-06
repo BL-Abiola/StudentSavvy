@@ -238,10 +238,7 @@ export default function GpaTracker() {
     semesterGpa: { label: 'Semester GPA', color: 'hsl(var(--primary))' },
     cgpa: {
       label: 'CGPA',
-      theme: {
-        light: '#000000',
-        dark: 'hsl(var(--card-foreground))',
-      },
+      color: 'hsl(var(--foreground))'
     },
   } satisfies import('@/components/ui/chart').ChartConfig;
 
@@ -255,7 +252,7 @@ export default function GpaTracker() {
         <AlertDialog open={!!qrCodeData} onOpenChange={(open) => !open && setQrCodeData(null)}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>QR Code for {qrCodeData.semester}</AlertDialogTitle>
+                    <AlertDialogTitle>QR Code for {qrCode-data.semester}</AlertDialogTitle>
                     <AlertDialogDescription>
                         Scan this code to view or share the semester's grade summary.
                     </AlertDialogDescription>
@@ -465,7 +462,7 @@ export default function GpaTracker() {
                 />
               </div>
               <Button type="submit" className="w-full">
-                <CheckCircle className="mr-2 h-4 w-4" /> Calculate & Save Grade
+                <CheckCircle className="mr-2 h-4 w-4" /> Calculate &amp; Save Grade
               </Button>
             </form>
           </Form>
