@@ -143,88 +143,98 @@ export default function GpaTracker() {
   }
 
 
-  const { cgpa, lastGpa, gradeDistribution, groupedGrades, gpaTrajectoryData } =
-    useMemo(() => {
-      let totalCreditHours = 0;
-      let totalQualityPoints = 0;
-      const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+  const {
+    cgpa,
+    semesterGpa,
+    semesterCredits,
+    totalCredits,
+    gradeDistribution,
+    groupedGrades,
+    gpaTrajectoryData,
+  } = useMemo(() => {
+    let totalCreditHours = 0;
+    let totalQualityPoints = 0;
+    const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
 
-      if (grades.length > 0) {
-        grades.forEach((g) => {
-          totalCreditHours += g.credits;
-          totalQualityPoints += g.grade * g.credits;
-          if (g.grade >= 3.7) distribution['A']++;
-          else if (g.grade >= 2.7) distribution['B']++;
-          else if (g.grade >= 1.7) distribution['C']++;
-          else if (g.grade >= 0.7) distribution['D']++;
-          else distribution['F']++;
-        });
-      }
+    if (grades.length > 0) {
+      grades.forEach((g) => {
+        totalCreditHours += g.credits;
+        totalQualityPoints += g.grade * g.credits;
+        if (g.grade >= 3.7) distribution['A']++;
+        else if (g.grade >= 2.7) distribution['B']++;
+        else if (g.grade >= 1.7) distribution['C']++;
+        else if (g.grade >= 0.7) distribution['D']++;
+        else distribution['F']++;
+      });
+    }
 
-      const calculatedCgpa =
-        totalCreditHours > 0
-          ? (totalQualityPoints / totalCreditHours).toFixed(2)
-          : '0.00';
-      const calculatedLastGpa =
-        grades.length > 0
-          ? grades[grades.length - 1].grade.toFixed(2)
-          : '0.00';
+    const calculatedCgpa =
+      totalCreditHours > 0
+        ? (totalQualityPoints / totalCreditHours).toFixed(2)
+        : '0.00';
 
-      const gradeDistributionData = Object.entries(distribution).map(
-        ([name, value]) => ({ name, value })
-      );
+    const gradeDistributionData = Object.entries(distribution).map(
+      ([name, value]) => ({ name, value })
+    );
 
-      const grouped = grades.reduce(
-        (acc, grade) => {
-          const { semester } = grade;
-          if (!acc[semester]) {
-            acc[semester] = {
-              grades: [],
-              totalCredits: 0,
-              totalQualityPoints: 0,
-            };
-          }
-          acc[semester].grades.push(grade);
-          acc[semester].totalCredits += grade.credits;
-          acc[semester].totalQualityPoints += grade.grade * grade.credits;
-          return acc;
-        },
-        {} as Record<
-          string,
-          { grades: Grade[]; totalCredits: number; totalQualityPoints: number }
-        >
-      );
+    const grouped = grades.reduce(
+      (acc, grade) => {
+        const { semester } = grade;
+        if (!acc[semester]) {
+          acc[semester] = {
+            grades: [],
+            totalCredits: 0,
+            totalQualityPoints: 0,
+          };
+        }
+        acc[semester].grades.push(grade);
+        acc[semester].totalCredits += grade.credits;
+        acc[semester].totalQualityPoints += grade.grade * grade.credits;
+        return acc;
+      },
+      {} as Record<
+        string,
+        { grades: Grade[]; totalCredits: number; totalQualityPoints: number }
+      >
+    );
 
-      const trajectory = [];
-      let cumulativeCredits = 0;
-      let cumulativeQualityPoints = 0;
-      const sortedSemesters = Object.keys(grouped).sort();
+    const trajectory = [];
+    let cumulativeCredits = 0;
+    let cumulativeQualityPoints = 0;
+    const sortedSemesters = Object.keys(grouped).sort();
 
-      for (const semester of sortedSemesters) {
-        const semesterData = grouped[semester];
-        const semesterGpa =
-          semesterData.totalQualityPoints / semesterData.totalCredits;
-        cumulativeCredits += semesterData.totalCredits;
-        cumulativeQualityPoints += semesterData.totalQualityPoints;
-        const cumulativeGpa =
-          cumulativeCredits > 0
-            ? cumulativeQualityPoints / cumulativeCredits
-            : 0;
-        trajectory.push({
-          semester: semester.replace('Semester ', 'Sem '),
-          semesterGpa: parseFloat(semesterGpa.toFixed(2)),
-          cgpa: parseFloat(cumulativeGpa.toFixed(2)),
-        });
-      }
+    for (const semester of sortedSemesters) {
+      const semesterData = grouped[semester];
+      const semesterGpa =
+        semesterData.totalQualityPoints / semesterData.totalCredits;
+      cumulativeCredits += semesterData.totalCredits;
+      cumulativeQualityPoints += semesterData.totalQualityPoints;
+      const cumulativeGpa =
+        cumulativeCredits > 0
+          ? cumulativeQualityPoints / cumulativeCredits
+          : 0;
+      trajectory.push({
+        semester: semester.replace('Semester ', 'Sem '),
+        semesterGpa: parseFloat(semesterGpa.toFixed(2)),
+        cgpa: parseFloat(cumulativeGpa.toFixed(2)),
+      });
+    }
 
-      return {
-        cgpa: calculatedCgpa,
-        lastGpa: calculatedLastGpa,
-        gradeDistribution: gradeDistributionData,
-        groupedGrades: grouped,
-        gpaTrajectoryData: trajectory,
-      };
-    }, [grades]);
+    const lastSemesterName = sortedSemesters[sortedSemesters.length - 1];
+    const lastSemesterData = lastSemesterName ? grouped[lastSemesterName] : null;
+
+    return {
+      cgpa: calculatedCgpa,
+      semesterGpa: lastSemesterData
+        ? (lastSemesterData.totalQualityPoints / lastSemesterData.totalCredits).toFixed(2)
+        : '0.00',
+      semesterCredits: lastSemesterData ? lastSemesterData.totalCredits : 0,
+      totalCredits: totalCreditHours,
+      gradeDistribution: gradeDistributionData,
+      groupedGrades: grouped,
+      gpaTrajectoryData: trajectory,
+    };
+  }, [grades]);
 
   const trajectoryChartConfig = {
     semesterGpa: { label: 'Semester GPA', color: 'hsl(var(--primary))' },
@@ -258,25 +268,34 @@ export default function GpaTracker() {
       <div className="flex items-center gap-3">
         <BarChart3 className="w-8 h-8 text-primary" />
         <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-          Performance & GPA Tracker
+          Your Academic Trajectory
         </h2>
       </div>
+      <p className="text-muted-foreground -mt-6">Instantly visualize your progress and gain insights.</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border-l-4 border-accent shadow-md">
-          <CardHeader>
-            <CardDescription>Current CGPA</CardDescription>
-            <CardTitle className="text-4xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-              {cgpa}
-            </CardTitle>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="p-4">
+            <CardDescription>Semester GPA</CardDescription>
+            <CardTitle className="text-2xl font-bold">{semesterGpa}</CardTitle>
           </CardHeader>
         </Card>
-        <Card className="border-l-4 border-primary shadow-md">
-          <CardHeader>
-            <CardDescription>Last Entry GPA</CardDescription>
-            <CardTitle className="text-4xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-              {lastGpa}
-            </CardTitle>
+        <Card>
+          <CardHeader className="p-4">
+            <CardDescription>Overall CGPA</CardDescription>
+            <CardTitle className="text-2xl font-bold">{cgpa}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="p-4">
+            <CardDescription>Semester Credits</CardDescription>
+            <CardTitle className="text-2xl font-bold">{semesterCredits}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="p-4">
+            <CardDescription>Total Credits</CardDescription>
+            <CardTitle className="text-2xl font-bold">{totalCredits}</CardTitle>
           </CardHeader>
         </Card>
       </div>
