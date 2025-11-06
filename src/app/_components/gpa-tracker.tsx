@@ -38,7 +38,6 @@ import {
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import {
-  BarChart3,
   CheckCircle,
   Trash2,
   QrCode,
@@ -274,7 +273,7 @@ export default function GpaTracker() {
   }, [grades, groupedGrades]);
 
   return (
-    <section id="performance" className="space-y-8">
+    <div id="performance" className="space-y-8">
       {qrCodeData && (
         <AlertDialog
           open={!!qrCodeData}
@@ -335,86 +334,81 @@ export default function GpaTracker() {
           </CardHeader>
         </Card>
       </div>
-
-      <div className="space-y-4">
-        {trajectoryData.length > 0 && (
-          <Card>
-              <CardHeader>
-                <CardTitle>CGPA Trajectory</CardTitle>
-                <CardDescription>
-                  Your cumulative GPA trend across semesters.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer
-                  config={trajectoryChartConfig}
-                  className="h-[250px] w-full"
-                >
-                  <RechartsLineChart
-                    data={trajectoryData}
-                    margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
-                  >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={10}
-                      tickFormatter={(value) => value.replace('\n', ' ')}
-                    />
-                    <YAxis domain={[0, 4]} tickCount={5} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <ChartLegend content={<ChartLegendContent />} />
-                    <RechartsLine
-                      dataKey="Semester GPA"
-                      type="monotone"
-                      stroke="var(--color-Semester GPA)"
-                      strokeWidth={2}
-                      dot={true}
-                    />
-                    <RechartsLine
-                      dataKey="CGPA"
-                      type="monotone"
-                      stroke="var(--color-CGPA)"
-                      strokeWidth={2}
-                      dot={true}
-                    />
-                  </RechartsLineChart>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-        )}
-        {gradeDistributionData.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Grade Distribution</CardTitle>
-                <CardDescription>Breakdown of your grades.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer
-                  config={distributionChartConfig}
-                  className="h-[250px] w-full"
-                >
-                  <RechartsBarChart data={gradeDistributionData}>
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="grade"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={10}
-                    />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar
-                      dataKey="count"
-                      fill="var(--color-count)"
-                      radius={4}
-                    />
-                  </RechartsBarChart>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-        )}
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>CGPA Trajectory</CardTitle>
+            <CardDescription>
+              Your cumulative GPA trend across semesters.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={trajectoryChartConfig}
+              className="h-[250px] w-full"
+            >
+              <RechartsLineChart
+                data={trajectoryData}
+                margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="name"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  tickFormatter={(value) => value.replace('\n', ' ')}
+                />
+                <YAxis domain={[0, 4]} tickCount={5} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <RechartsLine
+                  dataKey="Semester GPA"
+                  type="monotone"
+                  stroke="var(--color-Semester GPA)"
+                  strokeWidth={2}
+                  dot={true}
+                />
+                <RechartsLine
+                  dataKey="CGPA"
+                  type="monotone"
+                  stroke="var(--color-CGPA)"
+                  strokeWidth={2}
+                  dot={true}
+                />
+              </RechartsLineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Grade Distribution</CardTitle>
+            <CardDescription>Breakdown of your grades.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={distributionChartConfig}
+              className="h-[250px] w-full"
+            >
+              <RechartsBarChart data={gradeDistributionData}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="grade"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar
+                  dataKey="count"
+                  fill="var(--color-count)"
+                  radius={4}
+                />
+              </RechartsBarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -585,12 +579,14 @@ export default function GpaTracker() {
               })}
             </Accordion>
           ) : (
-            <p className="p-8 text-center text-muted-foreground bg-muted/50 rounded-lg">
+            <p className="text-center text-muted-foreground bg-muted/50 p-8 rounded-lg">
               No grades have been added yet.
             </p>
           )}
         </CardContent>
       </Card>
-    </section>
+    </div>
   );
 }
+
+    
