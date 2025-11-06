@@ -61,7 +61,11 @@ import {
   RechartsXAxis,
   RechartsYAxis,
   RechartsCartesianGrid,
+  RechartsBarChart,
+  RechartsBar,
 } from "@/components/ui/chart";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 
 const gradeSchema = z.object({
   name: z.string().min(2, 'Course name is required'),
@@ -75,17 +79,24 @@ const gradeSchema = z.object({
 
 // Helper function to convert GPA to letter grade
 function gpaToLetter(gpa: number): string {
-  if (gpa >= 4.0) return 'A+';
-  if (gpa >= 3.7) return 'A';
-  if (gpa >= 3.3) return 'A-';
-  if (gpa >= 3.0) return 'B+';
-  if (gpa >= 2.7) return 'B';
-  if (gpa >= 2.3) return 'B-';
-  if (gpa >= 2.0) return 'C+';
-  if (gpa >= 1.7) return 'C';
-  if (gpa >= 1.3) return 'C-';
+  if (gpa >= 4.0) return 'A';
+  if (gpa >= 3.7) return 'A-';
+  if (gpa >= 3.3) return 'B+';
+  if (gpa >= 3.0) return 'B';
+  if (gpa >= 2.7) return 'B-';
+  if (gpa >= 2.3) return 'C+';
+  if (gpa >= 2.0) return 'C';
+  if (gpa >= 1.7) return 'C-';
   if (gpa >= 1.0) return 'D';
   return 'F';
+}
+
+function gpaToGradePoints(gpa: number): string {
+    if (gpa >= 4.0) return 'A';
+    if (gpa >= 3.0) return 'B';
+    if (gpa >= 2.0) return 'C';
+    if (gpa >= 1.0) return 'D';
+    return 'F';
 }
 
 type QrCodeInfo = {
@@ -95,7 +106,15 @@ type QrCodeInfo = {
 };
 
 export default function GpaTracker() {
-  const [grades, setGrades] = useState<Grade[]>([]);
+  const [grades, setGrades] = useState<Grade[]>([
+    // Mock data for demonstration
+    { id: 1, name: 'Intro to CS', grade: 3.7, credits: 3, semester: 'Sem 1' },
+    { id: 2, name: 'Calculus I', grade: 3.3, credits: 4, semester: 'Sem 1' },
+    { id: 3, name: 'Data Structures', grade: 3.0, credits: 3, semester: 'Sem 2' },
+    { id: 4, name: 'Physics I', grade: 2.7, credits: 4, semester: 'Sem 2' },
+    { id: 5, name: 'Algorithms', grade: 4.0, credits: 3, semester: 'Sem 3' },
+    { id: 6, name: 'Web Development', grade: 3.5, credits: 3, semester: 'Sem 3' },
+  ]);
   const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null);
 
   const form = useForm<z.infer<typeof gradeSchema>>({
@@ -135,7 +154,8 @@ export default function GpaTracker() {
     cgpa,
     totalCredits,
     groupedGrades,
-    chartData
+    trajectoryData,
+    gradeDistributionData
   } = useMemo(() => {
     let totalCreditHours = 0;
     let totalQualityPoints = 0;
@@ -165,7 +185,7 @@ export default function GpaTracker() {
     let cumulativeQualityPoints = 0;
     const sortedSemesters = Object.keys(grouped).sort();
     
-    const calculatedChartData = sortedSemesters.map(semester => {
+    const calculatedTrajectoryData = sortedSemesters.map(semester => {
         const semesterData = grouped[semester];
         const semesterGpa = semesterData.totalQualityPoints / semesterData.totalCredits;
         
@@ -178,8 +198,8 @@ export default function GpaTracker() {
 
         return {
             name: semester.replace(' ', '\n'),
-            semesterGpa: parseFloat(semesterGpa.toFixed(2)),
-            cumulativeGpa: parseFloat(cumulativeGpa.toFixed(2))
+            "Semester GPA": parseFloat(semesterGpa.toFixed(2)),
+            "CGPA": parseFloat(cumulativeGpa.toFixed(2))
         }
     });
 
@@ -188,15 +208,30 @@ export default function GpaTracker() {
         ? (totalQualityPoints / totalCreditHours).toFixed(2)
         : '0.00';
 
+    const distribution = grades.reduce((acc, grade) => {
+        const letter = gpaToGradePoints(grade.grade);
+        if (!acc[letter]) {
+            acc[letter] = 0;
+        }
+        acc[letter]++;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const calculatedGradeDistributionData = ['A', 'B', 'C', 'D', 'F'].map(grade => ({
+        grade,
+        count: distribution[grade] || 0
+    }));
+
     return {
       cgpa: calculatedCgpa,
       totalCredits: totalCreditHours,
       groupedGrades: grouped,
-      chartData: calculatedChartData
+      trajectoryData: calculatedTrajectoryData,
+      gradeDistributionData: calculatedGradeDistributionData
     };
   }, [grades]);
   
-  const semesterGpa = chartData.length > 0 ? chartData[chartData.length - 1].semesterGpa.toFixed(2) : '0.00';
+  const semesterGpa = trajectoryData.length > 0 ? trajectoryData[trajectoryData.length - 1]["Semester GPA"].toFixed(2) : '0.00';
   const semesterCredits = useMemo(() => {
      if (grades.length === 0) return 0;
      const lastSemesterName = Object.keys(groupedGrades).sort()[Object.keys(groupedGrades).length - 1];
@@ -204,17 +239,22 @@ export default function GpaTracker() {
   }, [grades, groupedGrades]);
 
 
-  const chartConfig = {
-    cumulativeGpa: {
-      label: 'Overall GPA',
+  const trajectoryChartConfig = {
+    "CGPA": {
+      label: 'CGPA',
       color: 'hsl(var(--primary))',
     },
-    semesterGpa: {
+    "Semester GPA": {
       label: 'Semester GPA',
       color: 'hsl(var(--foreground))',
     },
   } satisfies import('@/components/ui/chart').ChartConfig;
 
+  const distributionChartConfig = {
+      count: {
+          label: 'Count'
+      }
+  } satisfies import('@/components/ui/chart').ChartConfig;
 
   return (
     <section id="performance" className="space-y-8">
@@ -238,7 +278,7 @@ export default function GpaTracker() {
       )}
       <div className="flex items-center gap-3">
         <BarChart3 className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+        <h2 className="text-3xl font-extrabold">
           Your Academic Trajectory
         </h2>
       </div>
@@ -271,33 +311,58 @@ export default function GpaTracker() {
         </Card>
       </div>
 
-      {chartData.length > 0 && (
-         <Card>
-            <CardHeader>
-                <CardTitle>GPA Progression</CardTitle>
-                <CardDescription>Your semester GPA vs. your cumulative GPA over time.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                    <RechartsLineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                        <RechartsCartesianGrid vertical={false} />
-                        <RechartsXAxis
-                            dataKey="name"
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={10}
-                            tickFormatter={(value) => value.replace('\n', ' ')}
-                        />
-                        <RechartsYAxis domain={[0, 4]} tickCount={5} />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <ChartLegend content={<ChartLegendContent />} />
-                        <RechartsLine dataKey="semesterGpa" type="monotone" stroke="var(--color-semesterGpa)" strokeWidth={2} dot={false} />
-                        <RechartsLine dataKey="cumulativeGpa" type="monotone" stroke="var(--color-cumulativeGpa)" strokeWidth={2} dot={false} />
-                    </RechartsLineChart>
-                </ChartContainer>
-            </CardContent>
-         </Card>
+       {trajectoryData.length > 0 && (
+         <div className="grid md:grid-cols-2 gap-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>CGPA Trajectory</CardTitle>
+                    <CardDescription>Your cumulative GPA trend across semesters.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={trajectoryChartConfig} className="h-[250px] w-full">
+                        <RechartsLineChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                            <RechartsCartesianGrid vertical={false} />
+                            <RechartsXAxis
+                                dataKey="name"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={10}
+                                tickFormatter={(value) => value.replace('\n', ' ')}
+                            />
+                            <RechartsYAxis domain={[0, 4]} tickCount={5} />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <ChartLegend content={<ChartLegendContent />} />
+                            <RechartsLine dataKey="Semester GPA" type="monotone" stroke="var(--color-Semester GPA)" strokeWidth={2} dot={true} />
+                            <RechartsLine dataKey="CGPA" type="monotone" stroke="var(--color-CGPA)" strokeWidth={2} dot={true} />
+                        </RechartsLineChart>
+                    </ChartContainer>
+                </CardContent>
+            </Card>
+             <Card>
+                <CardHeader>
+                    <CardTitle>Grade Distribution</CardTitle>
+                    <CardDescription>Breakdown of your grades.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={distributionChartConfig} className="h-[250px] w-full">
+                        <RechartsBarChart data={gradeDistributionData} >
+                             <RechartsCartesianGrid vertical={false} />
+                             <RechartsXAxis
+                                dataKey="grade"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={10}
+                            />
+                             <RechartsYAxis />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                             <RechartsBar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                        </RechartsBarChart>
+                    </ChartContainer>
+                </CardContent>
+             </Card>
+         </div>
       )}
+
 
       <Card>
         <CardHeader>
@@ -330,7 +395,7 @@ export default function GpaTracker() {
                     <FormItem>
                       <FormLabel>Semester</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Semester 1" {...field} />
+                        <Input placeholder="e.g., Sem 1" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
