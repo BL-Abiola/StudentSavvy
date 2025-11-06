@@ -99,14 +99,7 @@ type QrCodeInfo = {
 };
 
 export default function GpaTracker() {
-  const [grades, setGrades] = useState<Grade[]>([
-    { id: 1, name: 'Intro to Psych', grade: 3.7, credits: 3, semester: 'Semester 1' },
-    { id: 2, name: 'Calculus I', grade: 3.0, credits: 4, semester: 'Semester 1' },
-    { id: 3, name: 'English Comp', grade: 4.0, credits: 3, semester: 'Semester 2' },
-    { id: 4, name: 'Art History', grade: 3.3, credits: 3, semester: 'Semester 2' },
-    { id: 5, name: 'Biology Lab', grade: 2.7, credits: 1, semester: 'Semester 3' },
-    { id: 6, name: 'Statistics', grade: 2.3, credits: 3, semester: 'Semester 3' },
-  ]);
+  const [grades, setGrades] = useState<Grade[]>([]);
   const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null);
 
   const form = useForm<z.infer<typeof gradeSchema>>({
@@ -206,7 +199,9 @@ export default function GpaTracker() {
     for (const semester of sortedSemesters) {
       const semesterData = grouped[semester];
       const semesterGpa =
-        semesterData.totalQualityPoints / semesterData.totalCredits;
+        semesterData.totalCredits > 0
+          ? semesterData.totalQualityPoints / semesterData.totalCredits
+          : 0;
       cumulativeCredits += semesterData.totalCredits;
       cumulativeQualityPoints += semesterData.totalQualityPoints;
       const cumulativeGpa =
@@ -225,9 +220,12 @@ export default function GpaTracker() {
 
     return {
       cgpa: calculatedCgpa,
-      semesterGpa: lastSemesterData
-        ? (lastSemesterData.totalQualityPoints / lastSemesterData.totalCredits).toFixed(2)
-        : '0.00',
+      semesterGpa:
+        lastSemesterData && lastSemesterData.totalCredits > 0
+          ? (
+              lastSemesterData.totalQualityPoints / lastSemesterData.totalCredits
+            ).toFixed(2)
+          : '0.00',
       semesterCredits: lastSemesterData ? lastSemesterData.totalCredits : 0,
       totalCredits: totalCreditHours,
       gradeDistribution: gradeDistributionData,
@@ -238,7 +236,13 @@ export default function GpaTracker() {
 
   const trajectoryChartConfig = {
     semesterGpa: { label: 'Semester GPA', color: 'hsl(var(--primary))' },
-    cgpa: { label: 'CGPA', color: 'hsl(var(--accent))' },
+    cgpa: {
+      label: 'CGPA',
+      theme: {
+        light: 'hsl(var(--foreground))',
+        dark: 'hsl(var(--card-foreground))',
+      },
+    },
   } satisfies import('@/components/ui/chart').ChartConfig;
 
   const distributionChartConfig = {
@@ -499,9 +503,12 @@ export default function GpaTracker() {
             {Object.keys(groupedGrades).length > 0 ? (
               <Accordion type="multiple" className="w-full">
                 {Object.entries(groupedGrades).map(([semester, data]) => {
-                  const semesterGpa = (
-                    data.totalQualityPoints / data.totalCredits
-                  ).toFixed(2);
+                  const semesterGpa =
+                    data.totalCredits > 0
+                      ? (
+                          data.totalQualityPoints / data.totalCredits
+                        ).toFixed(2)
+                      : '0.00';
                   return (
                     <AccordionItem value={semester} key={semester}>
                       <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
