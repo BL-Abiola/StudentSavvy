@@ -111,11 +111,11 @@ type QrCodeInfo = {
 const trajectoryChartConfig = {
   'CGPA': {
     label: 'CGPA',
-    color: 'hsl(var(--warning))',
+    color: 'hsl(var(--primary))',
   },
   'Semester GPA': {
     label: 'Semester GPA',
-    color: 'hsl(var(--primary))',
+    color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
 
@@ -334,7 +334,7 @@ export default function GpaTracker() {
           </CardHeader>
         </Card>
       </div>
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>CGPA Trajectory</CardTitle>
@@ -579,7 +579,7 @@ export default function GpaTracker() {
               })}
             </Accordion>
           ) : (
-            <p className="text-center text-muted-foreground bg-muted/50 p-8 rounded-lg">
+            <p className="text-center text-muted-foreground bg-muted p-8 rounded-lg">
               No grades have been added yet.
             </p>
           )}
@@ -588,5 +588,3 @@ export default function GpaTracker() {
     </div>
   );
 }
-
-    
