@@ -25,10 +25,13 @@ import { Input } from '@/components/ui/input';
 import {
   BarChart,
   Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from 'recharts';
 import { BarChart3, GraduationCap, CheckCircle } from 'lucide-react';
@@ -43,14 +46,22 @@ const gradeSchema = z.object({
   credits: z.coerce.number().min(0.5, 'Credits must be a positive number'),
 });
 
-const mockPerformanceData = [
-  { semester: 'Fall \'23', gpa: 3.2, credits: 15 },
-  { semester: 'Spring \'24', gpa: 3.8, credits: 16 },
-  { semester: 'Fall \'24', gpa: 3.5, credits: 15 },
+const gpaTrajectoryData = [
+    { semester: 'Sem 1', semesterGpa: 3.5, cgpa: 3.5 },
+    { semester: 'Sem 2', semesterGpa: 3.2, cgpa: 3.35 },
+    { semester: 'Sem 3', semesterGpa: 3.8, cgpa: 3.5 },
+    { semester: 'Sem 4', semesterGpa: 3.9, cgpa: 3.6 },
 ];
 
 export default function GpaTracker() {
-  const [grades, setGrades] = useState<Grade[]>([]);
+  const [grades, setGrades] = useState<Grade[]>([
+      { id: 1, name: 'Intro to Psych', grade: 3.7, credits: 3 },
+      { id: 2, name: 'Calculus I', grade: 3.0, credits: 4 },
+      { id: 3, name: 'English Comp', grade: 4.0, credits: 3 },
+      { id: 4, name: 'Art History', grade: 3.3, credits: 3 },
+      { id: 5, name: 'Biology Lab', grade: 2.7, credits: 1 },
+      { id: 6, name: 'Statistics', grade: 2.3, credits: 3 },
+  ]);
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
@@ -67,13 +78,19 @@ export default function GpaTracker() {
     form.reset();
   }
 
-  const { cgpa, lastGpa } = useMemo(() => {
+  const { cgpa, lastGpa, gradeDistribution } = useMemo(() => {
     let totalCreditHours = 0;
     let totalQualityPoints = 0;
+    const distribution = { 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 };
 
     grades.forEach((g) => {
       totalCreditHours += g.credits;
       totalQualityPoints += g.grade * g.credits;
+      if (g.grade >= 3.7) distribution['A']++;
+      else if (g.grade >= 2.7) distribution['B']++;
+      else if (g.grade >= 1.7) distribution['C']++;
+      else if (g.grade >= 0.7) distribution['D']++;
+      else distribution['F']++;
     });
 
     const calculatedCgpa =
@@ -84,15 +101,19 @@ export default function GpaTracker() {
       grades.length > 0
         ? grades[grades.length - 1].grade.toFixed(2)
         : '0.00';
+    
+    const gradeDistributionData = Object.entries(distribution).map(([name, value]) => ({ name, value }));
 
-    return { cgpa: calculatedCgpa, lastGpa: calculatedLastGpa };
+    return { cgpa: calculatedCgpa, lastGpa: calculatedLastGpa, gradeDistribution: gradeDistributionData };
   }, [grades]);
   
-  const chartConfig = {
-    gpa: {
-      label: "GPA",
-      color: "hsl(var(--primary))",
-    },
+  const trajectoryChartConfig = {
+    semesterGpa: { label: "Semester GPA", color: "hsl(var(--primary))" },
+    cgpa: { label: "CGPA", color: "hsl(var(--accent))" },
+  } satisfies import('@/components/ui/chart').ChartConfig;
+  
+  const distributionChartConfig = {
+    value: { label: "Count", color: "hsl(var(--primary))" },
   } satisfies import('@/components/ui/chart').ChartConfig;
 
   return (
@@ -123,28 +144,50 @@ export default function GpaTracker() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance Trend</CardTitle>
-          <CardDescription>Mock data showing GPA over past semesters.</CardDescription>
-        </CardHeader>
-        <CardContent className="h-80">
-          <ChartContainer config={chartConfig} className="w-full h-full">
-            <BarChart data={mockPerformanceData} accessibilityLayer>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="semester"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <YAxis domain={[0, 4]} tickLine={false} axisLine={false} />
-               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="gpa" fill="var(--color-gpa)" radius={4} />
-            </BarChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>CGPA Trajectory</CardTitle>
+            <CardDescription>Your cumulative GPA trend across semesters.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ChartContainer config={trajectoryChartConfig} className="w-full h-full">
+              <LineChart data={gpaTrajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="semester" tickLine={false} axisLine={false} tickMargin={8} />
+                <YAxis domain={[2.0, 4.0]} tickLine={false} axisLine={false} tickMargin={8}/>
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Legend />
+                <Line type="monotone" dataKey="semesterGpa" stroke="var(--color-semesterGpa)" strokeWidth={2} dot={{r: 4, fill: "var(--color-semesterGpa)"}} activeDot={{ r: 6 }}/>
+                <Line type="monotone" dataKey="cgpa" stroke="var(--color-cgpa)" strokeWidth={2} dot={{r: 4, fill: "var(--color-cgpa)"}} activeDot={{ r: 6 }}/>
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Grade Distribution</CardTitle>
+            <CardDescription>Breakdown of your entered grades.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ChartContainer config={distributionChartConfig} className="w-full h-full">
+              <BarChart data={gradeDistribution} accessibilityLayer>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="name"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                />
+                <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
