@@ -262,14 +262,14 @@ export default function GpaTracker() {
       label: 'Semester GPA',
       color: 'hsl(var(--foreground))',
     },
-  } satisfies import('@/components/ui/chart').ChartConfig;
+  };
 
   const distributionChartConfig = {
     count: {
       label: 'Count',
       color: 'hsl(var(--primary))',
     },
-  } satisfies import('@/components/ui/chart').ChartConfig;
+  };
 
   return (
     <section id="performance" className="space-y-8">
@@ -335,7 +335,7 @@ export default function GpaTracker() {
       </div>
 
       {trajectoryData.length > 0 && (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
               <CardTitle>CGPA Trajectory</CardTitle>
