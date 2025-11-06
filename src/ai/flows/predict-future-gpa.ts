@@ -55,19 +55,28 @@ const predictFutureGpaFlow = ai.defineFlow(
     inputSchema: PredictFutureGpaInputSchema,
     outputSchema: PredictFutureGpaOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    // Attempt to parse the predicted GPA as a number, handling potential errors.
-    try {
-      const predictedGpa = parseFloat(output!.trim());
-      if (isNaN(predictedGpa)) {
-        throw new Error("Could not parse predicted GPA from the output.");
-      }
-      return { predictedGpa: predictedGpa };
-    } catch (error) {
-      console.error("Error parsing predicted GPA:", error);
-      // Provide a default value or re-throw the error as needed.
-      throw error;
+  async (input) => {
+    const {currentGpa, totalCredits, courses} = input;
+    
+    const currentTotalPoints = currentGpa * totalCredits;
+    
+    let futureCredits = 0;
+    let futurePoints = 0;
+
+    courses.forEach(course => {
+        futureCredits += course.credits;
+        futurePoints += course.expectedGrade * course.credits;
+    });
+
+    const newTotalCredits = totalCredits + futureCredits;
+    const newTotalPoints = currentTotalPoints + futurePoints;
+
+    if (newTotalCredits === 0) {
+        return { predictedGpa: 0 };
     }
+
+    const predictedGpa = newTotalPoints / newTotalCredits;
+
+    return { predictedGpa };
   }
 );
