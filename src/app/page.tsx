@@ -48,7 +48,7 @@ const GpaTracker = dynamic(() => import('./_components/gpa-tracker'), {
 });
 
 function AppContent() {
-  const [activeScreen, setActiveScreen] = useState<Screen>('dashboard');
+  const [activeScreen, setActiveScreen] = useState<Screen>('performance');
   const isMobile = useIsMobile();
 
   const renderScreen = () => {
@@ -60,7 +60,7 @@ function AppContent() {
       case 'ai-tools':
         return <AiPremium />;
       default:
-        return <Dashboard />;
+        return <GpaTracker />;
     }
   };
 
@@ -89,7 +89,7 @@ function AppContent() {
 
         <main
           className={cn(
-            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl',
+            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar',
             isMobile ? 'pb-28' : '' // Add padding-bottom only on mobile
           )}
         >

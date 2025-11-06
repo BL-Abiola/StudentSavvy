@@ -4,7 +4,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { Screen } from '@/types';
 import {
   BarChart3,
-  LayoutDashboard,
+  BookOpenText,
   Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,14 +17,14 @@ interface MainNavProps {
 
 const navItems = [
   {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-  },
-  {
     id: 'performance',
     label: 'Performance',
     icon: BarChart3,
+  },
+  {
+    id: 'dashboard',
+    label: 'Planner',
+    icon: BookOpenText,
   },
   {
     id: 'ai-tools',
@@ -48,7 +48,7 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
               'transition-colors duration-150',
               isActive
                 ? 'bg-primary text-primary-foreground'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-muted',
+                : 'text-gray-600 dark:text-gray-400',
               item.id === 'ai-tools' &&
                 !isActive &&
                 'text-primary/80 font-bold',
