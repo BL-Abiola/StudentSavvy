@@ -58,7 +58,7 @@ export default function MainNav({
               key={item.id}
               onClick={() => setActiveScreen(item.id)}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-md transition-colors duration-150 w-20',
+                'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-md w-20',
                 isActive
                   ? 'text-primary'
                   : 'text-gray-600 dark:text-gray-400',

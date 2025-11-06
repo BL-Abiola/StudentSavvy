@@ -7,7 +7,6 @@ import StudyPlanner from './_components/study-planner';
 import TaskManager from './_components/task-manager';
 import ClassSchedule from './_components/class-schedule';
 import AiPremium from './_components/ai-premium';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -62,9 +61,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="absolute top-0 right-0 p-4 z-50">
-        <ThemeToggle />
-      </header>
       <main
         className={cn(
           'flex-1 overflow-y-auto max-w-4xl mx-auto pt-8 pb-28 p-4 w-full'
@@ -78,5 +74,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
