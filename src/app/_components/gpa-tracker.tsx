@@ -239,7 +239,7 @@ export default function GpaTracker() {
     cgpa: {
       label: 'CGPA',
       theme: {
-        light: 'hsl(var(--foreground))',
+        light: '#000000',
         dark: 'hsl(var(--card-foreground))',
       },
     },
@@ -576,3 +576,5 @@ export default function GpaTracker() {
     </section>
   );
 }
+
+    

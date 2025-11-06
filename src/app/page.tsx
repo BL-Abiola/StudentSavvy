@@ -67,7 +67,7 @@ export default function Home() {
       </header>
       <main
         className={cn(
-          'flex-1 overflow-y-auto max-w-4xl mx-auto pt-8 pb-28 p-4 w-full no-scrollbar'
+          'flex-1 overflow-y-auto max-w-4xl mx-auto pt-8 pb-28 p-4 w-full'
         )}
       >
         <div className="animate-in fade-in-50 duration-300">
@@ -78,3 +78,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
