@@ -12,6 +12,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -50,8 +59,13 @@ import {
   Trash2,
   QrCode,
 } from 'lucide-react';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
+import QRCode from 'qrcode.react';
 
 const gradeSchema = z.object({
   name: z.string().min(2, 'Course name is required'),
@@ -78,6 +92,12 @@ function gpaToLetter(gpa: number): string {
   return 'F';
 }
 
+type QrCodeInfo = {
+  semester: string;
+  gpa: string;
+  courses: { name: string; grade: number; credits: number }[];
+};
+
 export default function GpaTracker() {
   const [grades, setGrades] = useState<Grade[]>([
     { id: 1, name: 'Intro to Psych', grade: 3.7, credits: 3, semester: 'Semester 1' },
@@ -87,6 +107,7 @@ export default function GpaTracker() {
     { id: 5, name: 'Biology Lab', grade: 2.7, credits: 1, semester: 'Semester 3' },
     { id: 6, name: 'Statistics', grade: 2.3, credits: 3, semester: 'Semester 3' },
   ]);
+  const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null);
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
@@ -107,74 +128,103 @@ export default function GpaTracker() {
   function removeGrade(id: number) {
     setGrades(grades.filter((g) => g.id !== id));
   }
-  
+
   function removeSemester(semester: string) {
     setGrades(grades.filter((g) => g.semester !== semester));
   }
-
-  const { cgpa, lastGpa, gradeDistribution, groupedGrades, gpaTrajectoryData } = useMemo(() => {
-    let totalCreditHours = 0;
-    let totalQualityPoints = 0;
-    const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
-
-    grades.forEach((g) => {
-      totalCreditHours += g.credits;
-      totalQualityPoints += g.grade * g.credits;
-      if (g.grade >= 3.7) distribution['A']++;
-      else if (g.grade >= 2.7) distribution['B']++;
-      else if (g.grade >= 1.7) distribution['C']++;
-      else if (g.grade >= 0.7) distribution['D']++;
-      else distribution['F']++;
+  
+  function handleGenerateQrCode(semester: string, data: any) {
+    const semesterGpa = (data.totalQualityPoints / data.totalCredits).toFixed(2);
+    setQrCodeData({
+        semester,
+        gpa: semesterGpa,
+        courses: data.grades.map((g: Grade) => ({ name: g.name, grade: g.grade, credits: g.credits })),
     });
+  }
 
-    const calculatedCgpa =
-      totalCreditHours > 0
-        ? (totalQualityPoints / totalCreditHours).toFixed(2)
-        : '0.00';
-    const calculatedLastGpa =
-      grades.length > 0
-        ? grades[grades.length - 1].grade.toFixed(2)
-        : '0.00';
 
-    const gradeDistributionData = Object.entries(distribution).map(([name, value]) => ({ name, value }));
+  const { cgpa, lastGpa, gradeDistribution, groupedGrades, gpaTrajectoryData } =
+    useMemo(() => {
+      let totalCreditHours = 0;
+      let totalQualityPoints = 0;
+      const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
 
-    const grouped = grades.reduce((acc, grade) => {
-        const { semester } = grade;
-        if (!acc[semester]) {
-            acc[semester] = { grades: [], totalCredits: 0, totalQualityPoints: 0 };
-        }
-        acc[semester].grades.push(grade);
-        acc[semester].totalCredits += grade.credits;
-        acc[semester].totalQualityPoints += grade.grade * grade.credits;
-        return acc;
-    }, {} as Record<string, { grades: Grade[]; totalCredits: number; totalQualityPoints: number; }>);
-    
-    const trajectory = [];
-    let cumulativeCredits = 0;
-    let cumulativeQualityPoints = 0;
-    const sortedSemesters = Object.keys(grouped).sort();
+      if (grades.length > 0) {
+        grades.forEach((g) => {
+          totalCreditHours += g.credits;
+          totalQualityPoints += g.grade * g.credits;
+          if (g.grade >= 3.7) distribution['A']++;
+          else if (g.grade >= 2.7) distribution['B']++;
+          else if (g.grade >= 1.7) distribution['C']++;
+          else if (g.grade >= 0.7) distribution['D']++;
+          else distribution['F']++;
+        });
+      }
 
-    for (const semester of sortedSemesters) {
+      const calculatedCgpa =
+        totalCreditHours > 0
+          ? (totalQualityPoints / totalCreditHours).toFixed(2)
+          : '0.00';
+      const calculatedLastGpa =
+        grades.length > 0
+          ? grades[grades.length - 1].grade.toFixed(2)
+          : '0.00';
+
+      const gradeDistributionData = Object.entries(distribution).map(
+        ([name, value]) => ({ name, value })
+      );
+
+      const grouped = grades.reduce(
+        (acc, grade) => {
+          const { semester } = grade;
+          if (!acc[semester]) {
+            acc[semester] = {
+              grades: [],
+              totalCredits: 0,
+              totalQualityPoints: 0,
+            };
+          }
+          acc[semester].grades.push(grade);
+          acc[semester].totalCredits += grade.credits;
+          acc[semester].totalQualityPoints += grade.grade * grade.credits;
+          return acc;
+        },
+        {} as Record<
+          string,
+          { grades: Grade[]; totalCredits: number; totalQualityPoints: number }
+        >
+      );
+
+      const trajectory = [];
+      let cumulativeCredits = 0;
+      let cumulativeQualityPoints = 0;
+      const sortedSemesters = Object.keys(grouped).sort();
+
+      for (const semester of sortedSemesters) {
         const semesterData = grouped[semester];
-        const semesterGpa = semesterData.totalQualityPoints / semesterData.totalCredits;
+        const semesterGpa =
+          semesterData.totalQualityPoints / semesterData.totalCredits;
         cumulativeCredits += semesterData.totalCredits;
         cumulativeQualityPoints += semesterData.totalQualityPoints;
-        const cumulativeGpa = cumulativeCredits > 0 ? cumulativeQualityPoints / cumulativeCredits : 0;
+        const cumulativeGpa =
+          cumulativeCredits > 0
+            ? cumulativeQualityPoints / cumulativeCredits
+            : 0;
         trajectory.push({
-            semester: semester.replace('Semester ', 'Sem '),
-            semesterGpa: parseFloat(semesterGpa.toFixed(2)),
-            cgpa: parseFloat(cumulativeGpa.toFixed(2)),
+          semester: semester.replace('Semester ', 'Sem '),
+          semesterGpa: parseFloat(semesterGpa.toFixed(2)),
+          cgpa: parseFloat(cumulativeGpa.toFixed(2)),
         });
-    }
+      }
 
-    return {
-      cgpa: calculatedCgpa,
-      lastGpa: calculatedLastGpa,
-      gradeDistribution: gradeDistributionData,
-      groupedGrades: grouped,
-      gpaTrajectoryData: trajectory,
-    };
-  }, [grades]);
+      return {
+        cgpa: calculatedCgpa,
+        lastGpa: calculatedLastGpa,
+        gradeDistribution: gradeDistributionData,
+        groupedGrades: grouped,
+        gpaTrajectoryData: trajectory,
+      };
+    }, [grades]);
 
   const trajectoryChartConfig = {
     semesterGpa: { label: 'Semester GPA', color: 'hsl(var(--primary))' },
@@ -187,6 +237,24 @@ export default function GpaTracker() {
 
   return (
     <section id="performance" className="space-y-8">
+       {qrCodeData && (
+        <AlertDialog open={!!qrCodeData} onOpenChange={(open) => !open && setQrCodeData(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>QR Code for {qrCodeData.semester}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Scan this code to view or share the semester's grade summary.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="flex justify-center p-4 bg-white rounded-md">
+                     <QRCode value={JSON.stringify(qrCodeData, null, 2)} size={256} />
+                </div>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setQrCodeData(null)}>Close</AlertDialogCancel>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+      )}
       <div className="flex items-center gap-3">
         <BarChart3 className="w-8 h-8 text-primary" />
         <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
@@ -222,52 +290,52 @@ export default function GpaTracker() {
             </CardDescription>
           </CardHeader>
           <CardContent className="h-80">
-          {gpaTrajectoryData.length > 0 ? (
-            <ChartContainer
-              config={trajectoryChartConfig}
-              className="w-full h-full"
-            >
-              <LineChart
-                data={gpaTrajectoryData}
-                margin={{ top: 5, right: 20, left: -10, bottom: 0 }}
+            {gpaTrajectoryData.length > 0 ? (
+              <ChartContainer
+                config={trajectoryChartConfig}
+                className="w-full h-full"
               >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="semester"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                />
-                <YAxis
-                  domain={['dataMin - 0.2', 'dataMax + 0.2']}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="semesterGpa"
-                  stroke="var(--color-semesterGpa)"
-                  strokeWidth={2}
-                  dot={{ r: 4, fill: 'var(--color-semesterGpa)' }}
-                  activeDot={{ r: 6 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="cgpa"
-                  stroke="var(--color-cgpa)"
-                  strokeWidth={2}
-                  dot={{ r: 4, fill: 'var(--color-cgpa)' }}
-                  activeDot={{ r: 6 }}
-                />
-              </LineChart>
-            </ChartContainer>
-             ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                  Add some grades to see your GPA trajectory.
-                </div>
+                <LineChart
+                  data={gpaTrajectoryData}
+                  margin={{ top: 5, right: 20, left: -10, bottom: 0 }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="semester"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis
+                    domain={['dataMin - 0.2', 'dataMax + 0.2']}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="semesterGpa"
+                    stroke="var(--color-semesterGpa)"
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: 'var(--color-semesterGpa)' }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="cgpa"
+                    stroke="var(--color-cgpa)"
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: 'var(--color-cgpa)' }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                Add some grades to see your GPA trajectory.
+              </div>
             )}
           </CardContent>
         </Card>
@@ -278,38 +346,38 @@ export default function GpaTracker() {
             <CardDescription>Breakdown of your entered grades.</CardDescription>
           </CardHeader>
           <CardContent className="h-80">
-          {grades.length > 0 ? (
-            <ChartContainer
-              config={distributionChartConfig}
-              className="w-full h-full"
-            >
-              <BarChart data={gradeDistribution} accessibilityLayer>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="name"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  allowDecimals={false}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" fill="var(--color-value)" radius={4} />
-              </BarChart>
-            </ChartContainer>
+            {grades.length > 0 ? (
+              <ChartContainer
+                config={distributionChartConfig}
+                className="w-full h-full"
+              >
+                <BarChart data={gradeDistribution} accessibilityLayer>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="name"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+                </BarChart>
+              </ChartContainer>
             ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                  No grades to display distribution for.
-                </div>
+              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                No grades to display distribution for.
+              </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-       <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Add New Grade</CardTitle>
           <CardDescription>
@@ -333,7 +401,7 @@ export default function GpaTracker() {
                     </FormItem>
                   )}
                 />
-                 <FormField
+                <FormField
                   control={form.control}
                   name="semester"
                   render={({ field }) => (
@@ -380,7 +448,7 @@ export default function GpaTracker() {
           </Form>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <div>
@@ -410,49 +478,71 @@ export default function GpaTracker() {
               <span className="text-right">Action</span>
             </div>
             {Object.keys(groupedGrades).length > 0 ? (
-            <Accordion type="multiple" className="w-full">
-              {Object.entries(groupedGrades).map(([semester, data]) => {
-                const semesterGpa = (data.totalQualityPoints / data.totalCredits).toFixed(2);
-                return (
-                  <AccordionItem value={semester} key={semester}>
-                    <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
-                      <div className="flex justify-between w-full items-center">
-                        <span className="font-semibold">{semester}</span>
-                        <div className="flex items-center gap-4">
-                           <Badge variant="secondary">GPA: {semesterGpa}</Badge>
-                           <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Accordion type="multiple" className="w-full">
+                {Object.entries(groupedGrades).map(([semester, data]) => {
+                  const semesterGpa = (
+                    data.totalQualityPoints / data.totalCredits
+                  ).toFixed(2);
+                  return (
+                    <AccordionItem value={semester} key={semester}>
+                      <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
+                        <div className="flex justify-between w-full items-center">
+                          <span className="font-semibold">{semester}</span>
+                          <div className="flex items-center gap-4">
+                            <Badge variant="secondary">GPA: {semesterGpa}</Badge>
+                            <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); handleGenerateQrCode(semester, data);}}>
                                 <QrCode className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); removeSemester(semester);}}>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeSemester(semester);
+                                }}
+                              >
                                 <Trash2 className="h-4 w-4" />
-                            </Button>
-                           </div>
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="divide-y">
-                        {data.grades.map((g) => (
-                           <div key={g.id} className="grid grid-cols-[1fr,120px,120px,80px] items-center px-4 py-3">
-                                <span>{g.name}</span>
-                                <span className="text-center">{gpaToLetter(g.grade)} ({g.grade.toFixed(2)})</span>
-                                <span className="text-center">{g.credits}</span>
-                                <div className="text-right">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => removeGrade(g.id)}>
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                           </div>
-                        ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                );
-              })}
-            </Accordion>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="divide-y">
+                          {data.grades.map((g) => (
+                            <div
+                              key={g.id}
+                              className="grid grid-cols-[1fr,120px,120px,80px] items-center px-4 py-3"
+                            >
+                              <span>{g.name}</span>
+                              <span className="text-center">
+                                {gpaToLetter(g.grade)} ({g.grade.toFixed(2)})
+                              </span>
+                              <span className="text-center">{g.credits}</span>
+                              <div className="text-right">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-destructive hover:text-destructive"
+                                  onClick={() => removeGrade(g.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
             ) : (
-                <p className="p-8 text-center text-muted-foreground">No grades have been added yet.</p>
+              <p className="p-8 text-center text-muted-foreground">
+                No grades have been added yet.
+              </p>
             )}
           </div>
         </CardContent>
