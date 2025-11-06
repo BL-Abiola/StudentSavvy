@@ -109,13 +109,13 @@ type QrCodeInfo = {
 };
 
 const trajectoryChartConfig = {
-  CGPA: {
+  'CGPA': {
     label: 'CGPA',
-    color: 'hsl(var(--primary))',
+    color: 'hsl(var(--foreground))',
   },
   'Semester GPA': {
     label: 'Semester GPA',
-    color: 'hsl(var(--foreground))',
+    color: 'hsl(var(--primary))',
   },
 } satisfies ChartConfig;
 
@@ -335,84 +335,86 @@ export default function GpaTracker() {
         </Card>
       </div>
 
-      {trajectoryData.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="space-y-4">
+        {trajectoryData.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle>CGPA Trajectory</CardTitle>
-              <CardDescription>
-                Your cumulative GPA trend across semesters.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={trajectoryChartConfig}
-                className="h-[250px] w-full"
-              >
-                <RechartsLineChart
-                  data={trajectoryData}
-                  margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+              <CardHeader>
+                <CardTitle>CGPA Trajectory</CardTitle>
+                <CardDescription>
+                  Your cumulative GPA trend across semesters.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={trajectoryChartConfig}
+                  className="h-[250px] w-full"
                 >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={10}
-                    tickFormatter={(value) => value.replace('\n', ' ')}
-                  />
-                  <YAxis domain={[0, 4]} tickCount={5} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <RechartsLine
-                    dataKey="Semester GPA"
-                    type="monotone"
-                    stroke="var(--color-Semester GPA)"
-                    strokeWidth={2}
-                    dot={true}
-                  />
-                  <RechartsLine
-                    dataKey="CGPA"
-                    type="monotone"
-                    stroke="var(--color-CGPA)"
-                    strokeWidth={2}
-                    dot={true}
-                  />
-                </RechartsLineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Grade Distribution</CardTitle>
-              <CardDescription>Breakdown of your grades.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={distributionChartConfig}
-                className="h-[250px] w-full"
-              >
-                <RechartsBarChart data={gradeDistributionData}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="grade"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={10}
-                  />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar
-                    dataKey="count"
-                    fill="var(--color-count)"
-                    radius={4}
-                  />
-                </RechartsBarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                  <RechartsLineChart
+                    data={trajectoryData}
+                    margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+                  >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="name"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      tickFormatter={(value) => value.replace('\n', ' ')}
+                    />
+                    <YAxis domain={[0, 4]} tickCount={5} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <RechartsLine
+                      dataKey="Semester GPA"
+                      type="monotone"
+                      stroke="var(--color-Semester GPA)"
+                      strokeWidth={2}
+                      dot={true}
+                    />
+                    <RechartsLine
+                      dataKey="CGPA"
+                      type="monotone"
+                      stroke="var(--color-CGPA)"
+                      strokeWidth={2}
+                      dot={true}
+                    />
+                  </RechartsLineChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+        )}
+        {gradeDistributionData.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Grade Distribution</CardTitle>
+                <CardDescription>Breakdown of your grades.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={distributionChartConfig}
+                  className="h-[250px] w-full"
+                >
+                  <RechartsBarChart data={gradeDistributionData}>
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="grade"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                    />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar
+                      dataKey="count"
+                      fill="var(--color-count)"
+                      radius={4}
+                    />
+                  </RechartsBarChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+        )}
+      </div>
 
       <Card>
         <CardHeader>
