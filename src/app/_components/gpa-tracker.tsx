@@ -225,7 +225,7 @@ export default function GpaTracker() {
       return {
         name: semester.replace(' ', '\n'),
         'Semester GPA': parseFloat(semesterGpa.toFixed(2)),
-        CGPA: parseFloat(cumulativeGpa.toFixed(2)),
+        'CGPA': parseFloat(cumulativeGpa.toFixed(2)),
       };
     });
 
