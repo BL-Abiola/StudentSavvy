@@ -1,0 +1,187 @@
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import type { StudySession } from '@/types';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { BookOpenText, Clock, Calendar, Pencil, Trash2 } from 'lucide-react';
+
+const studySchema = z.object({
+  topic: z.string().min(3, 'Topic is required'),
+  date: z.string().min(1, 'Date is required'),
+  time: z.string().min(1, 'Time is required'),
+  notes: z.string().optional(),
+});
+
+export default function StudyPlanner() {
+  const [sessions, setSessions] = useState<StudySession[]>([]);
+
+  const form = useForm<z.infer<typeof studySchema>>({
+    resolver: zodResolver(studySchema),
+    defaultValues: {
+      topic: '',
+      date: new Date().toISOString().split('T')[0],
+      time: '',
+      notes: '',
+    },
+  });
+
+  function addStudySession(values: z.infer<typeof studySchema>) {
+    const newSession: StudySession = { id: Date.now(), ...values, notes: values.notes || '' };
+    setSessions([...sessions, newSession].sort((a,b) => new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime()));
+    form.reset({
+      topic: '',
+      date: new Date().toISOString().split('T')[0],
+      time: '',
+      notes: '',
+    });
+  }
+
+  function removeSession(id: number) {
+    setSessions(sessions.filter((s) => s.id !== id));
+  }
+
+  return (
+    <section id="planner" className="space-y-8">
+      <div className="flex items-center gap-3">
+        <BookOpenText className="w-8 h-8 text-primary" />
+        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+          Personal Study Sessions Planner
+        </h2>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>New Study Block</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(addStudySession)}
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="topic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Topic/Course Focus</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Chapter 5 Reading" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="time"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Time</FormLabel>
+                      <FormControl>
+                        <Input type="time" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Goals for this session</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g., Summarize key concepts, complete practice problems..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" variant="secondary" className="w-full">
+                Schedule Session
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      <div>
+        <h3 className="text-xl font-bold mt-8 mb-4 text-gray-700 dark:text-gray-300">
+          Upcoming Sessions
+        </h3>
+        {sessions.length === 0 ? (
+          <p className="text-center text-gray-500 bg-gray-100 dark:bg-gray-800 p-8 rounded-lg">
+            No study sessions scheduled. Plan one now!
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {sessions.map((session) => (
+              <Card key={session.id} className="p-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-bold text-lg text-gray-900 dark:text-gray-100">{session.topic}</p>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-2">
+                      <span className="flex items-center gap-1.5"><Calendar size={14} />{new Date(session.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</span>
+                      <span className="flex items-center gap-1.5"><Clock size={14} />{new Date(`1970-01-01T${session.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    {session.notes && (
+                      <p className="flex items-start gap-1.5 text-sm text-gray-600 dark:text-gray-300 mt-2"><Pencil size={14} className="mt-0.5 shrink-0" /> {session.notes}</p>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                    onClick={() => removeSession(session.id)}
+                  >
+                    <Trash2 size={18} />
+                     <span className="sr-only">Remove session</span>
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
