@@ -4,9 +4,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { Screen } from '@/types';
 import {
   BarChart3,
-  BookOpenText,
-  CheckSquare,
-  CalendarDays,
+  LayoutDashboard,
   Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,28 +17,18 @@ interface MainNavProps {
 
 const navItems = [
   {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+  },
+  {
     id: 'performance',
     label: 'Performance',
     icon: BarChart3,
   },
   {
-    id: 'planner',
-    label: 'Planner',
-    icon: BookOpenText,
-  },
-  {
-    id: 'tasks',
-    label: 'To-Do List',
-    icon: CheckSquare,
-  },
-  {
-    id: 'schedule',
-    label: 'Schedule',
-    icon: CalendarDays,
-  },
-  {
-    id: 'premium',
-    label: 'AI Premium',
+    id: 'ai-tools',
+    label: 'AI Tools',
     icon: Sparkles,
   },
 ] as const;
@@ -61,7 +49,7 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
               isActive
                 ? 'bg-primary text-primary-foreground'
                 : 'text-gray-600 dark:text-gray-400 hover:bg-muted',
-              item.id === 'premium' &&
+              item.id === 'ai-tools' &&
                 !isActive &&
                 'text-primary/80 font-bold',
               state === 'collapsed' && 'justify-center'
@@ -101,7 +89,7 @@ function MobileNav({ activeScreen, setActiveScreen }: MainNavProps) {
                 isActive
                   ? 'text-primary'
                   : 'text-gray-600 dark:text-gray-400',
-                item.id === 'premium' && !isActive && 'text-primary/80 font-bold'
+                item.id === 'ai-tools' && !isActive && 'text-primary/80 font-bold'
               )}
             >
               <item.icon

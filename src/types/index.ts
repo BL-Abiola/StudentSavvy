@@ -33,9 +33,4 @@ export type Class = {
   location: string;
 };
 
-export type Screen =
-  | 'performance'
-  | 'planner'
-  | 'tasks'
-  | 'schedule'
-  | 'premium';
+export type Screen = 'dashboard' | 'performance' | 'ai-tools';

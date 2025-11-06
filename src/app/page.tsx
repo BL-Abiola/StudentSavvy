@@ -3,10 +3,6 @@
 import { useState } from 'react';
 import type { Screen } from '@/types';
 import MainNav from './_components/main-nav';
-import StudyPlanner from './_components/study-planner';
-import TaskManager from './_components/task-manager';
-import ClassSchedule from './_components/class-schedule';
-import AiPremium from './_components/ai-premium';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,6 +16,8 @@ import {
 } from '@/components/ui/sidebar';
 import { GraduationCap } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import Dashboard from './_components/dashboard';
+import AiPremium from './_components/ai-premium';
 
 const GpaTracker = dynamic(() => import('./_components/gpa-tracker'), {
   ssr: false,
@@ -50,23 +48,19 @@ const GpaTracker = dynamic(() => import('./_components/gpa-tracker'), {
 });
 
 function AppContent() {
-  const [activeScreen, setActiveScreen] = useState<Screen>('performance');
+  const [activeScreen, setActiveScreen] = useState<Screen>('dashboard');
   const isMobile = useIsMobile();
 
   const renderScreen = () => {
     switch (activeScreen) {
+      case 'dashboard':
+        return <Dashboard />;
       case 'performance':
         return <GpaTracker />;
-      case 'planner':
-        return <StudyPlanner />;
-      case 'tasks':
-        return <TaskManager />;
-      case 'schedule':
-        return <ClassSchedule />;
-      case 'premium':
+      case 'ai-tools':
         return <AiPremium />;
       default:
-        return <GpaTracker />;
+        return <Dashboard />;
     }
   };
 

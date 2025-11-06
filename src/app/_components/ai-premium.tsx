@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, useFieldArray, useFormState } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -116,11 +116,11 @@ export default function AiPremium() {
   };
 
   return (
-    <section id="premium" className="space-y-8">
+    <section id="ai-tools" className="space-y-8">
       <div className="flex items-center gap-3">
         <Sparkles className="w-8 h-8 text-primary" />
         <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-          AI Premium: Strategic Leverage
+          AI Tools: Strategic Leverage
         </h2>
       </div>
 
@@ -211,9 +211,14 @@ export default function AiPremium() {
                     />
                   </div>
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', credits: 3, expectedGrade: 4.0 })}>
-                  Add Course
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', credits: 3, expectedGrade: 4.0 })}>
+                    Add Course
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => remove(fields.length - 1)} disabled={fields.length <= 1}>
+                    Remove
+                    </Button>
+                </div>
               </div>
               
               <Button type="submit" className="w-full" disabled={isGpaLoading}>
