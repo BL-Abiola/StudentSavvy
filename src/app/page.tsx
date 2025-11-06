@@ -63,7 +63,7 @@ export default function Home() {
     <div className="flex h-screen flex-col">
       <main
         className={cn(
-          'flex-1 overflow-y-auto max-w-4xl mx-auto pt-8 pb-28 p-4 w-full'
+          'flex-1 max-w-4xl mx-auto pt-8 pb-28 p-4 w-full'
         )}
       >
         <div className="animate-in fade-in-50 duration-300">
