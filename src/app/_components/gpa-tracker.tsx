@@ -46,9 +46,24 @@ import {
   Download,
   Trash2,
   QrCode,
+  LineChart,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import QRCode from 'qrcode.react';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  RechartsBarChart,
+  RechartsBar,
+  RechartsLineChart,
+  RechartsLine,
+  RechartsXAxis,
+  RechartsYAxis,
+  RechartsCartesianGrid,
+} from "@/components/ui/chart";
 
 const gradeSchema = z.object({
   name: z.string().min(2, 'Course name is required'),
@@ -118,28 +133,14 @@ export default function GpaTracker() {
     });
   }
 
-
   const {
     cgpa,
-    semesterGpa,
-    semesterCredits,
     totalCredits,
     groupedGrades,
+    chartData
   } = useMemo(() => {
     let totalCreditHours = 0;
     let totalQualityPoints = 0;
-    
-    if (grades.length > 0) {
-      grades.forEach((g) => {
-        totalCreditHours += g.credits;
-        totalQualityPoints += g.grade * g.credits;
-      });
-    }
-
-    const calculatedCgpa =
-      totalCreditHours > 0
-        ? (totalQualityPoints / totalCreditHours).toFixed(2)
-        : '0.00';
 
     const grouped = grades.reduce(
       (acc, grade) => {
@@ -162,23 +163,59 @@ export default function GpaTracker() {
       >
     );
 
+    let cumulativeCredits = 0;
+    let cumulativeQualityPoints = 0;
     const sortedSemesters = Object.keys(grouped).sort();
-    const lastSemesterName = sortedSemesters[sortedSemesters.length - 1];
-    const lastSemesterData = lastSemesterName ? grouped[lastSemesterName] : null;
+    
+    const calculatedChartData = sortedSemesters.map(semester => {
+        const semesterData = grouped[semester];
+        const semesterGpa = semesterData.totalQualityPoints / semesterData.totalCredits;
+        
+        cumulativeCredits += semesterData.totalCredits;
+        cumulativeQualityPoints += semesterData.totalQualityPoints;
+        const cumulativeGpa = cumulativeQualityPoints / cumulativeCredits;
+
+        totalCreditHours += semesterData.totalCredits;
+        totalQualityPoints += semesterData.totalQualityPoints;
+
+        return {
+            name: semester.replace(' ', '\n'),
+            semesterGpa: parseFloat(semesterGpa.toFixed(2)),
+            cumulativeGpa: parseFloat(cumulativeGpa.toFixed(2))
+        }
+    });
+
+    const calculatedCgpa =
+      totalCreditHours > 0
+        ? (totalQualityPoints / totalCreditHours).toFixed(2)
+        : '0.00';
 
     return {
       cgpa: calculatedCgpa,
-      semesterGpa:
-        lastSemesterData && lastSemesterData.totalCredits > 0
-          ? (
-              lastSemesterData.totalQualityPoints / lastSemesterData.totalCredits
-            ).toFixed(2)
-          : '0.00',
-      semesterCredits: lastSemesterData ? lastSemesterData.totalCredits : 0,
       totalCredits: totalCreditHours,
       groupedGrades: grouped,
+      chartData: calculatedChartData
     };
   }, [grades]);
+  
+  const semesterGpa = chartData.length > 0 ? chartData[chartData.length - 1].semesterGpa.toFixed(2) : '0.00';
+  const semesterCredits = useMemo(() => {
+     if (grades.length === 0) return 0;
+     const lastSemesterName = Object.keys(groupedGrades).sort()[Object.keys(groupedGrades).length - 1];
+     return groupedGrades[lastSemesterName]?.totalCredits || 0;
+  }, [grades, groupedGrades]);
+
+
+  const chartConfig = {
+    cumulativeGpa: {
+      label: 'Overall GPA',
+      color: 'hsl(var(--primary))',
+    },
+    semesterGpa: {
+      label: 'Semester GPA',
+      color: 'hsl(var(--foreground))',
+    },
+  } satisfies import('@/components/ui/chart').ChartConfig;
 
 
   return (
@@ -235,6 +272,34 @@ export default function GpaTracker() {
           </CardHeader>
         </Card>
       </div>
+
+      {chartData.length > 0 && (
+         <Card>
+            <CardHeader>
+                <CardTitle>GPA Progression</CardTitle>
+                <CardDescription>Your semester GPA vs. your cumulative GPA over time.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                    <RechartsLineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                        <RechartsCartesianGrid vertical={false} />
+                        <RechartsXAxis
+                            dataKey="name"
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={10}
+                            tickFormatter={(value) => value.replace('\n', ' ')}
+                        />
+                        <RechartsYAxis domain={[0, 4]} tickCount={5} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <ChartLegend content={<ChartLegendContent />} />
+                        <RechartsLine dataKey="semesterGpa" type="monotone" stroke="var(--color-semesterGpa)" strokeWidth={2} dot={false} />
+                        <RechartsLine dataKey="cumulativeGpa" type="monotone" stroke="var(--color-cumulativeGpa)" strokeWidth={2} dot={false} />
+                    </RechartsLineChart>
+                </ChartContainer>
+            </CardContent>
+         </Card>
+      )}
 
       <Card>
         <CardHeader>
