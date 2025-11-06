@@ -61,7 +61,7 @@ export default function MainNav({
                 'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-md transition-colors duration-150 w-20',
                 isActive
                   ? 'text-primary'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary',
+                  : 'text-gray-600 dark:text-gray-400',
                 item.id === 'premium' && !isActive && 'text-primary/80 font-bold'
               )}
             >
