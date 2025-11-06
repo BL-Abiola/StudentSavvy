@@ -38,18 +38,6 @@ import {
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import {
   BarChart3,
   GraduationCap,
   CheckCircle,
@@ -59,11 +47,6 @@ import {
   Trash2,
   QrCode,
 } from 'lucide-react';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
 import QRCode from 'qrcode.react';
 
@@ -141,23 +124,15 @@ export default function GpaTracker() {
     semesterGpa,
     semesterCredits,
     totalCredits,
-    gradeDistribution,
     groupedGrades,
-    gpaTrajectoryData,
   } = useMemo(() => {
     let totalCreditHours = 0;
     let totalQualityPoints = 0;
-    const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
-
+    
     if (grades.length > 0) {
       grades.forEach((g) => {
         totalCreditHours += g.credits;
         totalQualityPoints += g.grade * g.credits;
-        if (g.grade >= 3.7) distribution['A']++;
-        else if (g.grade >= 2.7) distribution['B']++;
-        else if (g.grade >= 1.7) distribution['C']++;
-        else if (g.grade >= 0.7) distribution['D']++;
-        else distribution['F']++;
       });
     }
 
@@ -165,10 +140,6 @@ export default function GpaTracker() {
       totalCreditHours > 0
         ? (totalQualityPoints / totalCreditHours).toFixed(2)
         : '0.00';
-
-    const gradeDistributionData = Object.entries(distribution).map(
-      ([name, value]) => ({ name, value })
-    );
 
     const grouped = grades.reduce(
       (acc, grade) => {
@@ -191,30 +162,7 @@ export default function GpaTracker() {
       >
     );
 
-    const trajectory = [];
-    let cumulativeCredits = 0;
-    let cumulativeQualityPoints = 0;
     const sortedSemesters = Object.keys(grouped).sort();
-
-    for (const semester of sortedSemesters) {
-      const semesterData = grouped[semester];
-      const semesterGpa =
-        semesterData.totalCredits > 0
-          ? semesterData.totalQualityPoints / semesterData.totalCredits
-          : 0;
-      cumulativeCredits += semesterData.totalCredits;
-      cumulativeQualityPoints += semesterData.totalQualityPoints;
-      const cumulativeGpa =
-        cumulativeCredits > 0
-          ? cumulativeQualityPoints / cumulativeCredits
-          : 0;
-      trajectory.push({
-        semester: semester.replace('Semester ', 'Sem '),
-        semesterGpa: parseFloat(semesterGpa.toFixed(2)),
-        cgpa: parseFloat(cumulativeGpa.toFixed(2)),
-      });
-    }
-
     const lastSemesterName = sortedSemesters[sortedSemesters.length - 1];
     const lastSemesterData = lastSemesterName ? grouped[lastSemesterName] : null;
 
@@ -228,23 +176,10 @@ export default function GpaTracker() {
           : '0.00',
       semesterCredits: lastSemesterData ? lastSemesterData.totalCredits : 0,
       totalCredits: totalCreditHours,
-      gradeDistribution: gradeDistributionData,
       groupedGrades: grouped,
-      gpaTrajectoryData: trajectory,
     };
   }, [grades]);
 
-  const trajectoryChartConfig = {
-    semesterGpa: { label: 'Semester GPA', color: 'hsl(var(--primary))' },
-    cgpa: {
-      label: 'CGPA',
-      color: 'hsl(var(--foreground))'
-    },
-  } satisfies import('@/components/ui/chart').ChartConfig;
-
-  const distributionChartConfig = {
-    value: { label: 'Count', color: 'hsl(var(--primary))' },
-  } satisfies import('@/components/ui/chart').ChartConfig;
 
   return (
     <section id="performance" className="space-y-8">
@@ -252,7 +187,7 @@ export default function GpaTracker() {
         <AlertDialog open={!!qrCodeData} onOpenChange={(open) => !open && setQrCodeData(null)}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>QR Code for {qrCode-data.semester}</AlertDialogTitle>
+                    <AlertDialogTitle>QR Code for {qrCodeData.semester}</AlertDialogTitle>
                     <AlertDialogDescription>
                         Scan this code to view or share the semester's grade summary.
                     </AlertDialogDescription>
@@ -298,102 +233,6 @@ export default function GpaTracker() {
             <CardDescription>Total Credits</CardDescription>
             <CardTitle className="text-2xl font-bold">{totalCredits}</CardTitle>
           </CardHeader>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>CGPA Trajectory</CardTitle>
-            <CardDescription>
-              Your cumulative GPA trend across semesters.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            {gpaTrajectoryData.length > 0 ? (
-              <ChartContainer
-                config={trajectoryChartConfig}
-                className="w-full h-full"
-              >
-                <LineChart
-                  data={gpaTrajectoryData}
-                  margin={{ top: 5, right: 20, left: -10, bottom: 0 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="semester"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                  />
-                  <YAxis
-                    domain={['dataMin - 0.2', 'dataMax + 0.2']}
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="semesterGpa"
-                    stroke="var(--color-semesterGpa)"
-                    strokeWidth={2}
-                    dot={{ r: 4, fill: 'var(--color-semesterGpa)' }}
-                    activeDot={{ r: 6 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="cgpa"
-                    stroke="var(--color-cgpa)"
-                    strokeWidth={2}
-                    dot={{ r: 4, fill: 'var(--color-cgpa)' }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ChartContainer>
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                Add some grades to see your GPA trajectory.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Grade Distribution</CardTitle>
-            <CardDescription>Breakdown of your entered grades.</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            {grades.length > 0 ? (
-              <ChartContainer
-                config={distributionChartConfig}
-                className="w-full h-full"
-              >
-                <BarChart data={gradeDistribution} accessibilityLayer>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    allowDecimals={false}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" fill="var(--color-value)" radius={4} />
-                </BarChart>
-              </ChartContainer>
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                No grades to display distribution for.
-              </div>
-            )}
-          </CardContent>
         </Card>
       </div>
 
