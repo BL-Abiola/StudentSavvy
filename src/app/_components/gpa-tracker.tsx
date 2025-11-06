@@ -29,10 +29,10 @@ import {
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import {
-  BarChart,
-  Bar,
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -62,13 +62,6 @@ const gradeSchema = z.object({
   credits: z.coerce.number().min(0.5, 'Credits must be a positive number'),
   semester: z.string().min(1, 'Semester is required'),
 });
-
-const gpaTrajectoryData = [
-  { semester: 'Sem 1', semesterGpa: 3.5, cgpa: 3.5 },
-  { semester: 'Sem 2', semesterGpa: 3.2, cgpa: 3.35 },
-  { semester: 'Sem 3', semesterGpa: 3.8, cgpa: 3.5 },
-  { semester: 'Sem 4', semesterGpa: 3.9, cgpa: 3.6 },
-];
 
 // Helper function to convert GPA to letter grade
 function gpaToLetter(gpa: number): string {
@@ -119,7 +112,7 @@ export default function GpaTracker() {
     setGrades(grades.filter((g) => g.semester !== semester));
   }
 
-  const { cgpa, lastGpa, gradeDistribution, groupedGrades } = useMemo(() => {
+  const { cgpa, lastGpa, gradeDistribution, groupedGrades, gpaTrajectoryData } = useMemo(() => {
     let totalCreditHours = 0;
     let totalQualityPoints = 0;
     const distribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
@@ -155,12 +148,31 @@ export default function GpaTracker() {
         acc[semester].totalQualityPoints += grade.grade * grade.credits;
         return acc;
     }, {} as Record<string, { grades: Grade[]; totalCredits: number; totalQualityPoints: number; }>);
+    
+    const trajectory = [];
+    let cumulativeCredits = 0;
+    let cumulativeQualityPoints = 0;
+    const sortedSemesters = Object.keys(grouped).sort();
+
+    for (const semester of sortedSemesters) {
+        const semesterData = grouped[semester];
+        const semesterGpa = semesterData.totalQualityPoints / semesterData.totalCredits;
+        cumulativeCredits += semesterData.totalCredits;
+        cumulativeQualityPoints += semesterData.totalQualityPoints;
+        const cumulativeGpa = cumulativeCredits > 0 ? cumulativeQualityPoints / cumulativeCredits : 0;
+        trajectory.push({
+            semester: semester.replace('Semester ', 'Sem '),
+            semesterGpa: parseFloat(semesterGpa.toFixed(2)),
+            cgpa: parseFloat(cumulativeGpa.toFixed(2)),
+        });
+    }
 
     return {
       cgpa: calculatedCgpa,
       lastGpa: calculatedLastGpa,
       gradeDistribution: gradeDistributionData,
-      groupedGrades: grouped
+      groupedGrades: grouped,
+      gpaTrajectoryData: trajectory,
     };
   }, [grades]);
 
@@ -210,6 +222,7 @@ export default function GpaTracker() {
             </CardDescription>
           </CardHeader>
           <CardContent className="h-80">
+          {gpaTrajectoryData.length > 0 ? (
             <ChartContainer
               config={trajectoryChartConfig}
               className="w-full h-full"
@@ -226,7 +239,7 @@ export default function GpaTracker() {
                   tickMargin={8}
                 />
                 <YAxis
-                  domain={[2.0, 4.0]}
+                  domain={['dataMin - 0.2', 'dataMax + 0.2']}
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
@@ -251,6 +264,11 @@ export default function GpaTracker() {
                 />
               </LineChart>
             </ChartContainer>
+             ) : (
+                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                  Add some grades to see your GPA trajectory.
+                </div>
+            )}
           </CardContent>
         </Card>
 
@@ -260,6 +278,7 @@ export default function GpaTracker() {
             <CardDescription>Breakdown of your entered grades.</CardDescription>
           </CardHeader>
           <CardContent className="h-80">
+          {grades.length > 0 ? (
             <ChartContainer
               config={distributionChartConfig}
               className="w-full h-full"
@@ -281,6 +300,11 @@ export default function GpaTracker() {
                 <Bar dataKey="value" fill="var(--color-value)" radius={4} />
               </BarChart>
             </ChartContainer>
+            ) : (
+                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                  No grades to display distribution for.
+                </div>
+            )}
           </CardContent>
         </Card>
       </div>
