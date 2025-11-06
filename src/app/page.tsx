@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { Screen } from '@/types';
 import MainNav from './_components/main-nav';
 import { cn } from '@/lib/utils';
@@ -16,8 +17,28 @@ import { GraduationCap, Sun, Moon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Dashboard from './_components/dashboard';
 import AiPremium from './_components/ai-premium';
-import GpaTracker from './_components/gpa-tracker';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const GpaTracker = dynamic(() => import('./_components/gpa-tracker'), {
+  ssr: false,
+  loading: () => (
+    <div className="space-y-8">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-8 w-8" />
+        <Skeleton className="h-8 w-1/3" />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
+      </div>
+      <Skeleton className="h-64 w-full" />
+      <Skeleton className="h-64 w-full" />
+    </div>
+  ),
+});
 
 function AppContent() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
@@ -70,9 +91,9 @@ function AppContent() {
             <span className="sr-only">Toggle theme</span>
           </Button>
         </header>
-        
+
         <div className="hidden md:flex justify-end p-2">
-           <Button
+          <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
@@ -82,7 +103,6 @@ function AppContent() {
             <span className="sr-only">Toggle theme</span>
           </Button>
         </div>
-
 
         <main
           className={cn(
@@ -105,7 +125,6 @@ function AppContent() {
   );
 }
 
-
 export default function Home() {
   return (
     <ThemeProvider>
@@ -113,7 +132,6 @@ export default function Home() {
     </ThemeProvider>
   );
 }
-
 
 // Theme provider
 interface ThemeProviderProps {
@@ -132,9 +150,17 @@ function ThemeProvider({ children }: ThemeProviderProps) {
   const value = {
     theme,
     setTheme: (theme: 'light' | 'dark') => {
+      localStorage.setItem('theme', theme);
       setTheme(theme);
     },
   };
+  
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, []);
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
