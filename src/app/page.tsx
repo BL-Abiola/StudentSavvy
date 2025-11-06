@@ -8,6 +8,7 @@ import StudyPlanner from './_components/study-planner';
 import TaskManager from './_components/task-manager';
 import ClassSchedule from './_components/class-schedule';
 import AiPremium from './_components/ai-premium';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Home() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
@@ -31,6 +32,9 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
+      <header className="absolute top-0 right-0 p-4 z-50">
+        <ThemeToggle />
+      </header>
       <main className="flex-1 overflow-y-auto max-w-4xl mx-auto pt-8 pb-28 p-4 w-full">
         <div className="animate-in fade-in-50 duration-300">
           {renderScreen()}
