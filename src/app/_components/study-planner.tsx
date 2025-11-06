@@ -61,127 +61,126 @@ export default function StudyPlanner() {
   }
 
   return (
-    <section id="planner" className="space-y-8">
-      <div className="flex items-center gap-3">
-        <BookOpenText className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-          Personal Study Sessions Planner
-        </h2>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>New Study Block</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(addStudySession)}
-              className="space-y-4"
-            >
-              <FormField
-                control={form.control}
-                name="topic"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Topic/Course Focus</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Chapter 5 Reading" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3">
+          <BookOpenText className="w-6 h-6" />
+          Study Planner
+        </CardTitle>
+        <CardDescription>
+          Schedule your personal study sessions.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        <div>
+            <Form {...form}>
+                <form
+                onSubmit={form.handleSubmit(addStudySession)}
+                className="space-y-4"
+                >
                 <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
+                    control={form.control}
+                    name="topic"
+                    render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
+                        <FormLabel>Topic/Course Focus</FormLabel>
+                        <FormControl>
+                        <Input placeholder="e.g., Chapter 5 Reading" {...field} />
+                        </FormControl>
+                        <FormMessage />
                     </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="time"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Time</FormLabel>
-                      <FormControl>
-                        <Input type="time" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Goals for this session</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="e.g., Summarize key concepts, complete practice problems..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" variant="secondary" className="w-full">
-                Schedule Session
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      <div>
-        <h3 className="text-xl font-bold mt-8 mb-4 text-gray-700 dark:text-gray-300">
-          Upcoming Sessions
-        </h3>
-        {sessions.length === 0 ? (
-          <p className="text-center text-gray-500 bg-gray-100 dark:bg-gray-800 p-8 rounded-lg">
-            No study sessions scheduled. Plan one now!
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {sessions.map((session) => (
-              <Card key={session.id} className="p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-bold text-lg text-gray-900 dark:text-gray-100">{session.topic}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-2">
-                      <span className="flex items-center gap-1.5"><Calendar size={14} />{new Date(session.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</span>
-                      <span className="flex items-center gap-1.5"><Clock size={14} />{new Date(`1970-01-01T${session.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
-                    {session.notes && (
-                      <p className="flex items-start gap-1.5 text-sm text-gray-600 dark:text-gray-300 mt-2"><Pencil size={14} className="mt-0.5 shrink-0" /> {session.notes}</p>
                     )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                    onClick={() => removeSession(session.id)}
-                  >
-                    <Trash2 size={18} />
-                     <span className="sr-only">Remove session</span>
-                  </Button>
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Date</FormLabel>
+                        <FormControl>
+                            <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="time"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Time</FormLabel>
+                        <FormControl>
+                            <Input type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
                 </div>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
+                <FormField
+                    control={form.control}
+                    name="notes"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Goals for this session</FormLabel>
+                        <FormControl>
+                        <Textarea
+                            placeholder="e.g., Summarize key concepts, complete practice problems..."
+                            {...field}
+                        />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <Button type="submit" variant="secondary" className="w-full">
+                    Schedule Session
+                </Button>
+                </form>
+            </Form>
+        </div>
+
+        <div>
+            <h3 className="text-lg font-semibold mt-6 mb-4 text-card-foreground">
+            Upcoming Sessions
+            </h3>
+            {sessions.length === 0 ? (
+            <div className="text-center text-muted-foreground bg-muted/50 p-8 rounded-lg">
+                <p>No study sessions scheduled. Plan one now!</p>
+            </div>
+            ) : (
+            <div className="space-y-4">
+                {sessions.map((session) => (
+                <Card key={session.id} className="p-4">
+                    <div className="flex justify-between items-start">
+                    <div>
+                        <p className="font-bold text-lg text-card-foreground">{session.topic}</p>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                        <span className="flex items-center gap-1.5"><Calendar size={14} />{new Date(session.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</span>
+                        <span className="flex items-center gap-1.5"><Clock size={14} />{new Date(`1970-01-01T${session.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        {session.notes && (
+                        <p className="flex items-start gap-1.5 text-sm text-muted-foreground mt-2"><Pencil size={14} className="mt-0.5 shrink-0" /> {session.notes}</p>
+                        )}
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                        onClick={() => removeSession(session.id)}
+                    >
+                        <Trash2 size={18} />
+                        <span className="sr-only">Remove session</span>
+                    </Button>
+                    </div>
+                </Card>
+                ))}
+            </div>
+            )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

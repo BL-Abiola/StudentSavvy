@@ -44,17 +44,17 @@ const taskSchema = z.object({
 const priorityConfig = {
   urgent: {
     label: '🔴 Most Priority',
-    style: 'border-destructive bg-destructive/5',
+    style: 'border-l-destructive',
     text: 'Most Priority (URGENTLY)',
   },
   intermediate: {
     label: '🟡 Priority',
-    style: 'border-warning bg-warning/5',
+    style: 'border-l-warning',
     text: 'Priority (Intermediate)',
   },
   later: {
     label: '🟢 Do It Later',
-    style: 'border-accent bg-accent/5',
+    style: 'border-l-accent',
     text: 'Do It Later',
   },
 };
@@ -98,19 +98,18 @@ export default function TaskManager() {
   }, [tasks]);
 
   return (
-    <section id="tasks" className="space-y-8">
-      <div className="flex items-center gap-3">
-        <CheckSquare className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-          Action To-Do List & Countdown
-        </h2>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Task</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3">
+            <CheckSquare className="w-6 h-6" />
+            Task Manager
+        </CardTitle>
+        <CardDescription>
+            Manage your to-do list and track deadlines.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(addTask)} className="space-y-4">
               <FormField
@@ -176,49 +175,49 @@ export default function TaskManager() {
               </Button>
             </form>
           </Form>
-        </CardContent>
-      </Card>
+        </div>
 
-      <div>
-        <h3 className="text-xl font-bold mt-8 mb-4 text-gray-700 dark:text-gray-300">
-          Active Tasks
-        </h3>
-        {sortedTasks.length === 0 ? (
-          <p className="text-center text-gray-500 bg-gray-100 dark:bg-gray-800 p-8 rounded-lg">
-            All clear! Add a task to get started.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {sortedTasks.map((task) => (
-              <Card
-                key={task.id}
-                className={cn(
-                  'p-4 flex justify-between items-center border-l-4 transition-all',
-                  priorityConfig[task.priority].style
-                )}
-              >
-                <div>
-                  <p className="font-bold text-gray-900 dark:text-gray-100">{task.title}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {priorityConfig[task.priority].text} | Due:{' '}
-                    {task.dueDate.toLocaleString()}
-                  </p>
-                  <Countdown dueDate={task.dueDate} />
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  onClick={() => removeTask(task.id)}
+        <div>
+            <h3 className="text-lg font-semibold mt-6 mb-4 text-card-foreground">
+            Active Tasks
+            </h3>
+            {sortedTasks.length === 0 ? (
+            <div className="text-center text-muted-foreground bg-muted/50 p-8 rounded-lg">
+                <p>All clear! Add a task to get started.</p>
+            </div>
+            ) : (
+            <div className="space-y-3">
+                {sortedTasks.map((task) => (
+                <Card
+                    key={task.id}
+                    className={cn(
+                    'p-4 flex justify-between items-center border-l-4 transition-all',
+                    priorityConfig[task.priority].style
+                    )}
                 >
-                  <Trash2 size={18} />
-                  <span className="sr-only">Remove task</span>
-                </Button>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
+                    <div>
+                    <p className="font-bold text-card-foreground">{task.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                        {priorityConfig[task.priority].text} | Due:{' '}
+                        {task.dueDate.toLocaleString()}
+                    </p>
+                    <Countdown dueDate={task.dueDate} />
+                    </div>
+                    <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => removeTask(task.id)}
+                    >
+                    <Trash2 size={18} />
+                    <span className="sr-only">Remove task</span>
+                    </Button>
+                </Card>
+                ))}
+            </div>
+            )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
