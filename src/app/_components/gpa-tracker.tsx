@@ -56,8 +56,6 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  RechartsBarChart,
-  RechartsBar,
   RechartsLineChart,
   RechartsLine,
   RechartsXAxis,
