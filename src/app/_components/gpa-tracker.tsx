@@ -56,14 +56,8 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  RechartsLineChart,
-  RechartsLine,
-  RechartsXAxis,
-  RechartsYAxis,
-  RechartsCartesianGrid,
-  RechartsBarChart,
-  RechartsBar,
 } from "@/components/ui/chart";
+import { LineChart as RechartsLineChart, BarChart as RechartsBarChart, Bar, Line as RechartsLine, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
@@ -252,7 +246,8 @@ export default function GpaTracker() {
 
   const distributionChartConfig = {
       count: {
-          label: 'Count'
+          label: 'Count',
+          color: 'hsl(var(--primary))'
       }
   } satisfies import('@/components/ui/chart').ChartConfig;
 
@@ -312,7 +307,7 @@ export default function GpaTracker() {
       </div>
 
        {trajectoryData.length > 0 && (
-         <div className="grid md:grid-cols-2 gap-4">
+         <div className="grid grid-cols-1 gap-4">
             <Card>
                 <CardHeader>
                     <CardTitle>CGPA Trajectory</CardTitle>
@@ -321,15 +316,15 @@ export default function GpaTracker() {
                 <CardContent>
                     <ChartContainer config={trajectoryChartConfig} className="h-[250px] w-full">
                         <RechartsLineChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                            <RechartsCartesianGrid vertical={false} />
-                            <RechartsXAxis
+                            <CartesianGrid vertical={false} />
+                            <XAxis
                                 dataKey="name"
                                 tickLine={false}
                                 axisLine={false}
                                 tickMargin={10}
                                 tickFormatter={(value) => value.replace('\n', ' ')}
                             />
-                            <RechartsYAxis domain={[0, 4]} tickCount={5} />
+                            <YAxis domain={[0, 4]} tickCount={5} />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <ChartLegend content={<ChartLegendContent />} />
                             <RechartsLine dataKey="Semester GPA" type="monotone" stroke="var(--color-Semester GPA)" strokeWidth={2} dot={true} />
@@ -346,16 +341,16 @@ export default function GpaTracker() {
                 <CardContent>
                     <ChartContainer config={distributionChartConfig} className="h-[250px] w-full">
                         <RechartsBarChart data={gradeDistributionData} >
-                             <RechartsCartesianGrid vertical={false} />
-                             <RechartsXAxis
+                             <CartesianGrid vertical={false} />
+                             <XAxis
                                 dataKey="grade"
                                 tickLine={false}
                                 axisLine={false}
                                 tickMargin={10}
                             />
-                             <RechartsYAxis />
+                             <YAxis />
                             <ChartTooltip content={<ChartTooltipContent />} />
-                             <RechartsBar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                             <Bar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsBarChart>
                     </ChartContainer>
                 </CardContent>
@@ -540,3 +535,5 @@ export default function GpaTracker() {
     </section>
   );
 }
+
+    
