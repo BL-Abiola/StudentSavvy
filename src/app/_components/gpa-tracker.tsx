@@ -42,6 +42,7 @@ import {
   CheckCircle,
   Trash2,
   QrCode,
+  LineChart,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import QRCode from 'qrcode.react';
@@ -51,7 +52,7 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  ChartConfig,
+  type ChartConfig,
 } from '@/components/ui/chart';
 import {
   LineChart as RechartsLineChart,
@@ -111,7 +112,7 @@ type QrCodeInfo = {
 const trajectoryChartConfig = {
   'CGPA': {
     label: 'CGPA',
-    color: 'hsl(var(--foreground))',
+    color: 'hsl(var(--warning))',
   },
   'Semester GPA': {
     label: 'Semester GPA',
@@ -301,7 +302,7 @@ export default function GpaTracker() {
         </AlertDialog>
       )}
       <div className="flex items-center gap-3">
-        <BarChart3 className="w-8 h-8 text-primary" />
+        <LineChart className="w-8 h-8 text-primary" />
         <h2 className="text-3xl font-extrabold">Your Academic Trajectory</h2>
       </div>
       <p className="text-muted-foreground -mt-6">
@@ -584,7 +585,7 @@ export default function GpaTracker() {
               })}
             </Accordion>
           ) : (
-            <p className="p-8 text-center text-muted-foreground">
+            <p className="p-8 text-center text-muted-foreground bg-muted/50 rounded-lg">
               No grades have been added yet.
             </p>
           )}
