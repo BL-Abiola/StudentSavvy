@@ -51,6 +51,7 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
+  ChartConfig,
 } from '@/components/ui/chart';
 import {
   LineChart as RechartsLineChart,
@@ -106,6 +107,24 @@ type QrCodeInfo = {
   gpa: string;
   courses: { name: string; grade: number; credits: number }[];
 };
+
+const trajectoryChartConfig = {
+  CGPA: {
+    label: 'CGPA',
+    color: 'hsl(var(--primary))',
+  },
+  'Semester GPA': {
+    label: 'Semester GPA',
+    color: 'hsl(var(--foreground))',
+  },
+} satisfies ChartConfig;
+
+const distributionChartConfig = {
+  count: {
+    label: 'Count',
+    color: 'hsl(var(--primary))',
+  },
+} satisfies ChartConfig;
 
 export default function GpaTracker() {
   const [grades, setGrades] = useState<Grade[]>([
@@ -200,8 +219,8 @@ export default function GpaTracker() {
           ? cumulativeQualityPoints / cumulativeCredits
           : 0;
 
-      totalCreditHours += semesterData.totalCredits;
-      totalQualityPoints += semesterData.totalQualityPoints;
+      totalCreditHours = cumulativeCredits;
+      totalQualityPoints = cumulativeQualityPoints;
 
       return {
         name: semester.replace(' ', '\n'),
@@ -252,24 +271,6 @@ export default function GpaTracker() {
       ];
     return groupedGrades[lastSemesterName]?.totalCredits || 0;
   }, [grades, groupedGrades]);
-
-  const trajectoryChartConfig = {
-    CGPA: {
-      label: 'CGPA',
-      color: 'hsl(var(--primary))',
-    },
-    'Semester GPA': {
-      label: 'Semester GPA',
-      color: 'hsl(var(--foreground))',
-    },
-  };
-
-  const distributionChartConfig = {
-    count: {
-      label: 'Count',
-      color: 'hsl(var(--primary))',
-    },
-  };
 
   return (
     <section id="performance" className="space-y-8">

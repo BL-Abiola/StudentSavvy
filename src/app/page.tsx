@@ -138,6 +138,12 @@ interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
+const ThemeContext = React.createContext<{
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+} | null>(null);
+
+
 function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
@@ -159,6 +165,9 @@ function ThemeProvider({ children }: ThemeProviderProps) {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     if (savedTheme) {
       setTheme(savedTheme);
+    } else {
+        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(isDarkMode ? 'dark' : 'light');
     }
   }, []);
 
@@ -166,12 +175,6 @@ function ThemeProvider({ children }: ThemeProviderProps) {
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
-
-// Theme context
-const ThemeContext = React.createContext<{
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
-} | null>(null);
 
 export function useTheme() {
   const context = React.useContext(ThemeContext);
