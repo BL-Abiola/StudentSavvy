@@ -49,8 +49,8 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 import {
-  AreaChart as RechartsAreaChart,
-  BarChart as RechartsBarChart,
+  AreaChart,
+  BarChart,
   Bar,
   Area,
   XAxis,
@@ -103,23 +103,6 @@ type QrCodeInfo = {
   courses: { name: string; grade: number; credits: number }[]
 }
 
-const trajectoryChartConfig = {
-  "Semester GPA": {
-    label: "Semester GPA",
-    color: "hsl(var(--chart-2))",
-  },
-  "CGPA": {
-    label: "CGPA",
-    color: "hsl(var(--chart-1))",
-  },
-} satisfies ChartConfig
-
-const distributionChartConfig = {
-  count: {
-    label: "Count",
-    color: "hsl(var(--chart-1))",
-  },
-} satisfies ChartConfig
 
 export default function GpaTracker() {
   const [grades, setGrades] = useState<Grade[]>([
@@ -272,6 +255,24 @@ export default function GpaTracker() {
       ]
     return groupedGrades[lastSemesterName]?.totalCredits || 0
   }, [grades, groupedGrades])
+  
+  const trajectoryChartConfig = {
+    "CGPA": {
+      label: "CGPA",
+      color: "hsl(var(--chart-1))",
+    },
+    "Semester GPA": {
+      label: "Semester GPA",
+      color: "hsl(var(--chart-2))",
+    },
+  } satisfies ChartConfig
+
+  const distributionChartConfig = {
+    count: {
+      label: "Count",
+      color: "hsl(var(--chart-1))",
+    },
+  } satisfies ChartConfig
 
   return (
     <div id="performance" className="space-y-8">
@@ -350,7 +351,7 @@ export default function GpaTracker() {
               config={trajectoryChartConfig}
               className="h-[250px] w-full"
             >
-              <RechartsAreaChart
+              <AreaChart
                 data={trajectoryData}
                 margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
               >
@@ -391,7 +392,7 @@ export default function GpaTracker() {
                   strokeWidth={2}
                   dot={true}
                 />
-              </RechartsAreaChart>
+              </AreaChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -405,7 +406,7 @@ export default function GpaTracker() {
               config={distributionChartConfig}
               className="h-[250px] w-full"
             >
-              <RechartsBarChart data={gradeDistributionData} barSize={30}>
+              <BarChart data={gradeDistributionData} barSize={30}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="grade"
@@ -417,7 +418,7 @@ export default function GpaTracker() {
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} />
-              </RechartsBarChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
