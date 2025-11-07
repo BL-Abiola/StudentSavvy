@@ -382,7 +382,7 @@ export default function GpaTracker() {
                   fill="url(#fillSemesterGPA)"
                   stroke="var(--color-Semester GPA)"
                   strokeWidth={2}
-                  dot={true}
+                  dot={{ r: 4, strokeWidth: 2 }}
                 />
                 <Area
                   dataKey="CGPA"
@@ -390,7 +390,7 @@ export default function GpaTracker() {
                   fill="url(#fillCGPA)"
                   stroke="var(--color-CGPA)"
                   strokeWidth={2}
-                  dot={true}
+                  dot={{ r: 4, strokeWidth: 2 }}
                 />
               </AreaChart>
             </ChartContainer>
