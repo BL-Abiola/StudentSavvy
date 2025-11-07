@@ -52,7 +52,7 @@ import {
   LineChart as RechartsLineChart,
   BarChart as RechartsBarChart,
   Bar,
-  Line as RechartsLine,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -108,7 +108,7 @@ const trajectoryChartConfig = {
     label: "Semester GPA",
     color: "hsl(var(--chart-2))",
   },
-  CGPA: {
+  "CGPA": {
     label: "CGPA",
     color: "hsl(var(--chart-1))",
   },
@@ -365,14 +365,14 @@ export default function GpaTracker() {
                 <YAxis domain={[0, 4]} tickCount={5} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <ChartLegend content={<ChartLegendContent />} />
-                <RechartsLine
+                <Line
                   dataKey="Semester GPA"
                   type="monotone"
                   stroke="var(--color-Semester GPA)"
                   strokeWidth={2}
                   dot={true}
                 />
-                <RechartsLine
+                <Line
                   dataKey="CGPA"
                   type="monotone"
                   stroke="var(--color-CGPA)"
@@ -587,5 +587,3 @@ export default function GpaTracker() {
     </div>
   )
 }
-
-    

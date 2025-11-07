@@ -34,8 +34,10 @@ const GpaTracker = dynamic(() => import('./_components/gpa-tracker'), {
         <Skeleton className="h-24" />
         <Skeleton className="h-24" />
       </div>
-      <Skeleton className="h-64 w-full" />
-      <Skeleton className="h-64 w-full" />
+      <div className="grid gap-6">
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
     </div>
   ),
 });
