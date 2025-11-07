@@ -109,13 +109,13 @@ type QrCodeInfo = {
 };
 
 const trajectoryChartConfig = {
-  'CGPA': {
-    label: 'CGPA',
-    color: 'hsl(var(--primary))',
-  },
   'Semester GPA': {
     label: 'Semester GPA',
     color: 'hsl(var(--chart-2))',
+  },
+  'CGPA': {
+    label: 'CGPA',
+    color: 'hsl(var(--primary))',
   },
 } satisfies ChartConfig;
 
@@ -176,17 +176,8 @@ export default function GpaTracker() {
     });
   }
 
-  const {
-    cgpa,
-    totalCredits,
-    groupedGrades,
-    trajectoryData,
-    gradeDistributionData,
-  } = useMemo(() => {
-    let totalCreditHours = 0;
-    let totalQualityPoints = 0;
-
-    const grouped = grades.reduce((acc, grade) => {
+ const groupedGrades = useMemo(() => {
+    return grades.reduce((acc, grade) => {
       const { semester } = grade;
       if (!acc[semester]) {
         acc[semester] = {
@@ -200,13 +191,15 @@ export default function GpaTracker() {
       acc[semester].totalQualityPoints += grade.grade * grade.credits;
       return acc;
     }, {} as Record<string, { grades: Grade[]; totalCredits: number; totalQualityPoints: number }>);
+  }, [grades]);
 
+  const { cgpa, totalCredits, trajectoryData } = useMemo(() => {
     let cumulativeCredits = 0;
     let cumulativeQualityPoints = 0;
-    const sortedSemesters = Object.keys(grouped).sort();
+    const sortedSemesters = Object.keys(groupedGrades).sort();
 
     const calculatedTrajectoryData = sortedSemesters.map((semester) => {
-      const semesterData = grouped[semester];
+      const semesterData = groupedGrades[semester];
       const semesterGpa =
         semesterData.totalCredits > 0
           ? semesterData.totalQualityPoints / semesterData.totalCredits
@@ -219,9 +212,6 @@ export default function GpaTracker() {
           ? cumulativeQualityPoints / cumulativeCredits
           : 0;
 
-      totalCreditHours = cumulativeCredits;
-      totalQualityPoints = cumulativeQualityPoints;
-
       return {
         name: semester.replace(' ', '\n'),
         'Semester GPA': parseFloat(semesterGpa.toFixed(2)),
@@ -230,33 +220,28 @@ export default function GpaTracker() {
     });
 
     const calculatedCgpa =
-      totalCreditHours > 0
-        ? (totalQualityPoints / totalCreditHours).toFixed(2)
+      cumulativeCredits > 0
+        ? (cumulativeQualityPoints / cumulativeCredits).toFixed(2)
         : '0.00';
-
-    const distribution = grades.reduce((acc, grade) => {
-      const letter = gpaToGradePoints(grade.grade);
-      if (!acc[letter]) {
-        acc[letter] = 0;
-      }
-      acc[letter]++;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const calculatedGradeDistributionData = ['A', 'B', 'C', 'D', 'F'].map(
-      (grade) => ({
-        grade,
-        count: distribution[grade] || 0,
-      })
-    );
 
     return {
       cgpa: calculatedCgpa,
-      totalCredits: totalCreditHours,
-      groupedGrades: grouped,
+      totalCredits: cumulativeCredits,
       trajectoryData: calculatedTrajectoryData,
-      gradeDistributionData: calculatedGradeDistributionData,
     };
+  }, [groupedGrades]);
+
+  const gradeDistributionData = useMemo(() => {
+    const distribution = grades.reduce((acc, grade) => {
+      const letter = gpaToGradePoints(grade.grade);
+      acc[letter] = (acc[letter] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return ['A', 'B', 'C', 'D', 'F'].map((grade) => ({
+      grade,
+      count: distribution[grade] || 0,
+    }));
   }, [grades]);
 
   const semesterGpa =
