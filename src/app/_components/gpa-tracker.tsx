@@ -108,7 +108,7 @@ const trajectoryChartConfig = {
     label: "Semester GPA",
     color: "hsl(var(--chart-2))",
   },
-  "CGPA": {
+  CGPA: {
     label: "CGPA",
     color: "hsl(var(--chart-1))",
   },
@@ -117,7 +117,7 @@ const trajectoryChartConfig = {
 const distributionChartConfig = {
   count: {
     label: "Count",
-    color: "hsl(var(--primary))",
+    color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig
 
@@ -337,7 +337,7 @@ export default function GpaTracker() {
           </CardHeader>
         </Card>
       </div>
-      <div className="grid gap-6">
+      <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>CGPA Trajectory</CardTitle>
@@ -393,7 +393,7 @@ export default function GpaTracker() {
               config={distributionChartConfig}
               className="h-[250px] w-full"
             >
-              <RechartsBarChart data={gradeDistributionData}>
+              <RechartsBarChart data={gradeDistributionData} barSize={30}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="grade"
@@ -403,7 +403,7 @@ export default function GpaTracker() {
                 />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+                <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} />
               </RechartsBarChart>
             </ChartContainer>
           </CardContent>
