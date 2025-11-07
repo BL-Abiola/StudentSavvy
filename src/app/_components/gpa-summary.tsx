@@ -84,9 +84,9 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
           : 0
 
       return {
-        name: semester.replace(" ", "\n"),
-        "SemesterGPA": parseFloat(semesterGpa.toFixed(2)),
-        "CGPA": parseFloat(cumulativeGpa.toFixed(2)),
+        name: semester,
+        SemesterGPA: parseFloat(semesterGpa.toFixed(2)),
+        CGPA: parseFloat(cumulativeGpa.toFixed(2)),
       }
     })
 
@@ -223,7 +223,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
               {chartType === "line" ? (
                 <RechartsLineChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                   <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace(" ", "\n")} />
                   <YAxis domain={[0, 4]} tickCount={5} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
@@ -233,7 +233,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
               ) : (
                 <RechartsBarChart data={trajectoryData} barSize={30}>
                   <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace(" ", "\n")} />
                   <YAxis domain={[0, 4]} tickCount={5} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
