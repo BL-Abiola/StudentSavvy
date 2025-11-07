@@ -1,17 +1,17 @@
-'use client';
+"use client"
 
-import { useState, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import type { Grade } from '@/types';
+import { useState, useMemo } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import type { Grade } from "@/types"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card"
 import {
   AlertDialog,
   AlertDialogContent,
@@ -20,8 +20,8 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -29,22 +29,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Input } from '@/components/ui/input';
-import {
-  CheckCircle,
-  Trash2,
-  QrCode,
-  LineChart,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import QRCode from 'qrcode.react';
+} from "@/components/ui/accordion"
+import { Input } from "@/components/ui/input"
+import { CheckCircle, Trash2, QrCode, LineChart } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import QRCode from "qrcode.react"
 import {
   ChartContainer,
   ChartTooltip,
@@ -52,7 +47,7 @@ import {
   ChartLegend,
   ChartLegendContent,
   type ChartConfig,
-} from '@/components/ui/chart';
+} from "@/components/ui/chart"
 import {
   LineChart as RechartsLineChart,
   BarChart as RechartsBarChart,
@@ -61,7 +56,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-} from 'recharts';
+} from "recharts"
 import {
   Table,
   TableBody,
@@ -69,102 +64,114 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table"
 
 const gradeSchema = z.object({
-  name: z.string().min(2, 'Course name is required'),
+  name: z.string().min(2, "Course name is required"),
   grade: z.coerce
     .number()
-    .min(0, 'Grade must be between 0.0 and 4.0')
-    .max(4, 'Grade must be between 0.0 and 4.0'),
-  credits: z.coerce.number().min(0.5, 'Credits must be a positive number'),
-  semester: z.string().min(1, 'Semester is required'),
-});
+    .min(0, "Grade must be between 0.0 and 4.0")
+    .max(4, "Grade must be between 0.0 and 4.0"),
+  credits: z.coerce.number().min(0.5, "Credits must be a positive number"),
+  semester: z.string().min(1, "Semester is required"),
+})
 
 function gpaToLetter(gpa: number): string {
-  if (gpa >= 4.0) return 'A';
-  if (gpa >= 3.7) return 'A-';
-  if (gpa >= 3.3) return 'B+';
-  if (gpa >= 3.0) return 'B';
-  if (gpa >= 2.7) return 'B-';
-  if (gpa >= 2.3) return 'C+';
-  if (gpa >= 2.0) return 'C';
-  if (gpa >= 1.7) return 'C-';
-  if (gpa >= 1.0) return 'D';
-  return 'F';
+  if (gpa >= 4.0) return "A"
+  if (gpa >= 3.7) return "A-"
+  if (gpa >= 3.3) return "B+"
+  if (gpa >= 3.0) return "B"
+  if (gpa >= 2.7) return "B-"
+  if (gpa >= 2.3) return "C+"
+  if (gpa >= 2.0) return "C"
+  if (gpa >= 1.7) return "C-"
+  if (gpa >= 1.0) return "D"
+  return "F"
 }
 
 function gpaToGradePoints(gpa: number): string {
-  if (gpa >= 4.0) return 'A';
-  if (gpa >= 3.0) return 'B';
-  if (gpa >= 2.0) return 'C';
-  if (gpa >= 1.0) return 'D';
-  return 'F';
+  if (gpa >= 4.0) return "A"
+  if (gpa >= 3.0) return "B"
+  if (gpa >= 2.0) return "C"
+  if (gpa >= 1.0) return "D"
+  return "F"
 }
 
 type QrCodeInfo = {
-  semester: string;
-  gpa: string;
-  courses: { name: string; grade: number; credits: number }[];
-};
+  semester: string
+  gpa: string
+  courses: { name: string; grade: number; credits: number }[]
+}
 
 const trajectoryChartConfig = {
-  'Semester GPA': {
-    label: 'Semester GPA',
-    color: 'hsl(var(--chart-2))',
+  "Semester GPA": {
+    label: "Semester GPA",
+    color: "hsl(var(--chart-2))",
   },
-  'CGPA': {
-    label: 'CGPA',
-    color: 'hsl(var(--primary))',
+  CGPA: {
+    label: "CGPA",
+    color: "hsl(var(--chart-1))",
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 const distributionChartConfig = {
   count: {
-    label: 'Count',
-    color: 'hsl(var(--primary))',
+    label: "Count",
+    color: "hsl(var(--primary))",
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 export default function GpaTracker() {
   const [grades, setGrades] = useState<Grade[]>([
-    { id: 1, name: 'Intro to CS', grade: 3.7, credits: 3, semester: 'Sem 1' },
-    { id: 2, name: 'Calculus I', grade: 3.3, credits: 4, semester: 'Sem 1' },
-    { id: 3, name: 'Data Structures', grade: 3.0, credits: 3, semester: 'Sem 2' },
-    { id: 4, name: 'Physics I', grade: 2.7, credits: 4, semester: 'Sem 2' },
-    { id: 5, name: 'Algorithms', grade: 4.0, credits: 3, semester: 'Sem 3' },
-    { id: 6, name: 'Web Development', grade: 3.5, credits: 3, semester: 'Sem 3' },
-  ]);
-  const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null);
+    { id: 1, name: "Intro to CS", grade: 3.7, credits: 3, semester: "Sem 1" },
+    { id: 2, name: "Calculus I", grade: 3.3, credits: 4, semester: "Sem 1" },
+    {
+      id: 3,
+      name: "Data Structures",
+      grade: 3.0,
+      credits: 3,
+      semester: "Sem 2",
+    },
+    { id: 4, name: "Physics I", grade: 2.7, credits: 4, semester: "Sem 2" },
+    { id: 5, name: "Algorithms", grade: 4.0, credits: 3, semester: "Sem 3" },
+    {
+      id: 6,
+      name: "Web Development",
+      grade: 3.5,
+      credits: 3,
+      semester: "Sem 3",
+    },
+  ])
+  const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null)
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
     defaultValues: {
-      name: '',
+      name: "",
       grade: 4.0,
       credits: 3,
-      semester: '',
+      semester: "",
     },
-  });
+  })
 
   function addGrade(values: z.infer<typeof gradeSchema>) {
-    const newGrade: Grade = { id: Date.now(), ...values };
-    setGrades([...grades, newGrade]);
-    form.reset();
+    const newGrade: Grade = { id: Date.now(), ...values }
+    setGrades([...grades, newGrade])
+    form.reset()
   }
 
   function removeGrade(id: number) {
-    setGrades(grades.filter((g) => g.id !== id));
+    setGrades(grades.filter((g) => g.id !== id))
   }
 
   function removeSemester(semester: string) {
-    setGrades(grades.filter((g) => g.semester !== semester));
+    setGrades(grades.filter((g) => g.semester !== semester))
   }
 
   function handleGenerateQrCode(semester: string, data: any) {
     const semesterGpa = (
       data.totalQualityPoints / data.totalCredits
-    ).toFixed(2);
+    ).toFixed(2)
     setQrCodeData({
       semester,
       gpa: semesterGpa,
@@ -173,89 +180,98 @@ export default function GpaTracker() {
         grade: g.grade,
         credits: g.credits,
       })),
-    });
+    })
   }
 
- const groupedGrades = useMemo(() => {
-    return grades.reduce((acc, grade) => {
-      const { semester } = grade;
-      if (!acc[semester]) {
-        acc[semester] = {
-          grades: [],
-          totalCredits: 0,
-          totalQualityPoints: 0,
-        };
-      }
-      acc[semester].grades.push(grade);
-      acc[semester].totalCredits += grade.credits;
-      acc[semester].totalQualityPoints += grade.grade * grade.credits;
-      return acc;
-    }, {} as Record<string, { grades: Grade[]; totalCredits: number; totalQualityPoints: number }>);
-  }, [grades]);
+  const groupedGrades = useMemo(() => {
+    return grades.reduce(
+      (acc, grade) => {
+        const { semester } = grade
+        if (!acc[semester]) {
+          acc[semester] = {
+            grades: [],
+            totalCredits: 0,
+            totalQualityPoints: 0,
+          }
+        }
+        acc[semester].grades.push(grade)
+        acc[semester].totalCredits += grade.credits
+        acc[semester].totalQualityPoints += grade.grade * grade.credits
+        return acc
+      },
+      {} as Record<
+        string,
+        { grades: Grade[]; totalCredits: number; totalQualityPoints: number }
+      >
+    )
+  }, [grades])
 
   const { cgpa, totalCredits, trajectoryData } = useMemo(() => {
-    let cumulativeCredits = 0;
-    let cumulativeQualityPoints = 0;
-    const sortedSemesters = Object.keys(groupedGrades).sort();
+    let cumulativeCredits = 0
+    let cumulativeQualityPoints = 0
+    const sortedSemesters = Object.keys(groupedGrades).sort()
 
     const calculatedTrajectoryData = sortedSemesters.map((semester) => {
-      const semesterData = groupedGrades[semester];
+      const semesterData = groupedGrades[semester]
       const semesterGpa =
         semesterData.totalCredits > 0
           ? semesterData.totalQualityPoints / semesterData.totalCredits
-          : 0;
+          : 0
 
-      cumulativeCredits += semesterData.totalCredits;
-      cumulativeQualityPoints += semesterData.totalQualityPoints;
+      cumulativeCredits += semesterData.totalCredits
+      cumulativeQualityPoints += semesterData.totalQualityPoints
       const cumulativeGpa =
         cumulativeCredits > 0
           ? cumulativeQualityPoints / cumulativeCredits
-          : 0;
+          : 0
 
       return {
-        name: semester.replace(' ', '\n'),
-        'Semester GPA': parseFloat(semesterGpa.toFixed(2)),
-        'CGPA': parseFloat(cumulativeGpa.toFixed(2)),
-      };
-    });
+        name: semester.replace(" ", "\n"),
+        "Semester GPA": parseFloat(semesterGpa.toFixed(2)),
+        "CGPA": parseFloat(cumulativeGpa.toFixed(2)),
+      }
+    })
 
     const calculatedCgpa =
       cumulativeCredits > 0
         ? (cumulativeQualityPoints / cumulativeCredits).toFixed(2)
-        : '0.00';
+        : "0.00"
 
     return {
       cgpa: calculatedCgpa,
       totalCredits: cumulativeCredits,
       trajectoryData: calculatedTrajectoryData,
-    };
-  }, [groupedGrades]);
+    }
+  }, [groupedGrades])
 
   const gradeDistributionData = useMemo(() => {
-    const distribution = grades.reduce((acc, grade) => {
-      const letter = gpaToGradePoints(grade.grade);
-      acc[letter] = (acc[letter] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const distribution = grades.reduce(
+      (acc, grade) => {
+        const letter = gpaToGradePoints(grade.grade)
+        acc[letter] = (acc[letter] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
 
-    return ['A', 'B', 'C', 'D', 'F'].map((grade) => ({
+    return ["A", "B", "C", "D", "F"].map((grade) => ({
       grade,
       count: distribution[grade] || 0,
-    }));
-  }, [grades]);
+    }))
+  }, [grades])
 
   const semesterGpa =
     trajectoryData.length > 0
-      ? trajectoryData[trajectoryData.length - 1]['Semester GPA'].toFixed(2)
-      : '0.00';
+      ? trajectoryData[trajectoryData.length - 1]["Semester GPA"].toFixed(2)
+      : "0.00"
   const semesterCredits = useMemo(() => {
-    if (grades.length === 0) return 0;
+    if (grades.length === 0) return 0
     const lastSemesterName =
       Object.keys(groupedGrades).sort()[
         Object.keys(groupedGrades).length - 1
-      ];
-    return groupedGrades[lastSemesterName]?.totalCredits || 0;
-  }, [grades, groupedGrades]);
+      ]
+    return groupedGrades[lastSemesterName]?.totalCredits || 0
+  }, [grades, groupedGrades])
 
   return (
     <div id="performance" className="space-y-8">
@@ -309,7 +325,9 @@ export default function GpaTracker() {
         <Card>
           <CardHeader className="p-4">
             <CardDescription>Semester Credits</CardDescription>
-            <CardTitle className="text-2xl font-bold">{semesterCredits}</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              {semesterCredits}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
@@ -342,7 +360,7 @@ export default function GpaTracker() {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={10}
-                  tickFormatter={(value) => value.replace('\n', ' ')}
+                  tickFormatter={(value) => value.replace("\n", " ")}
                 />
                 <YAxis domain={[0, 4]} tickCount={5} />
                 <ChartTooltip content={<ChartTooltipContent />} />
@@ -385,11 +403,7 @@ export default function GpaTracker() {
                 />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar
-                  dataKey="count"
-                  fill="var(--color-count)"
-                  radius={4}
-                />
+                <Bar dataKey="count" fill="var(--color-count)" radius={4} />
               </RechartsBarChart>
             </ChartContainer>
           </CardContent>
@@ -483,7 +497,7 @@ export default function GpaTracker() {
                 const semesterGpa =
                   data.totalCredits > 0
                     ? (data.totalQualityPoints / data.totalCredits).toFixed(2)
-                    : '0.00';
+                    : "0.00"
                 return (
                   <AccordionItem value={semester} key={semester}>
                     <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
@@ -497,8 +511,8 @@ export default function GpaTracker() {
                               size="icon"
                               className="h-8 w-8"
                               onClick={(e) => {
-                                e.stopPropagation();
-                                handleGenerateQrCode(semester, data);
+                                e.stopPropagation()
+                                handleGenerateQrCode(semester, data)
                               }}
                             >
                               <QrCode className="h-4 w-4" />
@@ -508,8 +522,8 @@ export default function GpaTracker() {
                               size="icon"
                               className="h-8 w-8 text-destructive hover:text-destructive"
                               onClick={(e) => {
-                                e.stopPropagation();
-                                removeSemester(semester);
+                                e.stopPropagation()
+                                removeSemester(semester)
                               }}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -560,7 +574,7 @@ export default function GpaTracker() {
                       </Table>
                     </AccordionContent>
                   </AccordionItem>
-                );
+                )
               })}
             </Accordion>
           ) : (
@@ -571,5 +585,7 @@ export default function GpaTracker() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
+
+    
