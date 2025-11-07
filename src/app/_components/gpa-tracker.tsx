@@ -49,10 +49,10 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 import {
-  LineChart as RechartsLineChart,
+  AreaChart as RechartsAreaChart,
   BarChart as RechartsBarChart,
   Bar,
-  Line,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -108,7 +108,7 @@ const trajectoryChartConfig = {
     label: "Semester GPA",
     color: "hsl(var(--chart-2))",
   },
-  CGPA: {
+  "CGPA": {
     label: "CGPA",
     color: "hsl(var(--chart-1))",
   },
@@ -350,10 +350,20 @@ export default function GpaTracker() {
               config={trajectoryChartConfig}
               className="h-[250px] w-full"
             >
-              <RechartsLineChart
+              <RechartsAreaChart
                 data={trajectoryData}
                 margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
               >
+                <defs>
+                    <linearGradient id="fillCGPA" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--color-CGPA)" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="var(--color-CGPA)" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="fillSemesterGPA" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--color-Semester GPA)" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="var(--color-Semester GPA)" stopOpacity={0.1}/>
+                    </linearGradient>
+                </defs>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="name"
@@ -365,21 +375,23 @@ export default function GpaTracker() {
                 <YAxis domain={[0, 4]} tickCount={5} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <ChartLegend content={<ChartLegendContent />} />
-                <Line
+                <Area
                   dataKey="Semester GPA"
                   type="monotone"
+                  fill="url(#fillSemesterGPA)"
                   stroke="var(--color-Semester GPA)"
                   strokeWidth={2}
                   dot={true}
                 />
-                <Line
+                <Area
                   dataKey="CGPA"
                   type="monotone"
+                  fill="url(#fillCGPA)"
                   stroke="var(--color-CGPA)"
                   strokeWidth={2}
                   dot={true}
                 />
-              </RechartsLineChart>
+              </RechartsAreaChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -399,6 +411,7 @@ export default function GpaTracker() {
                   dataKey="grade"
                   tickLine={false}
                   axisLine={false}
+
                   tickMargin={10}
                 />
                 <YAxis />
@@ -500,11 +513,11 @@ export default function GpaTracker() {
                     : "0.00"
                 return (
                   <AccordionItem value={semester} key={semester}>
-                    <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
+                    <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50 rounded-md">
                       <div className="flex justify-between w-full items-center">
-                        <span className="font-semibold">{semester}</span>
+                        <span className="font-semibold text-lg">{semester}</span>
                         <div className="flex items-center gap-4">
-                          <Badge variant="secondary">GPA: {semesterGpa}</Badge>
+                          <Badge variant="secondary" className="text-base">GPA: {semesterGpa}</Badge>
                           <div className="flex items-center gap-1">
                             <Button
                               variant="ghost"
