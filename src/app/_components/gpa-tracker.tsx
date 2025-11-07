@@ -334,7 +334,7 @@ export default function GpaTracker() {
           </CardHeader>
         </Card>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Card>
           <CardHeader>
             <CardTitle>CGPA Trajectory</CardTitle>
