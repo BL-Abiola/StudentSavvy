@@ -37,7 +37,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
-import { CheckCircle, Trash2, QrCode, LineChart, AreaChart as AreaChartIcon, BarChart as BarChartIcon } from "lucide-react"
+import { CheckCircle, Trash2, QrCode, LineChart, BarChart as BarChartIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import QRCode from "qrcode.react"
 import {
@@ -49,14 +49,12 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 import {
-  AreaChart,
   BarChart,
   Bar,
-  Area,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
+  Line,
   LineChart as RechartsLineChart,
 } from "recharts"
 import {
@@ -105,9 +103,6 @@ type QrCodeInfo = {
   courses: { name: string; grade: number; credits: number }[]
 }
 
-type ChartType = 'area' | 'line' | 'bar';
-
-
 export default function GpaTracker() {
   const [grades, setGrades] = useState<Grade[]>([
     { id: 1, name: "Intro to CS", grade: 3.7, credits: 3, semester: "Sem 1" },
@@ -130,7 +125,6 @@ export default function GpaTracker() {
     },
   ])
   const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null)
-  const [chartType, setChartType] = useState<ChartType>('area');
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
@@ -279,59 +273,6 @@ export default function GpaTracker() {
     },
   } satisfies ChartConfig
 
-  const renderTrajectoryChart = () => {
-    switch (chartType) {
-      case 'line':
-        return (
-          <RechartsLineChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-            <YAxis domain={[0, 4]} tickCount={5} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <ChartLegend content={<ChartLegendContent />} />
-            <Line dataKey="SemesterGPA" type="monotone" stroke="var(--color-SemesterGPA)" strokeWidth={2} dot={{ r: 4, strokeWidth: 2 }} />
-            <Line dataKey="CGPA" type="monotone" stroke="var(--color-CGPA)" strokeWidth={2} dot={{ r: 4, strokeWidth: 2 }} />
-          </RechartsLineChart>
-        );
-      case 'bar':
-        return (
-          <BarChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-            <YAxis domain={[0, 4]} tickCount={5} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <ChartLegend content={<ChartLegendContent />} />
-            <Bar dataKey="SemesterGPA" fill="var(--color-SemesterGPA)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="CGPA" fill="var(--color-CGPA)" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        );
-      case 'area':
-      default:
-        return (
-          <AreaChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-            <defs>
-                <linearGradient id="fillCGPA" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-CGPA)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="var(--color-CGPA)" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="fillSemesterGPA" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-SemesterGPA)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="var(--color-SemesterGPA)" stopOpacity={0.1}/>
-                </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-            <YAxis domain={[0, 4]} tickCount={5} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <ChartLegend content={<ChartLegendContent />} />
-            <Area dataKey="SemesterGPA" type="monotone" fill="url(#fillSemesterGPA)" stroke="var(--color-SemesterGPA)" strokeWidth={2} dot={{ r: 4, strokeWidth: 2 }} />
-            <Area dataKey="CGPA" type="monotone" fill="url(#fillCGPA)" stroke="var(--color-CGPA)" strokeWidth={2} dot={{ r: 4, strokeWidth: 2 }} />
-          </AreaChart>
-        );
-    }
-  };
-
-
   return (
     <div id="performance" className="space-y-8">
       {qrCodeData && (
@@ -398,31 +339,26 @@ export default function GpaTracker() {
       </div>
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-                <CardTitle>CGPA Trajectory</CardTitle>
-                <CardDescription>
-                Your cumulative GPA trend across semesters.
-                </CardDescription>
-            </div>
-            <div className="flex items-center gap-1 rounded-md bg-secondary p-1">
-                <Button variant={chartType === 'area' ? 'primary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setChartType('area')} aria-label="Area Chart">
-                    <AreaChartIcon className="h-4 w-4" />
-                </Button>
-                <Button variant={chartType === 'line' ? 'primary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setChartType('line')} aria-label="Line Chart">
-                    <LineChart className="h-4 w-4" />
-                </Button>
-                <Button variant={chartType === 'bar' ? 'primary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setChartType('bar')} aria-label="Bar Chart">
-                    <BarChartIcon className="h-4 w-4" />
-                </Button>
-            </div>
+          <CardHeader>
+            <CardTitle>CGPA Trajectory</CardTitle>
+            <CardDescription>
+            Your cumulative GPA trend across semesters.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer
               config={trajectoryChartConfig}
               className="h-[250px] w-full"
             >
-              {renderTrajectoryChart()}
+              <RechartsLineChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
+                <YAxis domain={[0, 4]} tickCount={5} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Line dataKey="SemesterGPA" type="monotone" stroke="var(--color-SemesterGPA)" strokeWidth={2} dot={{ r: 4, strokeWidth: 2, fill: 'var(--color-SemesterGPA)' }} />
+                <Line dataKey="CGPA" type="monotone" stroke="var(--color-CGPA)" strokeWidth={2} dot={{ r: 4, strokeWidth: 2, fill: 'var(--color-CGPA)' }} />
+              </RechartsLineChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -631,5 +567,3 @@ export default function GpaTracker() {
     </div>
   )
 }
-
-    
