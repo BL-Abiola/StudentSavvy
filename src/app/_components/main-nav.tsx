@@ -49,9 +49,6 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
               isActive
                 ? 'bg-primary text-primary-foreground'
                 : 'text-gray-600 dark:text-gray-400',
-              item.id === 'ai-tools' &&
-                !isActive &&
-                'text-primary/80 font-bold',
               state === 'collapsed' && 'justify-center'
             )}
           >
@@ -88,8 +85,7 @@ function MobileNav({ activeScreen, setActiveScreen }: MainNavProps) {
                 'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-md w-20',
                 isActive
                   ? 'text-primary'
-                  : 'text-gray-600 dark:text-gray-400',
-                item.id === 'ai-tools' && !isActive && 'text-primary/80 font-bold'
+                  : 'text-gray-600 dark:text-gray-400'
               )}
             >
               <item.icon
