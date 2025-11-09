@@ -68,10 +68,10 @@ const gradeSchema = z.object({
 })
 
 function gpaToLetter(gpa: number): string {
-  if (gpa >= 5.0) return "A"
-  if (gpa >= 4.0) return "B"
-  if (gpa >= 3.0) return "C"
-  if (gpa >= 2.0) return "D"
+  if (gpa >= 4.5) return "A"
+  if (gpa >= 3.5) return "B"
+  if (gpa >= 2.5) return "C"
+  if (gpa >= 1.5) return "D"
   return "F"
 }
 
@@ -264,7 +264,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                   name="grade"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Grade (5.0 Scale)</FormLabel>
+                      <FormLabel>Grade</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.1" {...field} />
                       </FormControl>
