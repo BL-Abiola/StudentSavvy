@@ -51,7 +51,11 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     )
   }, [grades])
 
-  const { cgpa, totalCredits, trajectoryData, allSemesters } = useMemo(() => {
+  const allSemesters = useMemo(() => {
+    return Object.keys(groupedGrades).sort()
+  }, [groupedGrades])
+
+  const { cgpa, totalCredits, trajectoryData } = useMemo(() => {
     let cumulativeCredits = 0
     let cumulativeQualityPoints = 0
     const sortedSemesters = Object.keys(groupedGrades).sort()
@@ -86,7 +90,6 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
       cgpa: calculatedCgpa,
       totalCredits: cumulativeCredits,
       trajectoryData: calculatedTrajectoryData,
-      allSemesters: sortedSemesters,
     }
   }, [groupedGrades])
 
