@@ -129,19 +129,19 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
       </p>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Semester GPA</CardDescription>
             <CardTitle className="text-2xl font-bold">{semesterGpa}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Overall CGPA</CardDescription>
             <CardTitle className="text-2xl font-bold">{cgpa}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Semester Credits</CardDescription>
             <CardTitle className="text-2xl font-bold">
@@ -149,7 +149,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
             </CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Total Credits</CardDescription>
             <CardTitle className="text-2xl font-bold">{totalCredits}</CardTitle>
@@ -157,7 +157,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         </Card>
       </div>
       <div className="grid grid-cols-1 gap-6">
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="flex flex-row items-start justify-between">
             <div>
               <CardTitle>CGPA Trajectory</CardTitle>
@@ -191,7 +191,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
             />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle>Grade Distribution</CardTitle>
             <CardDescription>Breakdown of your grades.</CardDescription>
