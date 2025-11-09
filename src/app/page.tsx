@@ -128,7 +128,7 @@ const ThemeContext = React.createContext<{
 
 
 function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   React.useEffect(() => {
     const root = window.document.documentElement;
