@@ -128,31 +128,34 @@ const ThemeContext = React.createContext<{
 
 
 function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setThemeState] = useState<'light' | 'dark'>('light');
 
   React.useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-  }, [theme]);
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setThemeState(isDarkMode ? 'dark' : 'light');
+  }, []);
 
-  const value = {
-    theme,
-    setTheme: (theme: 'light' | 'dark') => {
-      localStorage.setItem('theme', theme);
-      setTheme(theme);
-    },
-  };
-  
   React.useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
-        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setTheme(isDarkMode ? 'dark' : 'light');
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(isDarkMode ? 'dark' : 'light');
     }
   }, []);
+
+  const setTheme = (theme: 'light' | 'dark') => {
+      localStorage.setItem('theme', theme);
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(theme);
+      setThemeState(theme);
+  }
+
+  const value = {
+    theme,
+    setTheme,
+  };
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
