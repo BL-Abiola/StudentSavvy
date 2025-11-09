@@ -110,10 +110,10 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     setGrades(grades.filter((g) => g.id !== id))
   }
 
-  function removeSemester(semester: string) {
-    setGrades(grades.filter((g) => `${g.year} ${g.session}` !== semester))
+  function removeSemester(year: string, session: string) {
+    setGrades(grades.filter((g) => !(g.year === year && g.session === session)))
   }
-
+  
   function handleGenerateQrCode(semester: string, data: any) {
     const semesterGpa = (
       data.totalQualityPoints / data.totalCredits
@@ -129,28 +129,25 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     })
   }
 
-  const groupedGrades = useMemo(() => {
-    return grades.reduce(
-      (acc, grade) => {
-        const semester = `${grade.year} ${grade.session}`;
-        if (!acc[semester]) {
-          acc[semester] = {
-            grades: [],
-            totalCredits: 0,
-            totalQualityPoints: 0,
-          }
-        }
-        acc[semester].grades.push(grade)
-        acc[semester].totalCredits += grade.credits
-        acc[semester].totalQualityPoints += grade.grade * grade.credits
-        return acc
-      },
-      {} as Record<
-        string,
-        { grades: Grade[]; totalCredits: number; totalQualityPoints: number }
-      >
-    )
-  }, [grades])
+  const groupedGradesByYear = useMemo(() => {
+    return grades.reduce((acc, grade) => {
+      const { year, session } = grade;
+      if (!acc[year]) {
+        acc[year] = {};
+      }
+      if (!acc[year][session]) {
+        acc[year][session] = {
+          grades: [],
+          totalCredits: 0,
+          totalQualityPoints: 0,
+        };
+      }
+      acc[year][session].grades.push(grade);
+      acc[year][session].totalCredits += grade.credits;
+      acc[year][session].totalQualityPoints += grade.grade * grade.credits;
+      return acc;
+    }, {} as Record<string, Record<string, { grades: Grade[]; totalCredits: number; totalQualityPoints: number }>>);
+  }, [grades]);
 
 
   return (
@@ -303,91 +300,92 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {Object.keys(groupedGrades).length > 0 ? (
-            <Accordion type="multiple" className="w-full">
-              {Object.entries(groupedGrades).map(([semester, data]) => {
-                const semesterGpa =
-                  data.totalCredits > 0
-                    ? (data.totalQualityPoints / data.totalCredits).toFixed(2)
-                    : "0.00"
-                return (
-                  <AccordionItem value={semester} key={semester}>
-                    <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50 rounded-md">
-                      <div className="flex justify-between w-full items-center">
-                        <span className="font-semibold text-lg">{semester}</span>
-                        <div className="flex items-center gap-4">
-                          <Badge variant="secondary" className="text-base">GPA: {semesterGpa}</Badge>
-                          <div className="flex items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleGenerateQrCode(semester, data)
-                              }}
-                            >
-                              <QrCode className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-destructive hover:text-destructive"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                removeSemester(semester)
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Course</TableHead>
-                            <TableHead className="text-center">Grade</TableHead>
-                            <TableHead className="text-center">
-                              Credits
-                            </TableHead>
-                            <TableHead className="text-right">
-                              Action
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {data.grades.map((g) => (
-                            <TableRow key={g.id}>
-                              <TableCell className="font-medium">
-                                {g.name}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {gpaToLetter(g.grade)} ({g.grade.toFixed(2)})
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {g.credits}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-destructive hover:text-destructive"
-                                  onClick={() => removeGrade(g.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </AccordionContent>
-                  </AccordionItem>
-                )
-              })}
+          {Object.keys(groupedGradesByYear).length > 0 ? (
+            <Accordion type="multiple" className="w-full space-y-4">
+              {Object.entries(groupedGradesByYear).map(([year, sessions]) => (
+                <AccordionItem value={year} key={year} className="border-b-0 rounded-lg bg-muted/30">
+                  <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline hover:bg-muted/50 rounded-t-lg">
+                    {year}
+                  </AccordionTrigger>
+                  <AccordionContent className="p-2">
+                    <Accordion type="multiple" className="w-full space-y-2">
+                      {Object.entries(sessions).map(([session, data]) => {
+                         const semesterGpa =
+                         data.totalCredits > 0
+                           ? (data.totalQualityPoints / data.totalCredits).toFixed(2)
+                           : "0.00"
+                        return (
+                          <AccordionItem value={session} key={session} className="border rounded-md">
+                            <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50 rounded-md">
+                              <div className="flex justify-between w-full items-center">
+                                <span className="font-semibold text-base">{session}</span>
+                                <div className="flex items-center gap-4">
+                                  <Badge variant="secondary" className="text-sm">GPA: {semesterGpa}</Badge>
+                                  <div className="flex items-center gap-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleGenerateQrCode(`${year} ${session}`, data)
+                                      }}
+                                    >
+                                      <QrCode className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-destructive hover:text-destructive"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        removeSemester(year, session)
+                                      }}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="border-t">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead>Course</TableHead>
+                                    <TableHead className="text-center">Grade</TableHead>
+                                    <TableHead className="text-center">Credits</TableHead>
+                                    <TableHead className="text-right">Action</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {data.grades.map((g) => (
+                                    <TableRow key={g.id}>
+                                      <TableCell className="font-medium">{g.name}</TableCell>
+                                      <TableCell className="text-center">{gpaToLetter(g.grade)} ({g.grade.toFixed(2)})</TableCell>
+                                      <TableCell className="text-center">{g.credits}</TableCell>
+                                      <TableCell className="text-right">
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-destructive hover:text-destructive"
+                                          onClick={() => removeGrade(g.id)}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </AccordionContent>
+                          </AccordionItem>
+                        )
+                      })}
+                    </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
             </Accordion>
           ) : (
             <p className="text-center text-muted-foreground bg-muted p-8 rounded-lg">
