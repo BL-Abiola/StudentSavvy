@@ -10,25 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-  type ChartConfig,
-} from "@/components/ui/chart"
-import {
-  Bar,
-  BarChart as RechartsBarChart,
-  CartesianGrid,
-  Line,
-  LineChart as RechartsLineChart,
-  XAxis,
-  YAxis,
-} from "recharts"
+import { BarChartIcon, LineChart } from "lucide-react"
+
+import GpaTrajectoryChart from "./gpa-trajectory-chart"
+import GpaDistributionChart from "./gpa-distribution-chart"
 import { Button } from "@/components/ui/button"
-import { LineChart, BarChart as BarChartIcon } from "lucide-react"
 
 function gpaToGradePoints(gpa: number): string {
   if (gpa >= 4.0) return "A"
@@ -131,23 +117,6 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     return groupedGrades[lastSemesterName]?.totalCredits || 0
   }, [grades, groupedGrades])
 
-  const trajectoryChartConfig = {
-    CGPA: {
-      label: "CGPA",
-      color: "hsl(var(--chart-1))",
-    },
-    SemesterGPA: {
-      label: "Semester GPA",
-      color: "hsl(var(--chart-2))",
-    },
-  } satisfies ChartConfig
-
-  const distributionChartConfig = {
-    count: {
-      label: "Count",
-      color: "hsl(var(--chart-1))",
-    },
-  } satisfies ChartConfig
 
   return (
     <>
@@ -216,32 +185,10 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
             </div>
           </CardHeader>
           <CardContent>
-            <ChartContainer
-              config={trajectoryChartConfig}
-              className="h-[250px] w-full"
-            >
-              {chartType === "line" ? (
-                <RechartsLineChart data={trajectoryData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-                  <YAxis domain={[0, 4]} tickCount={5} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Line dataKey="SemesterGPA" type="monotone" stroke="var(--color-SemesterGPA)" strokeWidth={3} dot={{ r: 5, strokeWidth: 2 }} />
-                  <Line dataKey="CGPA" type="monotone" stroke="var(--color-CGPA)" strokeWidth={3} dot={{ r: 5, strokeWidth: 2 }} />
-                </RechartsLineChart>
-              ) : (
-                <RechartsBarChart data={trajectoryData} barSize={30}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-                  <YAxis domain={[0, 4]} tickCount={5} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Bar dataKey="SemesterGPA" fill="var(--color-SemesterGPA)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="CGPA" fill="var(--color-CGPA)" radius={[4, 4, 0, 0]} />
-                </RechartsBarChart>
-              )}
-            </ChartContainer>
+            <GpaTrajectoryChart
+              data={trajectoryData}
+              chartType={chartType}
+            />
           </CardContent>
         </Card>
         <Card>
@@ -250,23 +197,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
             <CardDescription>Breakdown of your grades.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer
-              config={distributionChartConfig}
-              className="h-[250px] w-full"
-            >
-              <RechartsBarChart data={gradeDistributionData} barSize={30}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="grade"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} />
-              </RechartsBarChart>
-            </ChartContainer>
+            <GpaDistributionChart data={gradeDistributionData} />
           </CardContent>
         </Card>
       </div>
