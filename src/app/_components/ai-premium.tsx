@@ -125,7 +125,7 @@ export default function AiPremium() {
         </h2>
       </div>
 
-      <Card className="border-2 border-primary shadow-lg">
+      <Card className="border-2 border-primary shadow-lg rounded-2xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl font-bold">
             <Wand2 /> Future-Pacing GPA Modeler
