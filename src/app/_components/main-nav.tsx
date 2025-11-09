@@ -44,7 +44,7 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
             key={item.id}
             onClick={() => setActiveScreen(item.id)}
             className={cn(
-              'flex items-center gap-3 p-3 text-sm font-medium rounded-md',
+              'flex items-center gap-3 p-3 text-sm font-medium rounded-lg',
               'transition-colors duration-150',
               isActive
                 ? 'bg-primary text-primary-foreground'
@@ -82,7 +82,7 @@ function MobileNav({ activeScreen, setActiveScreen }: MainNavProps) {
               key={item.id}
               onClick={() => setActiveScreen(item.id)}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-md w-20',
+                'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-lg w-20',
                 isActive
                   ? 'text-primary'
                   : 'text-gray-600 dark:text-gray-400'
