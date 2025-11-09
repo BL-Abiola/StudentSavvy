@@ -135,7 +135,7 @@ export default function StudyPlanner() {
                     </FormItem>
                     )}
                 />
-                <Button type="submit" variant="secondary" className="w-full">
+                <Button type="submit" className="w-full">
                     Schedule Session
                 </Button>
                 </form>
