@@ -258,7 +258,6 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                         <SelectContent>
                           <SelectItem value="1st Semester">1st Semester</SelectItem>
                           <SelectItem value="2nd Semester">2nd Semester</SelectItem>
-                          <SelectItem value="Summer">Summer</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
