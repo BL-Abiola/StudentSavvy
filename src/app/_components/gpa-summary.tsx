@@ -216,7 +216,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
                 </div>
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="rounded-md">
                         {selectedSemester}
                         <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
