@@ -182,7 +182,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
         </AlertDialog>
       )}
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle>Add New Grade</CardTitle>
           <CardDescription>
