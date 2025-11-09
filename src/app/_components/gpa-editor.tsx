@@ -60,23 +60,18 @@ const gradeSchema = z.object({
   name: z.string().min(2, "Course name is required"),
   grade: z.coerce
     .number()
-    .min(0, "Grade must be between 0.0 and 4.0")
-    .max(4, "Grade must be between 0.0 and 4.0"),
+    .min(0, "Grade must be between 0.0 and 5.0")
+    .max(5, "Grade must be between 0.0 and 5.0"),
   credits: z.coerce.number().min(0.5, "Credits must be a positive number"),
   year: z.string().min(1, "Year is required"),
   session: z.string().min(1, "Session is required"),
 })
 
 function gpaToLetter(gpa: number): string {
-  if (gpa >= 4.0) return "A"
-  if (gpa >= 3.7) return "A-"
-  if (gpa >= 3.3) return "B+"
-  if (gpa >= 3.0) return "B"
-  if (gpa >= 2.7) return "B-"
-  if (gpa >= 2.3) return "C+"
-  if (gpa >= 2.0) return "C"
-  if (gpa >= 1.7) return "C-"
-  if (gpa >= 1.0) return "D"
+  if (gpa >= 5.0) return "A"
+  if (gpa >= 4.0) return "B"
+  if (gpa >= 3.0) return "C"
+  if (gpa >= 2.0) return "D"
   return "F"
 }
 
@@ -98,7 +93,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     resolver: zodResolver(gradeSchema),
     defaultValues: {
       name: "",
-      grade: 4.0,
+      grade: 5.0,
       credits: 3,
       year: "Year 1",
       session: "1st Semester",
@@ -269,9 +264,9 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                   name="grade"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Grade (4.0 Scale)</FormLabel>
+                      <FormLabel>Grade (5.0 Scale)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} />
+                        <Input type="number" step="0.1" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -45,7 +45,7 @@ export default function GpaTrajectoryChart({ data, chartType }: GpaTrajectoryCha
         <RechartsLineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-          <YAxis domain={[0, 4]} tickCount={5} />
+          <YAxis domain={[0, 5]} tickCount={6} />
           <ChartTooltip content={<ChartTooltipContent />} />
           <ChartLegend content={<ChartLegendContent />} />
           <Line dataKey="SemesterGPA" type="monotone" stroke="var(--color-SemesterGPA)" strokeWidth={3} dot={{ r: 5, strokeWidth: 2 }} />
@@ -55,7 +55,7 @@ export default function GpaTrajectoryChart({ data, chartType }: GpaTrajectoryCha
         <RechartsBarChart data={data} barSize={30}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
-          <YAxis domain={[0, 4]} tickCount={5} />
+          <YAxis domain={[0, 5]} tickCount={6} />
           <ChartTooltip content={<ChartTooltipContent />} />
           <ChartLegend content={<ChartLegendContent />} />
           <Bar dataKey="SemesterGPA" fill="var(--color-SemesterGPA)" radius={[4, 4, 0, 0]} />

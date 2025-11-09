@@ -30,7 +30,7 @@ const gpaModelerSchema = z.object({
   currentGpa: z.coerce
     .number()
     .min(0, 'GPA must be positive')
-    .max(4, 'GPA cannot exceed 4.0'),
+    .max(5, 'GPA cannot exceed 5.0'),
   totalCredits: z.coerce.number().min(0, 'Credits must be positive'),
   courses: z.array(
     z.object({
@@ -39,7 +39,7 @@ const gpaModelerSchema = z.object({
       expectedGrade: z.coerce
         .number()
         .min(0, 'Min grade is 0.0')
-        .max(4, 'Max grade is 4.0'),
+        .max(5, 'Max grade is 5.0'),
     })
   ).min(1, 'Please add at least one course.'),
 });
@@ -62,9 +62,9 @@ export default function AiPremium() {
   const gpaForm = useForm<z.infer<typeof gpaModelerSchema>>({
     resolver: zodResolver(gpaModelerSchema),
     defaultValues: {
-      currentGpa: 3.5,
+      currentGpa: 4.5,
       totalCredits: 60,
-      courses: [{ name: 'CS 202', credits: 3, expectedGrade: 3.7 }],
+      courses: [{ name: 'CS 202', credits: 3, expectedGrade: 5.0 }],
     },
   });
 
@@ -213,7 +213,7 @@ export default function AiPremium() {
                   </div>
                 ))}
                 <div className="flex items-center gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', credits: 3, expectedGrade: 4.0 })}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', credits: 3, expectedGrade: 5.0 })}>
                     Add Course
                     </Button>
                     <Button type="button" variant="ghost" size="sm" onClick={() => remove(fields.length - 1)} disabled={fields.length <= 1}>

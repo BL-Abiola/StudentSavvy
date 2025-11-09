@@ -38,6 +38,8 @@ const prompt = ai.definePrompt({
   output: {schema: PredictFutureGpaOutputSchema},
   prompt: `You are a helpful assistant that predicts a student's future GPA based on their current GPA, total credits, and expected grades in current courses.
 
+  The GPA scale is 5.0.
+
   Current GPA: {{{currentGpa}}}
   Total Credits: {{{totalCredits}}}
   Courses:
@@ -77,6 +79,6 @@ const predictFutureGpaFlow = ai.defineFlow(
 
     const predictedGpa = newTotalPoints / newTotalCredits;
 
-    return { predictedGpa };
+    return { predictedGpa: Math.min(predictedGpa, 5.0) };
   }
 );
