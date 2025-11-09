@@ -38,7 +38,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
   const groupedGrades = useMemo(() => {
     return grades.reduce(
       (acc, grade) => {
-        const { semester } = grade
+        const semester = `${grade.year} ${grade.session}`;
         if (!acc[semester]) {
           acc[semester] = {
             grades: [],
@@ -82,7 +82,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
           : 0
 
       return {
-        name: semester.replace(" ", "\n"),
+        name: semester.replace(" ", "\n").replace(" Semester", ""),
         "SemesterGPA": parseFloat(semesterGpa.toFixed(2)),
         "CGPA": parseFloat(cumulativeGpa.toFixed(2)),
       }

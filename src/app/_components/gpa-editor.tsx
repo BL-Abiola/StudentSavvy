@@ -37,6 +37,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { CheckCircle, Trash2, QrCode } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import QRCode from "qrcode.react"
@@ -56,7 +63,8 @@ const gradeSchema = z.object({
     .min(0, "Grade must be between 0.0 and 4.0")
     .max(4, "Grade must be between 0.0 and 4.0"),
   credits: z.coerce.number().min(0.5, "Credits must be a positive number"),
-  semester: z.string().min(1, "Semester is required"),
+  year: z.string().min(4, "Year is required").max(4, "Must be a 4-digit year"),
+  session: z.string().min(1, "Session is required"),
 })
 
 function gpaToLetter(gpa: number): string {
@@ -92,7 +100,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       name: "",
       grade: 4.0,
       credits: 3,
-      semester: "",
+      year: new Date().getFullYear().toString(),
+      session: "1st Semester",
     },
   })
 
@@ -107,7 +116,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   }
 
   function removeSemester(semester: string) {
-    setGrades(grades.filter((g) => g.semester !== semester))
+    setGrades(grades.filter((g) => `${g.year} ${g.session}` !== semester))
   }
 
   function handleGenerateQrCode(semester: string, data: any) {
@@ -128,7 +137,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   const groupedGrades = useMemo(() => {
     return grades.reduce(
       (acc, grade) => {
-        const { semester } = grade
+        const semester = `${grade.year} ${grade.session}`;
         if (!acc[semester]) {
           acc[semester] = {
             grades: [],
@@ -188,8 +197,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(addGrade)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <FormField
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
@@ -202,15 +211,42 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                     </FormItem>
                   )}
                 />
-                <FormField
+                 <FormField
                   control={form.control}
-                  name="semester"
+                  name="year"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Semester</FormLabel>
+                      <FormLabel>Year</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Sem 1" {...field} />
+                        <Input placeholder="e.g., 2024" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <FormField
+                  control={form.control}
+                  name="session"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Session</FormLabel>
+                       <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a session" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="1st Semester">1st Semester</SelectItem>
+                          <SelectItem value="2nd Semester">2nd Semester</SelectItem>
+                          <SelectItem value="Summer">Summer</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

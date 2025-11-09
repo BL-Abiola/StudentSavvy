@@ -4,7 +4,8 @@ export type Grade = {
   name: string;
   grade: number;
   credits: number;
-  semester: string;
+  year: string;
+  session: string;
 };
 
 export type TaskPriority = 'urgent' | 'intermediate' | 'later';
