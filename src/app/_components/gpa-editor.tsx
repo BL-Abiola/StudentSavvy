@@ -63,7 +63,7 @@ const gradeSchema = z.object({
     .min(0, "Grade must be between 0.0 and 4.0")
     .max(4, "Grade must be between 0.0 and 4.0"),
   credits: z.coerce.number().min(0.5, "Credits must be a positive number"),
-  year: z.string().min(4, "Year is required").max(4, "Must be a 4-digit year"),
+  year: z.string().min(1, "Year is required"),
   session: z.string().min(1, "Session is required"),
 })
 
@@ -100,7 +100,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       name: "",
       grade: 4.0,
       credits: 3,
-      year: new Date().getFullYear().toString(),
+      year: "Year 1",
       session: "1st Semester",
     },
   })
@@ -217,9 +217,23 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Year</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., 2024" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Year 1">Year 1</SelectItem>
+                          <SelectItem value="Year 2">Year 2</SelectItem>
+                          <SelectItem value="Year 3">Year 3</SelectItem>
+                          <SelectItem value="Year 4">Year 4</SelectItem>
+                          <SelectItem value="Year 5">Year 5</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
