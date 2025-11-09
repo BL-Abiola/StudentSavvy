@@ -1,7 +1,7 @@
+
 'use client';
 
-import React, { useState, Suspense } from 'react';
-import dynamic from 'next/dynamic';
+import React, { useState } from 'react';
 import type { Screen } from '@/types';
 import MainNav from './_components/main-nav';
 import { cn } from '@/lib/utils';
@@ -18,32 +18,8 @@ import { GraduationCap, Sun, Moon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Dashboard from './_components/dashboard';
 import AiPremium from './_components/ai-premium';
+import GpaTracker from './_components/gpa-tracker';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-
-const GpaTracker = dynamic(() => import('./_components/gpa-tracker'), {
-  ssr: false,
-  loading: () => (
-    <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <Skeleton className="h-8 w-8" />
-        <Skeleton className="h-8 w-48" />
-      </div>
-      <Skeleton className="h-4 w-3/4" />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Skeleton className="h-24" />
-        <Skeleton className="h-24" />
-        <Skeleton className="h-24" />
-        <Skeleton className="h-24" />
-      </div>
-      <div className="grid md:grid-cols-2 gap-6">
-        <Skeleton className="h-80" />
-        <Skeleton className="h-80" />
-      </div>
-    </div>
-  ),
-});
-
 
 function AppContent() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
