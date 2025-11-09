@@ -271,7 +271,7 @@ export default function AiPremium() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" variant="secondary" className="w-full" disabled={isSessionsLoading}>
+              <Button type="submit" className="w-full" disabled={isSessionsLoading}>
                 {isSessionsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Sessions'}
               </Button>
             </form>

@@ -11,6 +11,7 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { GraduationCap, Sun, Moon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -37,6 +38,26 @@ function AppContent() {
     }
   };
 
+  const ThemeToggle = () => (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      className="w-full justify-start gap-3 p-3 text-sm font-medium rounded-md"
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span
+        className={cn(
+          'transition-opacity duration-200',
+          'group-data-[collapsed]/sidebar-wrapper:opacity-0 group-data-[collapsed]/sidebar-wrapper:w-0'
+        )}
+      >
+        Toggle Theme
+      </span>
+    </Button>
+  );
+
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon" className="border-r">
@@ -52,6 +73,9 @@ function AppContent() {
             setActiveScreen={setActiveScreen}
           />
         </SidebarContent>
+        <SidebarFooter className="p-2">
+          <ThemeToggle />
+        </SidebarFooter>
       </Sidebar>
 
       <SidebarInset>
@@ -60,28 +84,7 @@ function AppContent() {
             <SidebarTrigger />
             <h1 className="text-lg font-semibold">StudentSavvy</h1>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
         </header>
-
-        <div className="hidden md:flex justify-end p-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </div>
 
         <main
           className={cn(
