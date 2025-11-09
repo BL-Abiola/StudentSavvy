@@ -15,6 +15,13 @@ import { BarChartIcon, LineChart } from "lucide-react"
 import GpaTrajectoryChart from "./gpa-trajectory-chart"
 import GpaDistributionChart from "./gpa-distribution-chart"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ChevronDown } from "lucide-react"
 
 function gpaToGradePoints(gpa: number): string {
   if (gpa >= 4.0) return "A"
@@ -207,25 +214,24 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
                     <CardTitle>Grade Distribution</CardTitle>
                     <CardDescription>Breakdown of your grades.</CardDescription>
                 </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-                <Button
-                    size="sm"
-                    variant={selectedSemester === "Overall" ? "secondary" : "outline"}
-                    onClick={() => setSelectedSemester("Overall")}
-                >
-                    Overall
-                </Button>
-                {allSemesters.map(semester => (
-                    <Button
-                        key={semester}
-                        size="sm"
-                        variant={selectedSemester === semester ? "secondary" : "outline"}
-                        onClick={() => setSelectedSemester(semester)}
-                    >
-                        {semester}
-                    </Button>
-                ))}
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                        {selectedSemester}
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => setSelectedSemester("Overall")}>
+                        Overall
+                        </DropdownMenuItem>
+                        {allSemesters.map(semester => (
+                        <DropdownMenuItem key={semester} onSelect={() => setSelectedSemester(semester)}>
+                            {semester}
+                        </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
           </CardHeader>
           <CardContent>
