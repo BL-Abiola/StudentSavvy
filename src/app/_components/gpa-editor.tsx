@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo } from "react"
@@ -292,7 +293,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle>Grade History</CardTitle>
           <CardDescription>
@@ -389,3 +390,5 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
+
+    
