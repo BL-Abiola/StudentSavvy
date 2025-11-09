@@ -26,6 +26,7 @@ function gpaToGradePoints(gpa: number): string {
 
 export default function GpaSummary({ grades }: { grades: Grade[] }) {
   const [chartType, setChartType] = useState<"line" | "bar">("line")
+  const [selectedSemester, setSelectedSemester] = useState<string>("Overall")
 
   const groupedGrades = useMemo(() => {
     return grades.reduce(
@@ -50,7 +51,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     )
   }, [grades])
 
-  const { cgpa, totalCredits, trajectoryData } = useMemo(() => {
+  const { cgpa, totalCredits, trajectoryData, allSemesters } = useMemo(() => {
     let cumulativeCredits = 0
     let cumulativeQualityPoints = 0
     const sortedSemesters = Object.keys(groupedGrades).sort()
@@ -85,11 +86,16 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
       cgpa: calculatedCgpa,
       totalCredits: cumulativeCredits,
       trajectoryData: calculatedTrajectoryData,
+      allSemesters: sortedSemesters,
     }
   }, [groupedGrades])
 
   const gradeDistributionData = useMemo(() => {
-    const distribution = grades.reduce(
+    const gradesToDisplay = selectedSemester === "Overall"
+        ? grades
+        : groupedGrades[selectedSemester]?.grades || [];
+
+    const distribution = gradesToDisplay.reduce(
       (acc, grade) => {
         const letter = gpaToGradePoints(grade.grade)
         acc[letter] = (acc[letter] || 0) + 1
@@ -102,7 +108,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
       grade,
       count: distribution[grade] || 0,
     }))
-  }, [grades])
+  }, [grades, selectedSemester, groupedGrades])
 
   const semesterGpa =
     trajectoryData.length > 0
@@ -193,8 +199,31 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         </Card>
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle>Grade Distribution</CardTitle>
-            <CardDescription>Breakdown of your grades.</CardDescription>
+            <div className="flex justify-between items-center mb-4">
+                <div>
+                    <CardTitle>Grade Distribution</CardTitle>
+                    <CardDescription>Breakdown of your grades.</CardDescription>
+                </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+                <Button
+                    size="sm"
+                    variant={selectedSemester === "Overall" ? "secondary" : "outline"}
+                    onClick={() => setSelectedSemester("Overall")}
+                >
+                    Overall
+                </Button>
+                {allSemesters.map(semester => (
+                    <Button
+                        key={semester}
+                        size="sm"
+                        variant={selectedSemester === semester ? "secondary" : "outline"}
+                        onClick={() => setSelectedSemester(semester)}
+                    >
+                        {semester}
+                    </Button>
+                ))}
+            </div>
           </CardHeader>
           <CardContent>
             <GpaDistributionChart data={gradeDistributionData} />
