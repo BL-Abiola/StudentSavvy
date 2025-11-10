@@ -157,9 +157,9 @@ export default function ClassSchedule() {
                         </FormItem>
                     )}
                     />
-                <div>
+                <FormItem>
                     <FormLabel>Class Time</FormLabel>
-                    <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div className="grid grid-cols-3 gap-2">
                          <FormField
                             control={form.control}
                             name="hour"
@@ -223,7 +223,7 @@ export default function ClassSchedule() {
                             )}
                         />
                     </div>
-                </div>
+                </FormItem>
                 <FormField
                     control={form.control}
                     name="location"
