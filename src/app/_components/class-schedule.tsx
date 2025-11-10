@@ -35,7 +35,9 @@ import { CalendarDays, Clock, MapPin, Trash2 } from 'lucide-react';
 const classSchema = z.object({
   name: z.string().min(2, 'Course name is required'),
   day: z.string().min(1, 'Please select a day'),
-  time: z.string().min(1, 'Time is required'),
+  hour: z.string().min(1, 'Required'),
+  minute: z.string().min(1, 'Required'),
+  period: z.string().min(1, 'Required'),
   location: z.string().optional(),
 });
 
@@ -56,19 +58,32 @@ export default function ClassSchedule() {
     defaultValues: {
       name: '',
       day: '',
-      time: '',
+      hour: '',
+      minute: '',
+      period: '',
       location: '',
     },
   });
 
   function addClass(values: z.infer<typeof classSchema>) {
+    let hour = parseInt(values.hour);
+    if (values.period === 'PM' && hour !== 12) {
+      hour += 12;
+    }
+    if (values.period === 'AM' && hour === 12) {
+      hour = 0;
+    }
+    const time = `${String(hour).padStart(2, '0')}:${values.minute}`;
+    
     const newClass: Class = {
       id: Date.now(),
-      ...values,
+      name: values.name,
+      day: values.day,
+      time: time,
       location: values.location || 'N/A',
     };
     setClasses([...classes, newClass]);
-    form.reset();
+    form.reset({ name: '', day: '', hour: '', minute: '', period: '', location: '' });
   }
 
   function removeClass(id: number) {
@@ -114,8 +129,7 @@ export default function ClassSchedule() {
                     </FormItem>
                     )}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+                <FormField
                     control={form.control}
                     name="day"
                     render={({ field }) => (
@@ -124,6 +138,7 @@ export default function ClassSchedule() {
                         <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
+                            value={field.value}
                         >
                             <FormControl>
                             <SelectTrigger>
@@ -142,19 +157,72 @@ export default function ClassSchedule() {
                         </FormItem>
                     )}
                     />
-                    <FormField
-                    control={form.control}
-                    name="time"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Class Time</FormLabel>
-                        <FormControl>
-                            <Input type="time" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
+                <div>
+                    <FormLabel>Class Time</FormLabel>
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                         <FormField
+                            control={form.control}
+                            name="hour"
+                            render={({ field }) => (
+                                <FormItem>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Hour" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                        <SelectItem key={h} value={String(h)}>{String(h)}</SelectItem>
+                                    ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="minute"
+                            render={({ field }) => (
+                                <FormItem>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Min" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    {['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].map(m => (
+                                        <SelectItem key={m} value={m}>{m}</SelectItem>
+                                    ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="period"
+                            render={({ field }) => (
+                                <FormItem>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="AM/PM" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="AM">AM</SelectItem>
+                                        <SelectItem value="PM">PM</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                 </div>
                 <FormField
                     control={form.control}
