@@ -116,9 +116,10 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   }
   
   function handleGenerateQrCode(semester: string, data: any) {
-    const semesterGpa = (
-      data.totalQualityPoints / data.totalCredits
-    ).toFixed(2)
+    const semesterGpa =
+      data.totalCredits > 0
+        ? (data.totalQualityPoints / data.totalCredits).toFixed(2)
+        : "0.00"
     setQrCodeData({
       semester,
       gpa: semesterGpa,
