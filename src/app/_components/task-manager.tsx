@@ -171,7 +171,7 @@ export default function TaskManager() {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full rounded-full">
                 Add Task
               </Button>
             </form>
