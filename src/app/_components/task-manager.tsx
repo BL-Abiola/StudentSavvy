@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -98,7 +99,7 @@ export default function TaskManager() {
   }, [tasks]);
 
   return (
-    <Card>
+    <Card className="rounded-2xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
             <CheckSquare className="w-6 h-6" />
@@ -191,7 +192,7 @@ export default function TaskManager() {
                 <Card
                     key={task.id}
                     className={cn(
-                    'p-4 flex justify-between items-center border-l-4 transition-all',
+                    'p-4 flex justify-between items-center border-l-4 transition-all rounded-lg',
                     priorityConfig[task.priority].style
                     )}
                 >
