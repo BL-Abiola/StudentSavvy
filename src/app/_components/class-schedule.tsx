@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -198,7 +199,7 @@ export default function ClassSchedule() {
                             <div>
                             <p className="font-bold text-card-foreground">{c.name}</p>
                             <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                <span className="flex items-center gap-1.5"><Clock size={14} />{new Date(`1970-01-01T${c.time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                <span className="flex items-center gap-1.5"><Clock size={14} />{new Date(`1970-01-01T${c.time}`).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>
                                 <span className="flex items-center gap-1.5"><MapPin size={14} />{c.location}</span>
                             </div>
                             </div>
