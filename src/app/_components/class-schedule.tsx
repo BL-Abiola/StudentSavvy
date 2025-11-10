@@ -36,9 +36,7 @@ import { cn } from '@/lib/utils';
 const classSchema = z.object({
   name: z.string().min(2, 'Course name is required'),
   day: z.string().min(1, 'Please select a day'),
-  hour: z.string().min(1, 'Required'),
-  minute: z.string().min(1, 'Required'),
-  period: z.string().min(1, 'Required'),
+  time: z.string().min(1, 'Time is required'),
   location: z.string().optional(),
 });
 
@@ -59,32 +57,21 @@ export default function ClassSchedule() {
     defaultValues: {
       name: '',
       day: '',
-      hour: '',
-      minute: '',
-      period: '',
+      time: '',
       location: '',
     },
   });
 
   function addClass(values: z.infer<typeof classSchema>) {
-    let hour = parseInt(values.hour);
-    if (values.period === 'PM' && hour !== 12) {
-      hour += 12;
-    }
-    if (values.period === 'AM' && hour === 12) {
-      hour = 0;
-    }
-    const time = `${String(hour).padStart(2, '0')}:${values.minute}`;
-    
     const newClass: Class = {
       id: Date.now(),
       name: values.name,
       day: values.day,
-      time: time,
+      time: values.time,
       location: values.location || 'N/A',
     };
     setClasses([...classes, newClass]);
-    form.reset({ name: '', day: '', hour: '', minute: '', period: '', location: '' });
+    form.reset({ name: '', day: '', time: '', location: '' });
   }
 
   function removeClass(id: number) {
@@ -159,81 +146,19 @@ export default function ClassSchedule() {
                             </FormItem>
                         )}
                         />
-                    <FormItem>
-                        <FormLabel>Class Time</FormLabel>
-                         <div className="flex w-full items-center">
-                          <div className="grid w-full grid-cols-3 items-center rounded-md border has-[[data-state=open]]:ring-2 has-[[data-state=open]]:ring-ring">
-                            <FormField
-                              control={form.control}
-                              name="hour"
-                              render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger
-                                      className={cn(
-                                        'w-full rounded-r-none border-0 border-r focus-visible:ring-0 focus-visible:ring-offset-0'
-                                      )}
-                                    >
-                                      <SelectValue placeholder="Hour" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                                      <SelectItem key={h} value={String(h)}>{String(h)}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="minute"
-                              render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger
-                                      className={cn(
-                                        'w-full rounded-none border-0 border-r focus-visible:ring-0 focus-visible:ring-offset-0'
-                                      )}
-                                    >
-                                      <SelectValue placeholder="Min" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].map(m => (
-                                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="period"
-                              render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger
-                                      className={cn('w-full rounded-l-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0')}
-                                    >
-                                      <SelectValue placeholder="AM/PM" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="AM">AM</SelectItem>
-                                    <SelectItem value="PM">PM</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                          </div>
-                        </div>
-                         <div className="grid grid-cols-3 gap-2">
-                            <FormMessage className="col-start-1">{form.formState.errors.hour?.message}</FormMessage>
-                            <FormMessage className="col-start-2">{form.formState.errors.minute?.message}</FormMessage>
-                            <FormMessage className="col-start-3">{form.formState.errors.period?.message}</FormMessage>
-                        </div>
-                    </FormItem>
+                     <FormField
+                        control={form.control}
+                        name="time"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Class Time</FormLabel>
+                            <FormControl>
+                                <Input type="time" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
                 </div>
                 <FormField
                     control={form.control}
