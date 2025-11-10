@@ -1,6 +1,3 @@
-// This hook is managed in src/app/page.tsx
-import { useTheme as useNextTheme } from '@/app/page';
+import { useTheme as useNextTheme } from 'next-themes';
 
 export const useTheme = useNextTheme;
-
-    

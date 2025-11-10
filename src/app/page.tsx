@@ -20,6 +20,7 @@ import Dashboard from './_components/dashboard';
 import AiPremium from './_components/ai-premium';
 import GpaTracker from './_components/gpa-tracker';
 import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 function AppContent() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
@@ -110,62 +111,6 @@ function AppContent() {
 
 export default function Home() {
   return (
-    <ThemeProvider>
       <AppContent />
-    </ThemeProvider>
   );
-}
-
-// Theme provider
-interface ThemeProviderProps {
-  children: React.ReactNode;
-}
-
-const ThemeContext = React.createContext<{
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
-} | null>(null);
-
-
-function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<'light' | 'dark'>('light');
-
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setThemeState(isDarkMode ? 'dark' : 'light');
-  }, []);
-
-  React.useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(isDarkMode ? 'dark' : 'light');
-    }
-  }, []);
-
-  const setTheme = (theme: 'light' | 'dark') => {
-      localStorage.setItem('theme', theme);
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(theme);
-      setThemeState(theme);
-  }
-
-  const value = {
-    theme,
-    setTheme,
-  };
-
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
-}
-
-export function useTheme() {
-  const context = React.useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
 }
