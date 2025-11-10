@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CalendarDays, Clock, MapPin, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const classSchema = z.object({
   name: z.string().min(2, 'Course name is required'),
@@ -159,60 +160,72 @@ export default function ClassSchedule() {
                     />
                 <FormItem>
                     <FormLabel>Class Time</FormLabel>
-                    <div className="grid grid-cols-3 gap-2">
-                         <FormField
-                            control={form.control}
-                            name="hour"
-                            render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Hour" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                    {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                                        <SelectItem key={h} value={String(h)}>{String(h)}</SelectItem>
-                                    ))}
-                                    </SelectContent>
-                                </Select>
-                            )}
+                     <div className="flex w-full items-center">
+                      <div className="grid w-full grid-cols-3 items-center rounded-md border has-[[data-state=open]]:ring-2 has-[[data-state=open]]:ring-ring">
+                        <FormField
+                          control={form.control}
+                          name="hour"
+                          render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger
+                                  className={cn(
+                                    'w-full rounded-r-none border-0 border-r focus-visible:ring-0'
+                                  )}
+                                >
+                                  <SelectValue placeholder="Hour" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                  <SelectItem key={h} value={String(h)}>{String(h)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
                         />
                         <FormField
-                            control={form.control}
-                            name="minute"
-                            render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Min" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                    {['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].map(m => (
-                                        <SelectItem key={m} value={m}>{m}</SelectItem>
-                                    ))}
-                                    </SelectContent>
-                                </Select>
-                            )}
+                          control={form.control}
+                          name="minute"
+                          render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger
+                                  className={cn(
+                                    'w-full rounded-none border-0 border-r focus-visible:ring-0'
+                                  )}
+                                >
+                                  <SelectValue placeholder="Min" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].map(m => (
+                                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
                         />
                         <FormField
-                            control={form.control}
-                            name="period"
-                            render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="AM/PM" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="AM">AM</SelectItem>
-                                        <SelectItem value="PM">PM</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            )}
+                          control={form.control}
+                          name="period"
+                          render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger
+                                  className={cn('w-full rounded-l-none border-0 focus-visible:ring-0')}
+                                >
+                                  <SelectValue placeholder="AM/PM" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="AM">AM</SelectItem>
+                                <SelectItem value="PM">PM</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
                         />
+                      </div>
                     </div>
                      <div className="grid grid-cols-3 gap-2">
                         <FormMessage className="col-start-1">{form.formState.errors.hour?.message}</FormMessage>
