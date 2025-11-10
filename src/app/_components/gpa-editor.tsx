@@ -305,7 +305,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
             <Accordion type="multiple" className="w-full space-y-4">
               {Object.entries(groupedGradesByYear).map(([year, sessions]) => (
                 <AccordionItem value={year} key={year} className="border-b-0 rounded-lg bg-muted/30">
-                  <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline hover:bg-muted/50 rounded-t-lg">
+                  <AccordionTrigger className="px-4 py-3 text-base font-semibold hover:no-underline hover:bg-muted/50 rounded-t-lg">
                     {year}
                   </AccordionTrigger>
                   <AccordionContent className="p-2 space-y-2">
@@ -390,5 +390,3 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
-
-    
