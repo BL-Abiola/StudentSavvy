@@ -60,7 +60,7 @@ export default function StudyPlanner() {
   }
 
   return (
-    <Card>
+    <Card className="rounded-2xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
           <BookOpenText className="w-6 h-6" />
@@ -139,7 +139,7 @@ export default function StudyPlanner() {
             ) : (
             <div className="space-y-4">
                 {sessions.map((session) => (
-                <Card key={session.id} className="p-4">
+                <Card key={session.id} className="p-4 rounded-lg">
                     <div className="flex justify-between items-start">
                     <div>
                         <p className="font-bold text-lg text-card-foreground">{session.topic}</p>
