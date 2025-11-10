@@ -222,7 +222,7 @@ export default function AiPremium() {
                 </div>
               </div>
               
-              <Button type="submit" className="w-full" disabled={isGpaLoading}>
+              <Button type="submit" className="w-full rounded-full" disabled={isGpaLoading}>
                 {isGpaLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Simulating...</> : 'Simulate Impact'}
               </Button>
 
@@ -272,7 +272,7 @@ export default function AiPremium() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isSessionsLoading}>
+              <Button type="submit" className="w-full rounded-full" disabled={isSessionsLoading}>
                 {isSessionsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Sessions'}
               </Button>
             </form>
