@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -27,8 +28,7 @@ import { BookOpenText, Clock, Calendar, Pencil, Trash2 } from 'lucide-react';
 
 const studySchema = z.object({
   topic: z.string().min(3, 'Topic is required'),
-  date: z.string().min(1, 'Date is required'),
-  time: z.string().min(1, 'Time is required'),
+  datetime: z.string().min(1, 'Date and time are required'),
   notes: z.string().optional(),
 });
 
@@ -39,19 +39,18 @@ export default function StudyPlanner() {
     resolver: zodResolver(studySchema),
     defaultValues: {
       topic: '',
-      date: new Date().toISOString().split('T')[0],
-      time: '',
+      datetime: '',
       notes: '',
     },
   });
 
   function addStudySession(values: z.infer<typeof studySchema>) {
-    const newSession: StudySession = { id: Date.now(), ...values, notes: values.notes || '' };
+    const [date, time] = values.datetime.split('T');
+    const newSession: StudySession = { id: Date.now(), topic: values.topic, date, time, notes: values.notes || '' };
     setSessions([...sessions, newSession].sort((a,b) => new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime()));
     form.reset({
       topic: '',
-      date: new Date().toISOString().split('T')[0],
-      time: '',
+      datetime: '',
       notes: '',
     });
   }
@@ -78,46 +77,33 @@ export default function StudyPlanner() {
                 onSubmit={form.handleSubmit(addStudySession)}
                 className="space-y-4"
                 >
-                <FormField
-                    control={form.control}
-                    name="topic"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Topic/Course Focus</FormLabel>
-                        <FormControl>
-                        <Input placeholder="e.g., Chapter 5 Reading" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Date</FormLabel>
-                        <FormControl>
-                            <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="time"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Time</FormLabel>
-                        <FormControl>
-                            <Input type="time" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
+                  <FormField
+                      control={form.control}
+                      name="topic"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel>Topic/Course Focus</FormLabel>
+                          <FormControl>
+                          <Input placeholder="e.g., Chapter 5 Reading" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+                  <FormField
+                  control={form.control}
+                  name="datetime"
+                  render={({ field }) => (
+                      <FormItem>
+                      <FormLabel>Date & Time</FormLabel>
+                      <FormControl>
+                          <Input type="datetime-local" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      </FormItem>
+                  )}
+                  />
                 </div>
                 <FormField
                     control={form.control}
