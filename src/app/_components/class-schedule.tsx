@@ -164,7 +164,6 @@ export default function ClassSchedule() {
                             control={form.control}
                             name="hour"
                             render={({ field }) => (
-                                <FormItem>
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                     <SelectTrigger>
@@ -177,15 +176,12 @@ export default function ClassSchedule() {
                                     ))}
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
-                                </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="minute"
                             render={({ field }) => (
-                                <FormItem>
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                     <SelectTrigger>
@@ -198,15 +194,12 @@ export default function ClassSchedule() {
                                     ))}
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
-                                </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="period"
                             render={({ field }) => (
-                                <FormItem>
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                     <SelectTrigger>
@@ -218,10 +211,13 @@ export default function ClassSchedule() {
                                         <SelectItem value="PM">PM</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
-                                </FormItem>
                             )}
                         />
+                    </div>
+                     <div className="grid grid-cols-3 gap-2">
+                        <FormMessage className="col-start-1">{form.formState.errors.hour?.message}</FormMessage>
+                        <FormMessage className="col-start-2">{form.formState.errors.minute?.message}</FormMessage>
+                        <FormMessage className="col-start-3">{form.formState.errors.period?.message}</FormMessage>
                     </div>
                 </FormItem>
                 <FormField
