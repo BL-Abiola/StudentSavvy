@@ -171,7 +171,7 @@ export default function ClassSchedule() {
                                   <FormControl>
                                     <SelectTrigger
                                       className={cn(
-                                        'w-full rounded-r-none border-0 border-r focus-visible:ring-0'
+                                        'w-full rounded-r-none border-0 border-r focus-visible:ring-0 focus-visible:ring-offset-0'
                                       )}
                                     >
                                       <SelectValue placeholder="Hour" />
@@ -193,7 +193,7 @@ export default function ClassSchedule() {
                                   <FormControl>
                                     <SelectTrigger
                                       className={cn(
-                                        'w-full rounded-none border-0 border-r focus-visible:ring-0'
+                                        'w-full rounded-none border-0 border-r focus-visible:ring-0 focus-visible:ring-offset-0'
                                       )}
                                     >
                                       <SelectValue placeholder="Min" />
@@ -214,7 +214,7 @@ export default function ClassSchedule() {
                                 <Select onValueChange={field.onChange} value={field.value}>
                                   <FormControl>
                                     <SelectTrigger
-                                      className={cn('w-full rounded-l-none border-0 focus-visible:ring-0')}
+                                      className={cn('w-full rounded-l-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0')}
                                     >
                                       <SelectValue placeholder="AM/PM" />
                                     </SelectTrigger>
@@ -248,7 +248,7 @@ export default function ClassSchedule() {
                     </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full rounded-full">
                     Save Class
                 </Button>
                 </form>
@@ -303,7 +303,3 @@ export default function ClassSchedule() {
     </Card>
   );
 }
-
-    
-
-    
