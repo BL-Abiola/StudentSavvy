@@ -121,7 +121,7 @@ export default function StudyPlanner() {
                     </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full rounded-full">
                     Schedule Session
                 </Button>
                 </form>
