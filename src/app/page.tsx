@@ -22,7 +22,7 @@ import GpaTracker from './_components/gpa-tracker';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 
-function AppContent() {
+export default function Home() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
   const isMobile = useIsMobile();
   const { theme, setTheme } = useTheme();
@@ -106,11 +106,5 @@ function AppContent() {
         )}
       </SidebarInset>
     </SidebarProvider>
-  );
-}
-
-export default function Home() {
-  return (
-      <AppContent />
   );
 }
