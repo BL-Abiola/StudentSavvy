@@ -103,7 +103,7 @@ export default function ClassSchedule() {
   }, {} as Record<string, Class[]>);
 
   return (
-    <Card>
+    <Card className="rounded-2xl">
        <CardHeader>
         <CardTitle className="flex items-center gap-3">
             <CalendarDays className="w-6 h-6" />
