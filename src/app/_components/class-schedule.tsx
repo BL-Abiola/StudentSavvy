@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -50,7 +50,17 @@ const dayFullName = {
 };
 
 export default function ClassSchedule() {
-  const [classes, setClasses] = useState<Class[]>([]);
+  const [classes, setClasses] = useState<Class[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    const savedClasses = localStorage.getItem('classes');
+    return savedClasses ? JSON.parse(savedClasses) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('classes', JSON.stringify(classes));
+  }, [classes]);
 
   const form = useForm<z.infer<typeof classSchema>>({
     resolver: zodResolver(classSchema),

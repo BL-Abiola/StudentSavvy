@@ -62,9 +62,9 @@ export default function AiPremium() {
   const gpaForm = useForm<z.infer<typeof gpaModelerSchema>>({
     resolver: zodResolver(gpaModelerSchema),
     defaultValues: {
-      currentGpa: 4.5,
-      totalCredits: 60,
-      courses: [{ name: 'CS 202', credits: 3, expectedGrade: 5.0 }],
+      currentGpa: 0,
+      totalCredits: 0,
+      courses: [{ name: '', credits: 3, expectedGrade: 5.0 }],
     },
   });
 

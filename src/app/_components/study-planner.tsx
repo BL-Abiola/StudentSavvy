@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -33,7 +33,17 @@ const studySchema = z.object({
 });
 
 export default function StudyPlanner() {
-  const [sessions, setSessions] = useState<StudySession[]>([]);
+  const [sessions, setSessions] = useState<StudySession[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    const savedSessions = localStorage.getItem('studySessions');
+    return savedSessions ? JSON.parse(savedSessions) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('studySessions', JSON.stringify(sessions));
+  }, [sessions]);
 
   const form = useForm<z.infer<typeof studySchema>>({
     resolver: zodResolver(studySchema),
