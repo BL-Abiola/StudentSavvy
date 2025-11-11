@@ -24,15 +24,14 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      className="p-2 rounded-full hover:bg-muted"
     >
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Toggle Theme</span>
-    </Button>
+    </button>
   );
 };
 
@@ -129,10 +128,12 @@ export default function Home() {
           </div>
         </main>
         
-        <MainNav
-            activeScreen={activeScreen}
-            setActiveScreen={setActiveScreen}
-        />
+        <div className="md:hidden">
+            <MainNav
+                activeScreen={activeScreen}
+                setActiveScreen={setActiveScreen}
+            />
+        </div>
         
       </SidebarInset>
     </SidebarProvider>
