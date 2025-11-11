@@ -11,7 +11,6 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { GraduationCap, Sun, Moon } from 'lucide-react';
@@ -62,7 +61,7 @@ export default function Home() {
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" className="border-r">
+      <Sidebar collapsible="icon" className="hidden md:block border-r">
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
             <GraduationCap className="w-8 h-8 text-primary" />
@@ -82,10 +81,10 @@ export default function Home() {
 
       <SidebarInset>
         <header className="flex items-center justify-between p-4 md:hidden border-b">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger />
-            <h1 className="text-lg font-semibold">StudentSavvy</h1>
-          </div>
+            <div className="flex items-center gap-4">
+                <GraduationCap className="w-6 h-6 text-primary" />
+                <h1 className="text-lg font-semibold">StudentSavvy</h1>
+            </div>
         </header>
 
         <main
@@ -98,12 +97,12 @@ export default function Home() {
             {renderScreen()}
           </div>
         </main>
-        {!isMobile ? null : (
-          <MainNav
+        
+        <MainNav
             activeScreen={activeScreen}
             setActiveScreen={setActiveScreen}
-          />
-        )}
+        />
+        
       </SidebarInset>
     </SidebarProvider>
   );
