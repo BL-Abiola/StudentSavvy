@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Dispatch, SetStateAction } from 'react';
@@ -73,8 +74,8 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
 
 function MobileNav({ activeScreen, setActiveScreen }: MainNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-[0_-1px_10px_rgba(0,0,0,0.05)] z-50 p-2 md:hidden">
-      <div className="flex justify-around items-center max-w-4xl mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t z-50 md:hidden">
+      <div className="flex justify-around items-center max-w-4xl mx-auto h-16">
         {navItems.map((item) => {
           const isActive = activeScreen === item.id;
           return (
@@ -82,10 +83,10 @@ function MobileNav({ activeScreen, setActiveScreen }: MainNavProps) {
               key={item.id}
               onClick={() => setActiveScreen(item.id)}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 p-2 text-sm font-medium rounded-2xl w-20',
+                'flex flex-col items-center justify-center gap-1 p-2 text-xs font-medium rounded-lg w-20',
                 isActive
                   ? 'text-primary'
-                  : 'text-gray-600 dark:text-gray-400'
+                  : 'text-muted-foreground'
               )}
             >
               <item.icon

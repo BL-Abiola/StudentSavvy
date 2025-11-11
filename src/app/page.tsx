@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Screen } from '@/types';
 import MainNav from './_components/main-nav';
 import { cn } from '@/lib/utils';
@@ -10,7 +10,6 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarInset,
-  SidebarProvider,
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { GraduationCap, Sun, Moon } from 'lucide-react';
@@ -20,6 +19,7 @@ import AiPremium from './_components/ai-premium';
 import GpaTracker from './_components/gpa-tracker';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
@@ -63,6 +63,18 @@ const SidebarThemeToggle = () => {
 export default function Home() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
   const isMobile = useIsMobile();
+  
+  useEffect(() => {
+    const savedScreen = localStorage.getItem('activeScreen');
+    if (savedScreen) {
+      setActiveScreen(savedScreen as Screen);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('activeScreen', activeScreen);
+  }, [activeScreen]);
+
 
   const renderScreen = () => {
     switch (activeScreen) {
@@ -109,7 +121,7 @@ export default function Home() {
         <main
           className={cn(
             'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar',
-            isMobile ? 'pb-28' : '' // Add padding-bottom only on mobile
+            isMobile ? 'pb-24' : '' // Add padding-bottom only on mobile
           )}
         >
           <div className="animate-in fade-in-50 duration-300">
@@ -126,4 +138,3 @@ export default function Home() {
     </SidebarProvider>
   );
 }
-
