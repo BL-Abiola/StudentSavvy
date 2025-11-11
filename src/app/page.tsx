@@ -21,25 +21,24 @@ import GpaTracker from './_components/gpa-tracker';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 
-export default function Home() {
-  const [activeScreen, setActiveScreen] = useState<Screen>('performance');
-  const isMobile = useIsMobile();
+const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Toggle Theme</span>
+    </Button>
+  );
+};
 
-  const renderScreen = () => {
-    switch (activeScreen) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'performance':
-        return <GpaTracker />;
-      case 'ai-tools':
-        return <AiPremium />;
-      default:
-        return <GpaTracker />;
-    }
-  };
-
-  const ThemeToggle = () => (
+const SidebarThemeToggle = () => {
+  const { theme, setTheme } = useTheme();
+  return (
     <Button
       variant="ghost"
       size="icon"
@@ -58,6 +57,25 @@ export default function Home() {
       </span>
     </Button>
   );
+}
+
+
+export default function Home() {
+  const [activeScreen, setActiveScreen] = useState<Screen>('performance');
+  const isMobile = useIsMobile();
+
+  const renderScreen = () => {
+    switch (activeScreen) {
+      case 'dashboard':
+        return <Dashboard />;
+      case 'performance':
+        return <GpaTracker />;
+      case 'ai-tools':
+        return <AiPremium />;
+      default:
+        return <GpaTracker />;
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -75,7 +93,7 @@ export default function Home() {
           />
         </SidebarContent>
         <SidebarFooter className="p-2">
-          <ThemeToggle />
+          <SidebarThemeToggle />
         </SidebarFooter>
       </Sidebar>
 
@@ -85,6 +103,7 @@ export default function Home() {
                 <GraduationCap className="w-6 h-6 text-primary" />
                 <h1 className="text-lg font-semibold">StudentSavvy</h1>
             </div>
+            <ThemeToggle />
         </header>
 
         <main
@@ -107,3 +126,4 @@ export default function Home() {
     </SidebarProvider>
   );
 }
+
