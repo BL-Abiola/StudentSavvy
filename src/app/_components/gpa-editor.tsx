@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -45,7 +45,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CheckCircle, Trash2, QrCode } from "lucide-react"
+import { CheckCircle, Trash2, QrCode, Upload, Download } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import QRCode from "qrcode.react"
 import {
@@ -56,6 +56,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useToast } from "@/hooks/use-toast"
 
 const gradeMap = {
   A: 5,
@@ -97,6 +98,8 @@ type GpaEditorProps = {
 
 export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null)
+  const importInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
@@ -144,6 +147,71 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       })),
     })
   }
+
+  const handleExport = () => {
+    if (grades.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "No Grades to Export",
+        description: "Add some grades before exporting.",
+      });
+      return;
+    }
+    const dataStr = JSON.stringify(grades, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+    const exportFileDefaultName = 'studentsavvy_grades.json';
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    toast({
+        title: "Export Successful",
+        description: "Your grades have been exported.",
+    });
+  }
+
+  const handleImportClick = () => {
+    importInputRef.current?.click();
+  };
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const text = e.target?.result;
+            if (typeof text !== 'string') {
+                throw new Error("File could not be read.");
+            }
+            const importedGrades = JSON.parse(text);
+
+            // Basic validation
+            if (Array.isArray(importedGrades) && importedGrades.every(g => 'id' in g && 'name' in g && 'grade' in g)) {
+                setGrades(importedGrades);
+                toast({
+                    title: "Import Successful",
+                    description: `${importedGrades.length} grades have been imported.`,
+                });
+            } else {
+                throw new Error("Invalid file format.");
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Import Failed",
+                description: "The selected file is not a valid grade export. Please try again.",
+            });
+        }
+    };
+    reader.readAsText(file);
+    // Reset file input
+    event.target.value = '';
+  };
+
 
   const groupedGradesByYear = useMemo(() => {
     return grades.reduce((acc, grade) => {
@@ -323,11 +391,28 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       </Card>
 
       <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Grade History</CardTitle>
-          <CardDescription>
-            A detailed overview of your academic performance.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle>Grade History</CardTitle>
+            <CardDescription>
+              A detailed overview of your academic performance.
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              ref={importInputRef}
+              className="hidden"
+              accept=".json"
+              onChange={handleImport}
+            />
+            <Button variant="outline" size="sm" onClick={handleImportClick}>
+              <Upload className="mr-2 h-4 w-4" /> Import
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleExport}>
+              <Download className="mr-2 h-4 w-4" /> Export
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {Object.keys(groupedGradesByYear).length > 0 ? (
@@ -411,7 +496,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
             </Accordion>
           ) : (
             <p className="text-center text-muted-foreground bg-muted p-8 rounded-lg">
-              No grades have been added yet.
+              No grades have been added yet. Use the form above or import your data to get started.
             </p>
           )}
         </CardContent>
@@ -419,3 +504,5 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
+
+    
