@@ -33,11 +33,10 @@ function gpaToGradePoints(gpa: number): string {
 
 function getDegreeClass(cgpa: number): string {
     if (cgpa >= 4.5) return "First Class";
-    if (cgpa >= 3.5) return "Second Class (Upper)";
-    if (cgpa >= 2.5) return "Second Class (Lower)";
+    if (cgpa >= 3.5) return "Second Class Upper";
+    if (cgpa >= 2.4) return "Second Class Lower";
     if (cgpa >= 1.5) return "Third Class";
-    if (cgpa >= 1.0) return "Pass";
-    return "N/A";
+    return "Fail";
 }
 
 export default function GpaSummary({ grades }: { grades: Grade[] }) {
