@@ -27,9 +27,9 @@ const ThemeToggle = () => {
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       className="p-2 rounded-full hover:bg-muted"
     >
-      <div className="relative h-5 w-5">
+      <div className="relative h-5 w-5 flex items-center justify-center">
         <Sun className="h-full w-full rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute top-0 left-0 h-full w-full rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        <Moon className="absolute h-full w-full rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       </div>
       <span className="sr-only">Toggle Theme</span>
     </button>
@@ -147,7 +147,7 @@ export default function Home() {
 
         <main
           className={cn(
-            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar pb-24'
+            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar pb-24 overflow-x-hidden'
           )}
         >
           <div className="animate-in fade-in-50 duration-300">
