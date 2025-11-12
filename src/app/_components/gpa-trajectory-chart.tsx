@@ -42,7 +42,7 @@ export default function GpaTrajectoryChart({ data, chartType }: GpaTrajectoryCha
       className="h-[250px] w-full"
     >
       {chartType === "line" ? (
-        <RechartsLineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+        <RechartsLineChart data={data} margin={{ right: 20, left: -10 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(value) => value.replace("\n", " ")} />
           <YAxis domain={[0, 5]} tickCount={6} />
