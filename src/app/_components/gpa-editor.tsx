@@ -406,10 +406,10 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
               accept=".json"
               onChange={handleImport}
             />
-            <Button variant="outline" size="sm" onClick={handleImportClick}>
+            <Button variant="outline" size="sm" onClick={handleImportClick} className="rounded-full">
               <Upload className="mr-2 h-4 w-4" /> Import
             </Button>
-            <Button variant="outline" size="sm" onClick={handleExport}>
+            <Button variant="outline" size="sm" onClick={handleExport} className="rounded-full">
               <Download className="mr-2 h-4 w-4" /> Export
             </Button>
           </div>
