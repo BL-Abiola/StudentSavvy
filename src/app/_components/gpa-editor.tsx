@@ -57,6 +57,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+const gradeMap = {
+  A: 5,
+  B: 4,
+  C: 3,
+  D: 2,
+  F: 0,
+};
+
 const gradeSchema = z.object({
   name: z.string().min(2, "Course name is required"),
   grade: z.coerce
@@ -104,7 +112,13 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   function addGrade(values: z.infer<typeof gradeSchema>) {
     const newGrade: Grade = { id: Date.now(), ...values }
     setGrades([...grades, newGrade])
-    form.reset()
+    form.reset({
+      name: "",
+      grade: 5.0,
+      credits: 3,
+      year: "Year 1",
+      session: "1st Semester",
+    });
   }
 
   function removeGrade(id: number) {
@@ -264,9 +278,23 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Grade</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.1" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        defaultValue={String(field.value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a grade" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(gradeMap).map(([letter, value]) => (
+                            <SelectItem key={letter} value={String(value)}>
+                              {letter}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -357,7 +385,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                                 {data.grades.map((g) => (
                                   <TableRow key={g.id}>
                                     <TableCell className="font-medium">{g.name}</TableCell>
-                                    <TableCell className="text-center">{gpaToLetter(g.grade)} ({g.grade.toFixed(2)})</TableCell>
+                                    <TableCell className="text-center">{gpaToLetter(g.grade)} ({g.grade.toFixed(1)})</TableCell>
                                     <TableCell className="text-center">{g.credits}</TableCell>
                                     <TableCell className="text-right">
                                       <Button
