@@ -159,10 +159,23 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       });
       return;
     }
-    const dataStr = JSON.stringify(grades, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const headers = ["id", "name", "grade", "credits", "year", "session"];
+    const csvContent = [
+      headers.join(','),
+      ...grades.map(g => headers.map(header => {
+        const value = g[header as keyof Grade];
+        if (typeof value === 'string') {
+          // Escape quotes by doubling them
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      }).join(','))
+    ].join('\n');
 
-    const exportFileDefaultName = 'studentsavvy_grades.json';
+    const dataUri = 'data:text/csv;charset=utf-8,'+ encodeURIComponent(csvContent);
+
+    const exportFileDefaultName = 'studentsavvy_grades.csv';
 
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -170,7 +183,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     linkElement.click();
     toast({
         title: "Export Successful",
-        description: "Your grades have been exported.",
+        description: "Your grades have been exported as a CSV file.",
     });
   }
 
@@ -532,5 +545,3 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
-
-    
