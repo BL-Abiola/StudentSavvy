@@ -49,7 +49,7 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
               'transition-colors duration-150',
               isActive
                 ? 'bg-primary text-primary-foreground'
-                : 'text-gray-600 dark:text-gray-400',
+                : 'text-gray-600 dark:text-gray-400 hover:bg-muted',
               state === 'collapsed' && 'justify-center'
             )}
           >

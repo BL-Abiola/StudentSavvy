@@ -1,4 +1,5 @@
 
+
 export type Grade = {
   id: number;
   name: string;
@@ -35,3 +36,11 @@ export type Class = {
 };
 
 export type Screen = 'dashboard' | 'performance' | 'ai-tools';
+
+export type User = {
+  name: string;
+  university: string;
+  faculty: string;
+  department: string;
+  year: string;
+};
