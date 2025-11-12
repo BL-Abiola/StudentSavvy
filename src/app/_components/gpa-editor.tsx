@@ -313,7 +313,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full rounded-full">
                 <CheckCircle className="mr-2 h-4 w-4" /> Calculate &amp; Save
                 Grade
               </Button>
