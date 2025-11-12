@@ -138,7 +138,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     <>
       <div className="flex items-center gap-3">
         <LineChart className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-extrabold">Your Academic Trajectory</h2>
+        <h2 className="text-3xl font-extrabold">GPA Snapshot</h2>
       </div>
       <p className="text-muted-foreground -mt-6">
         Instantly visualize your progress and gain insights.
