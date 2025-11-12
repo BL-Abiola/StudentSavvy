@@ -147,7 +147,7 @@ export default function Home() {
 
         <main
           className={cn(
-            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar pb-24 overflow-x-hidden'
+            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar pb-24'
           )}
         >
           <div className="animate-in fade-in-50 duration-300">
@@ -165,3 +165,5 @@ export default function Home() {
     </SidebarProvider>
   );
 }
+
+    

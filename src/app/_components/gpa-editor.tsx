@@ -275,7 +275,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(addGrade)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <FormField
                   control={form.control}
                   name="name"
@@ -317,7 +317,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                  <FormField
                   control={form.control}
                   name="session"
@@ -393,14 +393,14 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       </Card>
 
       <Card className="rounded-2xl">
-        <CardHeader className="flex flex-row items-start justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
           <div>
             <CardTitle>Grade History</CardTitle>
             <CardDescription>
               A detailed overview of your academic performance.
             </CardDescription>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2 sm:mt-0">
             <input
               type="file"
               ref={importInputRef}
@@ -532,3 +532,5 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
+
+    
