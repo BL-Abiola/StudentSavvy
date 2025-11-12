@@ -57,6 +57,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useToast } from "@/hooks/use-toast"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const gradeMap = {
   A: 5,
@@ -100,6 +101,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   const [qrCodeData, setQrCodeData] = useState<QrCodeInfo | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
@@ -456,6 +458,31 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                               </div>
                             </div>
                           </div>
+                          {isMobile ? (
+                            <div className="p-2 space-y-2">
+                                {data.grades.map(g => (
+                                    <Card key={g.id} className="p-3">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1">
+                                                <p className="font-bold">{g.name}</p>
+                                                <div className="flex gap-4 text-sm text-muted-foreground mt-1">
+                                                    <span>Grade: <span className="font-semibold text-foreground">{gpaToLetter(g.grade)} ({g.grade.toFixed(1)})</span></span>
+                                                    <span>Credits: <span className="font-semibold text-foreground">{g.credits}</span></span>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-destructive hover:text-destructive shrink-0"
+                                                onClick={() => removeGrade(g.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+                          ) : (
                           <div className="p-0">
                             <Table>
                               <TableHeader>
@@ -487,6 +514,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                               </TableBody>
                             </Table>
                           </div>
+                          )}
                         </div>
                       )
                     })}
@@ -504,5 +532,3 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
-
-    
