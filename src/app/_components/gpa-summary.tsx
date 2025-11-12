@@ -168,7 +168,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
             <CardTitle className="text-2xl font-bold">{cgpa.toFixed(2)}</CardTitle>
           </CardHeader>
         </Card>
-        <Card className="rounded-2xl hidden md:block">
+        <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Class of Degree</CardDescription>
             <CardTitle className="text-2xl font-bold flex items-center gap-2">
@@ -185,15 +185,6 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         </Card>
       </div>
       <div className="grid grid-cols-1 gap-6">
-        <Card className="rounded-2xl md:hidden">
-          <CardHeader className="p-4">
-            <CardDescription>Class of Degree</CardDescription>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                <Award className="w-6 h-6 text-amber-500" />
-                {degreeClass}
-            </CardTitle>
-          </CardHeader>
-        </Card>
         <Card className="rounded-2xl">
           <CardHeader className="flex flex-row items-start justify-between">
             <div>
