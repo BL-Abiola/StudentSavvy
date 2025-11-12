@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { BarChartIcon, LineChart } from "lucide-react"
+import { BarChartIcon, LineChart, Award } from "lucide-react"
 
 import GpaTrajectoryChart from "./gpa-trajectory-chart"
 import GpaDistributionChart from "./gpa-distribution-chart"
@@ -29,6 +29,15 @@ function gpaToGradePoints(gpa: number): string {
   if (gpa >= 3.0) return "C"
   if (gpa >= 2.0) return "D"
   return "F"
+}
+
+function getDegreeClass(cgpa: number): string {
+    if (cgpa >= 4.5) return "First Class";
+    if (cgpa >= 3.5) return "Second Class (Upper)";
+    if (cgpa >= 2.5) return "Second Class (Lower)";
+    if (cgpa >= 1.5) return "Third Class";
+    if (cgpa >= 1.0) return "Pass";
+    return "N/A";
 }
 
 export default function GpaSummary({ grades }: { grades: Grade[] }) {
@@ -90,8 +99,8 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
 
     const calculatedCgpa =
       cumulativeCredits > 0
-        ? (cumulativeQualityPoints / cumulativeCredits).toFixed(2)
-        : "0.00"
+        ? (cumulativeQualityPoints / cumulativeCredits)
+        : 0
 
     return {
       cgpa: calculatedCgpa,
@@ -133,6 +142,8 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     return groupedGrades[lastSemesterName]?.totalCredits || 0
   }, [grades, groupedGrades])
 
+  const degreeClass = getDegreeClass(cgpa);
+
 
   return (
     <>
@@ -154,14 +165,15 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Overall CGPA</CardDescription>
-            <CardTitle className="text-2xl font-bold">{cgpa}</CardTitle>
+            <CardTitle className="text-2xl font-bold">{cgpa.toFixed(2)}</CardTitle>
           </CardHeader>
         </Card>
-        <Card className="rounded-2xl">
+        <Card className="rounded-2xl hidden md:block">
           <CardHeader className="p-4">
-            <CardDescription>Semester Credits</CardDescription>
-            <CardTitle className="text-2xl font-bold">
-              {semesterCredits}
+            <CardDescription>Class of Degree</CardDescription>
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                <Award className="w-6 h-6 text-amber-500" />
+                {degreeClass}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -173,6 +185,15 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         </Card>
       </div>
       <div className="grid grid-cols-1 gap-6">
+        <Card className="rounded-2xl md:hidden">
+          <CardHeader className="p-4">
+            <CardDescription>Class of Degree</CardDescription>
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                <Award className="w-6 h-6 text-amber-500" />
+                {degreeClass}
+            </CardTitle>
+          </CardHeader>
+        </Card>
         <Card className="rounded-2xl">
           <CardHeader className="flex flex-row items-start justify-between">
             <div>
