@@ -12,57 +12,30 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { GraduationCap, Sun, Moon } from 'lucide-react';
+import { GraduationCap, Settings } from 'lucide-react';
 import Dashboard from './_components/dashboard';
 import AiPremium from './_components/ai-premium';
 import GpaTracker from './_components/gpa-tracker';
-import { useTheme } from 'next-themes';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import Onboarding from './_components/onboarding';
+import SettingsDialog from './_components/settings-dialog';
+import { Button } from '@/components/ui/button';
 
-const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
-  return (
-    <button
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      className="p-2 rounded-full hover:bg-muted"
-    >
-      <div className="relative h-5 w-5 flex items-center justify-center">
-        <Sun className="h-full w-full rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute h-full w-full rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      </div>
-      <span className="sr-only">Toggle Theme</span>
-    </button>
-  );
-};
-
-const SidebarThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
-  return (
-    <button
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      className="w-full flex items-center gap-3 p-3 text-sm font-medium rounded-2xl hover:bg-muted"
-    >
-      <div className="relative h-5 w-5">
-        <Sun className="h-full w-full rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute top-0 left-0 h-full w-full rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      </div>
-      <span
-        className={cn(
-          'transition-opacity duration-200',
-          'group-data-[collapsed]/sidebar-wrapper:opacity-0 group-data-[collapsed]/sidebar-wrapper:w-0'
-        )}
-      >
-        Toggle Theme
-      </span>
-    </button>
-  );
-};
+const SettingsButton = ({ onClick }: { onClick: () => void }) => (
+  <Button variant="ghost" size="icon" onClick={onClick} className="md:w-full md:justify-start md:px-3 md:gap-3">
+    <Settings className="h-5 w-5" />
+    <span className={cn('hidden md:inline-block transition-opacity duration-200', 'group-data-[collapsed]/sidebar-wrapper:opacity-0 group-data-[collapsed]/sidebar-wrapper:w-0')}>
+      Settings
+    </span>
+    <span className="sr-only">Open Settings</span>
+  </Button>
+);
 
 export default function Home() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
   const [user, setUser] = useState<User | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     const savedScreen = localStorage.getItem('activeScreen');
@@ -74,7 +47,9 @@ export default function Home() {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     } else {
-      setShowOnboarding(true);
+      // Small delay to prevent flash of onboarding screen if user is found
+      const timer = setTimeout(() => setShowOnboarding(true), 100);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -129,7 +104,7 @@ export default function Home() {
           />
         </SidebarContent>
         <SidebarFooter className="p-2">
-          <SidebarThemeToggle />
+          <SettingsButton onClick={() => setShowSettings(true)} />
         </SidebarFooter>
       </Sidebar>
 
@@ -142,12 +117,13 @@ export default function Home() {
               <p className="text-xs text-muted-foreground">{user?.university}</p>
             </div>
           </div>
-          <ThemeToggle />
+          <SettingsButton onClick={() => setShowSettings(true)} />
         </header>
 
         <main
           className={cn(
-            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar pb-24'
+            'flex-1 mx-auto p-4 md:p-8 w-full max-w-4xl no-scrollbar pb-24',
+            'overflow-y-auto'
           )}
         >
           <div className="animate-in fade-in-50 duration-300">
@@ -162,8 +138,7 @@ export default function Home() {
           />
         </div>
       </SidebarInset>
+      <SettingsDialog open={showSettings} onOpenChange={setShowSettings} />
     </SidebarProvider>
   );
 }
-
-    
