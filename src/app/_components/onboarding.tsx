@@ -91,7 +91,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   return (
     <Dialog open={true}>
-      <DialogContent className="sm:max-w-[425px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-[425px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <GraduationCap className="w-8 h-8 text-primary" /> Welcome to StudentSavvy!
