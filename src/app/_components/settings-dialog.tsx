@@ -90,14 +90,14 @@ export default function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] rounded-2xl">
+      <DialogContent className="h-full sm:h-auto sm:max-w-[480px] sm:rounded-2xl flex flex-col">
         <DialogHeader>
           <DialogTitle>Application Settings</DialogTitle>
           <DialogDescription>
             Manage your preferences and data.
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4 space-y-6">
+        <div className="py-4 space-y-6 flex-1 overflow-y-auto">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="api-key">Gemini API Key</Label>
