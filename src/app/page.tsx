@@ -22,7 +22,7 @@ import SettingsDialog from './_components/settings-dialog';
 import { Button } from '@/components/ui/button';
 
 const SettingsButton = ({ onClick }: { onClick: () => void }) => (
-  <Button variant="ghost" size="icon" onClick={onClick} className="md:w-full md:justify-start md:px-3 md:gap-3">
+  <Button variant="ghost" size="icon" onClick={onClick} className="md:w-full md:justify-start md:px-3 md:gap-3 hover:bg-transparent dark:hover:bg-transparent">
     <Settings className="h-5 w-5" />
     <span className={cn('hidden md:inline-block transition-opacity duration-200', 'group-data-[collapsed]/sidebar-wrapper:opacity-0 group-data-[collapsed]/sidebar-wrapper:w-0')}>
       Settings
