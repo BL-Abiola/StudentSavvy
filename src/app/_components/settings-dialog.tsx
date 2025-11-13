@@ -47,17 +47,16 @@ const ThemeToggle = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Theme</CardTitle>
-        <CardDescription>Switch between light and dark mode.</CardDescription>
+        <CardTitle>Appearance</CardTitle>
+        <CardDescription>
+          Currently in {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <h3 className="font-medium">Appearance</h3>
-            <p className="text-sm text-muted-foreground">
-              Currently in {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-            </p>
-          </div>
+      <CardContent className="pt-2">
+        <div className="flex items-center justify-between rounded-lg">
+          <p className="text-sm text-muted-foreground">
+            Switch between light and dark mode.
+          </p>
           <Button
             variant="secondary"
             size="icon"
@@ -120,7 +119,7 @@ export default function SettingsDialog({
                 Your key is stored locally and is used for AI features.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <div className="space-y-2">
                 <Label htmlFor="api-key" className="sr-only">Gemini API Key</Label>
                 <Input
@@ -131,7 +130,7 @@ export default function SettingsDialog({
                   onChange={(e) => setApiKey(e.target.value)}
                 />
               </div>
-              <Button onClick={handleSaveApiKey} className="w-full">
+              <Button onClick={handleSaveApiKey} className="w-full mt-4">
                 <KeyRound className="mr-2" /> Save API Key
               </Button>
             </CardContent>
