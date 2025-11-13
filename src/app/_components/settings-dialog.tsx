@@ -23,6 +23,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTheme } from 'next-themes';
@@ -38,23 +45,31 @@ const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex items-center justify-between rounded-lg border p-4">
-      <div className="space-y-0.5">
-        <h3 className="font-medium">Theme</h3>
-        <p className="text-sm text-muted-foreground">
-          Switch between light and dark mode.
-        </p>
-      </div>
-      <Button
-        variant="secondary"
-        size="icon"
-        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      >
-        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        <span className="sr-only">Toggle theme</span>
-      </Button>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Theme</CardTitle>
+        <CardDescription>Switch between light and dark mode.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between rounded-lg border p-4">
+          <div className="space-y-0.5">
+            <h3 className="font-medium">Appearance</h3>
+            <p className="text-sm text-muted-foreground">
+              Currently in {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          >
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -98,60 +113,70 @@ export default function SettingsDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 space-y-6 flex-1 overflow-y-auto">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="api-key">Gemini API Key</Label>
-              <Input
-                id="api-key"
-                type="password"
-                placeholder="Enter your Gemini API key"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gemini API Key</CardTitle>
+              <CardDescription>
                 Your key is stored locally and is used for AI features.
-              </p>
-            </div>
-            <Button onClick={handleSaveApiKey} className="w-full">
-              <KeyRound className="mr-2" /> Save API Key
-            </Button>
-          </div>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="api-key" className="sr-only">Gemini API Key</Label>
+                <Input
+                  id="api-key"
+                  type="password"
+                  placeholder="Enter your Gemini API key"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                />
+              </div>
+              <Button onClick={handleSaveApiKey} className="w-full">
+                <KeyRound className="mr-2" /> Save API Key
+              </Button>
+            </CardContent>
+          </Card>
+          
           <ThemeToggle />
-          <div className="flex items-center justify-between rounded-lg border border-destructive/50 p-4">
-            <div className="space-y-0.5">
-              <h3 className="font-medium text-destructive">Danger Zone</h3>
-              <p className="text-sm text-muted-foreground">
+
+          <Card className="border-destructive">
+             <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
                 This will permanently delete all your data.
-              </p>
-            </div>
-            <AlertDialog
-              open={showRestartConfirm}
-              onOpenChange={setShowRestartConfirm}
-            >
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Power className="mr-2" /> Restart
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="flex items-center gap-2">
-                    <TriangleAlert className="text-destructive" /> Are you sure?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete all your grades, tasks, and
-                    other saved information. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleRestart}>
-                    Yes, restart app
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <AlertDialog
+                open={showRestartConfirm}
+                onOpenChange={setShowRestartConfirm}
+                >
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full">
+                    <Power className="mr-2" /> Restart Application
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                        <TriangleAlert className="text-destructive" /> Are you sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete all your grades, tasks, and
+                        other saved information. This action cannot be undone.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleRestart}>
+                        Yes, restart app
+                    </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+                </AlertDialog>
+            </CardContent>
+          </Card>
+
         </div>
         <DialogFooter>
           <DialogClose asChild>
