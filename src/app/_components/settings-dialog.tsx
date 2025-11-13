@@ -46,27 +46,22 @@ const ThemeToggle = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Appearance</CardTitle>
-        <CardDescription>
-          Currently in {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-2">
-        <div className="flex items-center justify-between rounded-lg">
-          <p className="text-sm text-muted-foreground">
-            Switch between light and dark mode.
-          </p>
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
+      <CardContent className="flex flex-row items-center justify-between p-6">
+        <div>
+          <CardTitle>Appearance</CardTitle>
+          <CardDescription>
+            Currently in {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+          </CardDescription>
         </div>
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        >
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
       </CardContent>
     </Card>
   );
