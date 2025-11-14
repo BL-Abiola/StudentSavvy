@@ -298,8 +298,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setSemesterToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => semesterToDelete && removeSemester(semesterToDelete.year, semesterToDelete.session)}>
+            <AlertDialogCancel className="rounded-full" onClick={() => setSemesterToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="rounded-full" onClick={() => semesterToDelete && removeSemester(semesterToDelete.year, semesterToDelete.session)}>
               Yes, delete semester
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -316,8 +316,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setGradeToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => gradeToDelete && removeGrade(gradeToDelete)}>
+            <AlertDialogCancel className="rounded-full" onClick={() => setGradeToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="rounded-full" onClick={() => gradeToDelete && removeGrade(gradeToDelete)}>
               Yes, delete grade
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -591,3 +591,5 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
+
+    
