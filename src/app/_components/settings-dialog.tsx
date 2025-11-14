@@ -50,9 +50,10 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useTheme } from 'next-themes';
-import { Sun, Moon, Power, KeyRound, TriangleAlert, User as UserIcon } from 'lucide-react';
+import { Power, KeyRound, TriangleAlert, User as UserIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { User } from '@/types';
+import { Switch } from '@/components/ui/switch';
 
 type SettingsDialogProps = {
   open: boolean;
@@ -75,22 +76,11 @@ const ThemeToggle = () => {
   return (
     <Card>
       <CardContent className="flex flex-row items-center justify-between p-6">
-        <div>
-          <CardTitle>Appearance</CardTitle>
-          <CardDescription>
-            Currently in {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-          </CardDescription>
-        </div>
-        <Button
-          variant="secondary"
-          size="icon"
-          className="rounded-full"
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-        >
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        <CardTitle>Appearance</CardTitle>
+        <Switch
+          checked={theme === 'dark'}
+          onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+        />
       </CardContent>
     </Card>
   );
