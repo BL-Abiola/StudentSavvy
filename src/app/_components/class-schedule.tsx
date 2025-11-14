@@ -121,7 +121,7 @@ export default function ClassSchedule() {
                     <FormItem>
                         <FormLabel>Course Name</FormLabel>
                         <FormControl>
-                        <Input placeholder="e.g., Intro to Microeconomics" {...field} />
+                        <Input placeholder="Course name" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -238,5 +238,3 @@ export default function ClassSchedule() {
     </Card>
   );
 }
-
-    
