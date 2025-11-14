@@ -24,17 +24,17 @@ import {
 import { ChevronDown } from "lucide-react"
 
 function gpaToGradePoints(gpa: number): string {
-  if (gpa >= 4.5) return "A"
-  if (gpa >= 3.5) return "B"
-  if (gpa >= 2.5) return "C"
-  if (gpa >= 1.5) return "D"
+  if (gpa >= 5) return "A"
+  if (gpa >= 4) return "B"
+  if (gpa >= 3) return "C"
+  if (gpa >= 2) return "D"
   return "F"
 }
 
 function getDegreeClass(cgpa: number): string {
     if (cgpa >= 4.5) return "First Class";
     if (cgpa >= 3.5) return "Second Class Upper";
-    if (cgpa >= 2.40) return "Second Class Lower";
+    if (cgpa >= 2.4) return "Second Class Lower";
     if (cgpa >= 1.5) return "Third Class";
     return "Fail";
 }

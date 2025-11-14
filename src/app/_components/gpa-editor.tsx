@@ -79,10 +79,10 @@ const gradeSchema = z.object({
 })
 
 function gpaToLetter(gpa: number): string {
-  if (gpa >= 4.5) return "A"
-  if (gpa >= 3.5) return "B"
-  if (gpa >= 2.5) return "C"
-  if (gpa >= 1.5) return "D"
+  if (gpa >= 5) return "A"
+  if (gpa >= 4) return "B"
+  if (gpa >= 3) return "C"
+  if (gpa >= 2) return "D"
   return "F"
 }
 
