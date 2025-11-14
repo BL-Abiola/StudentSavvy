@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -57,7 +58,7 @@ const SidebarProvider = React.forwardRef<
 >(
   (
     {
-      defaultOpen = true,
+      defaultOpen = false,
       open: openProp,
       onOpenChange: setOpenProp,
       className,
@@ -217,6 +218,7 @@ const Sidebar = React.forwardRef<
         ref={ref}
         className="group peer hidden md:block text-sidebar-foreground"
         data-state={state}
+        data-collapsed={state === "collapsed"}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
         data-side={side}

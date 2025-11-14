@@ -22,7 +22,7 @@ import SettingsDialog from './_components/settings-dialog';
 import { Button } from '@/components/ui/button';
 
 const SettingsButton = ({ onClick }: { onClick: () => void }) => (
-  <Button variant="ghost" size="icon" onClick={onClick} className="md:w-full md:justify-start md:px-3 md:gap-3 hover:bg-transparent dark:hover:bg-transparent">
+  <Button variant="ghost" size="icon" onClick={onClick} className="hover:bg-transparent dark:hover:bg-transparent">
     <Settings className="h-5 w-5" />
     <span className={cn('hidden md:inline-block transition-opacity duration-200', 'group-data-[collapsed]/sidebar-wrapper:opacity-0 group-data-[collapsed]/sidebar-wrapper:w-0')}>
       Settings
@@ -90,12 +90,12 @@ export default function Home() {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <Sidebar collapsible="icon" className="hidden md:block border-r">
         <SidebarHeader>
           <div className="flex flex-col gap-2 p-2 items-center">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <div className="text-center">
+            <div className="text-center group-data-[collapsed=true]:hidden">
               <span className="text-lg font-bold">{user?.name}</span>
               <p className="text-xs text-muted-foreground">{user?.university} - {user?.year}</p>
             </div>
@@ -108,20 +108,33 @@ export default function Home() {
           />
         </SidebarContent>
         <SidebarFooter className="p-2">
-          <SettingsButton onClick={() => setShowSettings(true)} />
+           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="md:w-full md:justify-start md:px-3 md:gap-3 hover:bg-muted">
+            <Settings className="h-5 w-5" />
+            <span className={cn('transition-opacity duration-200', 'group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:w-0')}>
+              Settings
+            </span>
+            <span className="sr-only">Open Settings</span>
+          </Button>
         </SidebarFooter>
       </Sidebar>
 
       <SidebarInset>
-        <header className="flex items-center justify-between p-4 md:hidden border-b">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-primary" />
+        <header className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-3">
+            <GraduationCap className="w-8 h-8 text-primary" />
             <div>
-              <h1 className="text-base font-semibold leading-tight">{user?.name}</h1>
-              <p className="text-xs text-muted-foreground">{user?.university} - {user?.year}</p>
+              <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
+              <p className="text-sm text-muted-foreground">{user?.university} - {user?.year}</p>
             </div>
           </div>
-          <SettingsButton onClick={() => setShowSettings(true)} />
+          <div className="flex items-center gap-2">
+            <div className="hidden md:block">
+              <SettingsButton onClick={() => setShowSettings(true)} />
+            </div>
+            <div className="md:hidden">
+               <SettingsButton onClick={() => setShowSettings(true)} />
+            </div>
+          </div>
         </header>
 
         <main
