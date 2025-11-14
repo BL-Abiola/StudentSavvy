@@ -80,7 +80,7 @@ const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <Card>
+    <Card className="rounded-2xl">
       <CardContent className="flex flex-row items-center justify-between p-6">
         <div className="space-y-0.5">
           <CardTitle>Appearance</CardTitle>
@@ -151,7 +151,7 @@ export default function SettingsDialog({
         </DialogHeader>
         <div className="py-4 space-y-6 flex-1 overflow-y-auto">
           
-          <Card>
+          <Card className="rounded-2xl">
             <Accordion type="single" collapsible>
                 <AccordionItem value="edit-profile" className="border-b-0">
                     <AccordionTrigger className="p-6 hover:no-underline">
@@ -248,7 +248,7 @@ export default function SettingsDialog({
             </Accordion>
           </Card>
           
-          <Card>
+          <Card className="rounded-2xl">
             <Accordion type="single" collapsible>
               <AccordionItem value="api-key" className="border-b-0">
                 <AccordionTrigger className="p-6 hover:no-underline">
@@ -288,7 +288,7 @@ export default function SettingsDialog({
           
           <ThemeToggle />
 
-          <Card>
+          <Card className="rounded-2xl">
             <Accordion type="single" collapsible>
               <AccordionItem value="danger-zone" className="border-b-0">
                 <AccordionTrigger className="p-6 hover:no-underline">
