@@ -289,41 +289,49 @@ export default function SettingsDialog({
           <ThemeToggle />
 
           <Card className="border-destructive">
-             <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
-              <CardDescription>
-                This will permanently delete all your data.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <AlertDialog
-                open={showRestartConfirm}
-                onOpenChange={setShowRestartConfirm}
-                >
-                <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="w-full">
-                    <Power className="mr-2 h-4 w-4" /> Restart Application
-                    </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                    <AlertDialogTitle className="flex items-center gap-2">
-                        <TriangleAlert className="text-destructive" /> Are you sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This will permanently delete all your grades, tasks, and
-                        other saved information. This action cannot be undone.
-                    </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleRestart}>
-                        Yes, restart app
-                    </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-                </AlertDialog>
-            </CardContent>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="danger-zone" className="border-b-0">
+                <AccordionTrigger className="p-6 hover:no-underline">
+                  <div className="text-left">
+                    <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                    <CardDescription>
+                      This will permanently delete all your data.
+                    </CardDescription>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <AlertDialog
+                    open={showRestartConfirm}
+                    onOpenChange={setShowRestartConfirm}
+                  >
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        <Power className="mr-2 h-4 w-4" /> Restart Application
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                          <TriangleAlert className="text-destructive" /> Are you
+                          sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete all your grades, tasks,
+                          and other saved information. This action cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleRestart}>
+                          Yes, restart app
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </Card>
 
         </div>
