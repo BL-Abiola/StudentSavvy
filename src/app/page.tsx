@@ -11,6 +11,7 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarFooter,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { GraduationCap, Settings } from 'lucide-react';
 import Dashboard from './_components/dashboard';
@@ -98,7 +99,7 @@ export default function Home() {
           />
         </SidebarContent>
         <SidebarFooter className="p-2">
-           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="md:w-full md:justify-start md:px-3 md:gap-3 hover:bg-muted">
+           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="w-full justify-start px-3 gap-3 hover:bg-muted">
             <Settings className="h-5 w-5" />
             <span className={cn('transition-opacity duration-200', 'group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:w-0')}>
               Settings
@@ -111,6 +112,7 @@ export default function Home() {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
+             <SidebarTrigger className="md:hidden" />
             <GraduationCap className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
