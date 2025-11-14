@@ -322,8 +322,8 @@ export default function SettingsDialog({
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleRestart}>
+                        <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                        <AlertDialogAction className="rounded-full" onClick={handleRestart}>
                           Yes, restart app
                         </AlertDialogAction>
                       </AlertDialogFooter>
