@@ -97,7 +97,7 @@ export default function Home() {
             <GraduationCap className="w-8 h-8 text-primary" />
             <div className="text-center">
               <span className="text-lg font-bold">{user?.name}</span>
-              <p className="text-xs text-muted-foreground">{user?.university}</p>
+              <p className="text-xs text-muted-foreground">{user?.university} - {user?.year}</p>
             </div>
           </div>
         </SidebarHeader>
@@ -118,7 +118,7 @@ export default function Home() {
             <GraduationCap className="w-6 h-6 text-primary" />
             <div>
               <h1 className="text-base font-semibold leading-tight">{user?.name}</h1>
-              <p className="text-xs text-muted-foreground">{user?.university}</p>
+              <p className="text-xs text-muted-foreground">{user?.university} - {user?.year}</p>
             </div>
           </div>
           <SettingsButton onClick={() => setShowSettings(true)} />
