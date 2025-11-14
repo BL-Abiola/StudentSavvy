@@ -111,7 +111,16 @@ export default function SettingsDialog({
             <CardHeader>
               <CardTitle>Gemini API Key</CardTitle>
               <CardDescription>
-                Your key is stored locally and is used for AI features.
+                Get your API key from{' '}
+                <a
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Google AI Studio
+                </a>
+                . Your key is stored locally and is used for AI features.
               </CardDescription>
             </CardHeader>
             <CardContent>
