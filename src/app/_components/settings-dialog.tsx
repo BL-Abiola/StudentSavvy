@@ -48,6 +48,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { useTheme } from 'next-themes';
 import { Power, KeyRound, TriangleAlert, User as UserIcon } from 'lucide-react';
@@ -76,7 +82,9 @@ const ThemeToggle = () => {
   return (
     <Card>
       <CardContent className="flex flex-row items-center justify-between p-6">
-        <CardTitle>Appearance</CardTitle>
+        <div className="space-y-0.5">
+          <CardTitle>Appearance</CardTitle>
+        </div>
         <Switch
           checked={theme === 'dark'}
           onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
@@ -144,97 +152,100 @@ export default function SettingsDialog({
         <div className="py-4 space-y-6 flex-1 overflow-y-auto">
           
           <Card>
-            <CardHeader>
-                <CardTitle>Edit Profile</CardTitle>
-                <CardDescription>Update your personal information.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleProfileUpdate)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="university"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>University</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="faculty"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Faculty</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="department"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Department</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                         <FormField
-                            control={form.control}
-                            name="year"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Year</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select your current year" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                    <SelectItem value="Year 1">Year 1</SelectItem>
-                                    <SelectItem value="Year 2">Year 2</SelectItem>
-                                    <SelectItem value="Year 3">Year 3</SelectItem>
-                                    <SelectItem value="Year 4">Year 4</SelectItem>
-                                    <SelectItem value="Year 5">Year 5</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit" className="w-full">
-                            <UserIcon className="mr-2 h-4 w-4" /> Save Profile
-                        </Button>
-                    </form>
-                </Form>
-            </CardContent>
+            <Accordion type="single" collapsible>
+                <AccordionItem value="edit-profile" className="border-b-0">
+                    <AccordionTrigger className="p-6 hover:no-underline">
+                        <CardTitle>Edit Profile</CardTitle>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-6">
+                         <Form {...form}>
+                            <form onSubmit={form.handleSubmit(handleProfileUpdate)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="university"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>University</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="faculty"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Faculty</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="department"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Department</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="year"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Year</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                            <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select your current year" />
+                                            </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                            <SelectItem value="Year 1">Year 1</SelectItem>
+                                            <SelectItem value="Year 2">Year 2</SelectItem>
+                                            <SelectItem value="Year 3">Year 3</SelectItem>
+                                            <SelectItem value="Year 4">Year 4</SelectItem>
+                                            <SelectItem value="Year 5">Year 5</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" className="w-full">
+                                    <UserIcon className="mr-2 h-4 w-4" /> Save Profile
+                                </Button>
+                            </form>
+                        </Form>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
           </Card>
           
           <Card>
