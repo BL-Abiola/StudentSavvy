@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/card"
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -45,7 +47,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CheckCircle, Trash2, QrCode, Upload, Download } from "lucide-react"
+import { CheckCircle, Trash2, QrCode, Upload, Download, TriangleAlert } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import QRCode from "qrcode.react"
 import {
@@ -102,6 +104,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   const importInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [semesterToDelete, setSemesterToDelete] = useState<{ year: string; session: string } | null>(null);
+  const [gradeToDelete, setGradeToDelete] = useState<number | null>(null);
 
   const form = useForm<z.infer<typeof gradeSchema>>({
     resolver: zodResolver(gradeSchema),
@@ -132,10 +136,12 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
 
   function removeGrade(id: number) {
     setGrades(grades.filter((g) => g.id !== id))
+    setGradeToDelete(null);
   }
 
   function removeSemester(year: string, session: string) {
     setGrades(grades.filter((g) => !(g.year === year && g.session === session)))
+    setSemesterToDelete(null);
   }
   
   function handleGenerateQrCode(semester: string, data: any) {
@@ -281,6 +287,42 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
           </AlertDialogContent>
         </AlertDialog>
       )}
+
+      {/* Delete Semester Confirmation */}
+       <AlertDialog open={!!semesterToDelete} onOpenChange={(open) => !open && setSemesterToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2"><TriangleAlert className="text-destructive" />Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete all grades for {semesterToDelete?.year} {semesterToDelete?.session}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setSemesterToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => semesterToDelete && removeSemester(semesterToDelete.year, semesterToDelete.session)}>
+              Yes, delete semester
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Grade Confirmation */}
+      <AlertDialog open={!!gradeToDelete} onOpenChange={(open) => !open && setGradeToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2"><TriangleAlert className="text-destructive" />Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this grade entry.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setGradeToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => gradeToDelete && removeGrade(gradeToDelete)}>
+              Yes, delete grade
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Card className="rounded-2xl">
         <CardHeader>
@@ -467,7 +509,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 text-destructive hover:text-destructive"
-                                    onClick={() => removeSemester(year, session)}
+                                    onClick={() => setSemesterToDelete({ year, session })}
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
@@ -491,7 +533,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                                                 variant="ghost"
                                                 size="icon"
                                                 className="h-8 w-8 text-destructive hover:text-destructive shrink-0"
-                                                onClick={() => removeGrade(g.id)}
+                                                onClick={() => setGradeToDelete(g.id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
@@ -521,7 +563,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8 text-destructive hover:text-destructive"
-                                        onClick={() => removeGrade(g.id)}
+                                        onClick={() => setGradeToDelete(g.id)}
                                       >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
