@@ -22,9 +22,9 @@ import SettingsDialog from './_components/settings-dialog';
 import { Button } from '@/components/ui/button';
 
 const SettingsButton = ({ onClick }: { onClick: () => void }) => (
-  <Button variant="ghost" size="icon" onClick={onClick} className="hover:bg-transparent dark:hover:bg-transparent">
+  <Button variant="ghost" size="icon" onClick={onClick} className="md:w-full md:justify-start md:px-3 md:gap-3 hover:bg-muted">
     <Settings className="h-5 w-5" />
-    <span className={cn('hidden md:inline-block transition-opacity duration-200', 'group-data-[collapsed]/sidebar-wrapper:opacity-0 group-data-[collapsed]/sidebar-wrapper:w-0')}>
+    <span className={cn('transition-opacity duration-200', 'group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:w-0')}>
       Settings
     </span>
     <span className="sr-only">Open Settings</span>
@@ -127,14 +127,10 @@ export default function Home() {
               <p className="text-sm text-muted-foreground">{user?.university} - {user?.year}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden md:block">
-              <SettingsButton onClick={() => setShowSettings(true)} />
-            </div>
-            <div className="md:hidden">
-               <SettingsButton onClick={() => setShowSettings(true)} />
-            </div>
-          </div>
+           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-muted">
+            <Settings className="h-5 w-5" />
+            <span className="sr-only">Open Settings</span>
+          </Button>
         </header>
 
         <main
