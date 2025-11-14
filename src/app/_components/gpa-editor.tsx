@@ -342,7 +342,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                     <FormItem>
                       <FormLabel>Course Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., CS 101" {...field} />
+                        <Input placeholder="Course name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
