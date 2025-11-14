@@ -116,7 +116,11 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
 
   function addGrade(values: z.infer<typeof gradeSchema>) {
     const newGrade: Grade = { id: Date.now(), ...values }
-    setGrades([...grades, newGrade])
+    setGrades([...grades, newGrade]);
+    toast({
+        title: "Grade Saved",
+        description: `Your grade for ${values.name} has been recorded.`,
+    });
     form.reset({
       name: "",
       grade: undefined,
