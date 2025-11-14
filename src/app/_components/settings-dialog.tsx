@@ -249,37 +249,41 @@ export default function SettingsDialog({
           </Card>
           
           <Card>
-            <CardHeader>
-              <CardTitle>Gemini API Key</CardTitle>
-              <CardDescription>
-                Get your API key from{' '}
-                <a
-                  href="https://aistudio.google.com/app/apikey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline"
-                >
-                  Google AI Studio
-                </a>
-                . Your key is stored locally and is used for AI features.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Input
-                  id="api-key"
-                  type="password"
-                  placeholder="Enter your Gemini API key"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                />
-              </div>
-              <DialogClose asChild>
-                <Button onClick={handleSaveApiKey} className="w-full mt-4">
-                  <KeyRound className="mr-2 h-4 w-4" /> Save API Key
-                </Button>
-              </DialogClose>
-            </CardContent>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="api-key" className="border-b-0">
+                <AccordionTrigger className="p-6 hover:no-underline">
+                  <CardTitle>Gemini API Key</CardTitle>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6 space-y-4">
+                   <CardDescription>
+                    Get your API key from{' '}
+                    <a
+                      href="https://aistudio.google.com/app/apikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Google AI Studio
+                    </a>
+                    . Your key is stored locally and is used for AI features.
+                  </CardDescription>
+                  <div className="space-y-2">
+                    <Input
+                      id="api-key"
+                      type="password"
+                      placeholder="Enter your Gemini API key"
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                    />
+                  </div>
+                  <DialogClose asChild>
+                    <Button onClick={handleSaveApiKey} className="w-full">
+                      <KeyRound className="mr-2 h-4 w-4" /> Save API Key
+                    </Button>
+                  </DialogClose>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </Card>
           
           <ThemeToggle />
