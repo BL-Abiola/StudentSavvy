@@ -21,16 +21,6 @@ import Onboarding from './_components/onboarding';
 import SettingsDialog from './_components/settings-dialog';
 import { Button } from '@/components/ui/button';
 
-const SettingsButton = ({ onClick }: { onClick: () => void }) => (
-  <Button variant="ghost" size="icon" onClick={onClick} className="md:w-full md:justify-start md:px-3 md:gap-3 hover:bg-muted">
-    <Settings className="h-5 w-5" />
-    <span className={cn('transition-opacity duration-200', 'group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:w-0')}>
-      Settings
-    </span>
-    <span className="sr-only">Open Settings</span>
-  </Button>
-);
-
 export default function Home() {
   const [activeScreen, setActiveScreen] = useState<Screen>('performance');
   const [user, setUser] = useState<User | null>(null);
