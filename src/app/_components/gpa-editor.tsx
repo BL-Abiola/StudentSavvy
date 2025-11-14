@@ -108,7 +108,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     defaultValues: {
       name: "",
       grade: 5.0,
-      credits: 3,
+      credits: undefined,
       year: "Year 1",
       session: "1st Semester",
     },
@@ -120,7 +120,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     form.reset({
       name: "",
       grade: 5.0,
-      credits: 3,
+      credits: undefined,
       year: "Year 1",
       session: "1st Semester",
     });
@@ -389,7 +389,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                     <FormItem>
                       <FormLabel>Credits</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.5" {...field} />
+                        <Input type="number" step="0.5" placeholder="Enter credits" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
