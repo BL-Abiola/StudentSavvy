@@ -107,7 +107,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     resolver: zodResolver(gradeSchema),
     defaultValues: {
       name: "",
-      grade: 5.0,
+      grade: undefined,
       credits: undefined,
       year: "Year 1",
       session: "1st Semester",
@@ -119,7 +119,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     setGrades([...grades, newGrade])
     form.reset({
       name: "",
-      grade: 5.0,
+      grade: undefined,
       credits: undefined,
       year: "Year 1",
       session: "1st Semester",
@@ -363,7 +363,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                       <FormLabel>Grade</FormLabel>
                       <Select
                         onValueChange={(value) => field.onChange(Number(value))}
-                        defaultValue={String(field.value)}
+                        value={field.value !== undefined ? String(field.value) : ''}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -389,7 +389,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                     <FormItem>
                       <FormLabel>Credits</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.5" placeholder="Enter credits" {...field} />
+                        <Input type="number" step="0.5" placeholder="Enter credits" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -545,3 +545,5 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
+
+    
