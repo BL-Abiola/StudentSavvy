@@ -186,32 +186,34 @@ export default function SettingsDialog({
                                 </FormItem>
                             )}
                         />
-                         <FormField
-                            control={form.control}
-                            name="faculty"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Faculty</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                         <FormField
-                            control={form.control}
-                            name="department"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Department</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="faculty"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Faculty</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="department"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Department</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                          <FormField
                             control={form.control}
                             name="year"
@@ -237,7 +239,7 @@ export default function SettingsDialog({
                             )}
                         />
                         <Button type="submit" className="w-full">
-                            <UserIcon className="mr-2" /> Save Profile
+                            <UserIcon className="mr-2 h-4 w-4" /> Save Profile
                         </Button>
                     </form>
                 </Form>
@@ -271,7 +273,7 @@ export default function SettingsDialog({
                 />
               </div>
               <Button onClick={handleSaveApiKey} className="w-full mt-4">
-                <KeyRound className="mr-2" /> Save API Key
+                <KeyRound className="mr-2 h-4 w-4" /> Save API Key
               </Button>
             </CardContent>
           </Card>
@@ -292,7 +294,7 @@ export default function SettingsDialog({
                 >
                 <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full">
-                    <Power className="mr-2" /> Restart Application
+                    <Power className="mr-2 h-4 w-4" /> Restart Application
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
