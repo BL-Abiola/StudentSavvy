@@ -288,7 +288,7 @@ export default function SettingsDialog({
           
           <ThemeToggle />
 
-          <Card className="border-destructive">
+          <Card>
             <Accordion type="single" collapsible>
               <AccordionItem value="danger-zone" className="border-b-0">
                 <AccordionTrigger className="p-6 hover:no-underline">
