@@ -238,7 +238,7 @@ export default function SettingsDialog({
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="w-full">
+                                <Button type="submit" className="w-full rounded-full">
                                     <UserIcon className="mr-2 h-4 w-4" /> Save Profile
                                 </Button>
                             </form>
@@ -277,7 +277,7 @@ export default function SettingsDialog({
                     />
                   </div>
                   <DialogClose asChild>
-                    <Button onClick={handleSaveApiKey} className="w-full">
+                    <Button onClick={handleSaveApiKey} className="w-full rounded-full">
                       <KeyRound className="mr-2 h-4 w-4" /> Save API Key
                     </Button>
                   </DialogClose>
@@ -305,7 +305,7 @@ export default function SettingsDialog({
                     onOpenChange={setShowRestartConfirm}
                   >
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" className="w-full">
+                      <Button variant="destructive" className="w-full rounded-full">
                         <Power className="mr-2 h-4 w-4" /> Restart Application
                       </Button>
                     </AlertDialogTrigger>
