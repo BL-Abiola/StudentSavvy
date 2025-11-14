@@ -109,8 +109,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       name: "",
       grade: undefined,
       credits: undefined,
-      year: "Year 1",
-      session: "1st Semester",
+      year: "",
+      session: "",
     },
   })
 
@@ -121,8 +121,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       name: "",
       grade: undefined,
       credits: undefined,
-      year: "Year 1",
-      session: "1st Semester",
+      year: "",
+      session: "",
     });
   }
 
@@ -310,7 +310,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                       <FormLabel>Year</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -339,7 +339,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                       <FormLabel>Session</FormLabel>
                        <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -545,5 +545,3 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
-
-    
