@@ -272,9 +272,11 @@ export default function SettingsDialog({
                   onChange={(e) => setApiKey(e.target.value)}
                 />
               </div>
-              <Button onClick={handleSaveApiKey} className="w-full mt-4">
-                <KeyRound className="mr-2 h-4 w-4" /> Save API Key
-              </Button>
+              <DialogClose asChild>
+                <Button onClick={handleSaveApiKey} className="w-full mt-4">
+                  <KeyRound className="mr-2 h-4 w-4" /> Save API Key
+                </Button>
+              </DialogClose>
             </CardContent>
           </Card>
           
