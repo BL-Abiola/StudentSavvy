@@ -141,7 +141,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     return groupedGrades[lastSemesterName]?.totalCredits || 0
   }, [grades, groupedGrades])
 
-  const degreeClass = getDegreeClass(cgpa);
+  const degreeClass = grades.length > 0 ? getDegreeClass(cgpa) : '--';
 
 
   return (
