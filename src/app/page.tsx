@@ -67,6 +67,10 @@ export default function Home() {
     setUser(userData);
     setShowOnboarding(false);
   };
+  
+  const handleUserUpdate = (newUserData: User) => {
+    setUser(newUserData);
+  };
 
   const renderScreen = () => {
     switch (activeScreen) {
@@ -138,7 +142,7 @@ export default function Home() {
           />
         </div>
       </SidebarInset>
-      <SettingsDialog open={showSettings} onOpenChange={setShowSettings} />
+      <SettingsDialog open={showSettings} onOpenChange={setShowSettings} user={user} onUserUpdate={handleUserUpdate} />
     </SidebarProvider>
   );
 }

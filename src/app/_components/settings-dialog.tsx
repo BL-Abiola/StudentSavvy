@@ -2,6 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -24,6 +27,21 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Card,
   CardContent,
   CardDescription,
@@ -31,15 +49,25 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useTheme } from 'next-themes';
-import { Sun, Moon, Power, KeyRound, TriangleAlert } from 'lucide-react';
+import { Sun, Moon, Power, KeyRound, TriangleAlert, User as UserIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { User } from '@/types';
 
 type SettingsDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  user: User | null;
+  onUserUpdate: (user: User) => void;
 };
+
+const profileSchema = z.object({
+  name: z.string().min(2, 'Please enter your name.'),
+  university: z.string().min(3, 'University name is required.'),
+  faculty: z.string().min(2, 'Faculty is required.'),
+  department: z.string().min(2, 'Department is required.'),
+  year: z.string().min(1, 'Please select your year.'),
+});
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
@@ -70,17 +98,25 @@ const ThemeToggle = () => {
 export default function SettingsDialog({
   open,
   onOpenChange,
+  user,
+  onUserUpdate,
 }: SettingsDialogProps) {
   const { toast } = useToast();
   const [apiKey, setApiKey] = useState('');
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
+  const form = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: user || {},
+  });
+
   useEffect(() => {
     if (open) {
       const storedKey = localStorage.getItem('gemini_api_key') || '';
       setApiKey(storedKey);
+      form.reset(user || {});
     }
-  }, [open]);
+  }, [open, user, form]);
 
   const handleRestart = () => {
     localStorage.clear();
@@ -96,6 +132,14 @@ export default function SettingsDialog({
     });
     setTimeout(() => window.location.reload(), 2000);
   };
+  
+  const handleProfileUpdate = (values: z.infer<typeof profileSchema>) => {
+    onUserUpdate(values);
+    toast({
+      title: 'Profile Updated',
+      description: 'Your profile information has been saved.',
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -107,6 +151,99 @@ export default function SettingsDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 space-y-6 flex-1 overflow-y-auto">
+          
+          <Card>
+            <CardHeader>
+                <CardTitle>Edit Profile</CardTitle>
+                <CardDescription>Update your personal information.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleProfileUpdate)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="university"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>University</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="faculty"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Faculty</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="department"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Department</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="year"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Year</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select your current year" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    <SelectItem value="Year 1">Year 1</SelectItem>
+                                    <SelectItem value="Year 2">Year 2</SelectItem>
+                                    <SelectItem value="Year 3">Year 3</SelectItem>
+                                    <SelectItem value="Year 4">Year 4</SelectItem>
+                                    <SelectItem value="Year 5">Year 5</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full">
+                            <UserIcon className="mr-2" /> Save Profile
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+          </Card>
+          
           <Card>
             <CardHeader>
               <CardTitle>Gemini API Key</CardTitle>
@@ -125,7 +262,6 @@ export default function SettingsDialog({
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="api-key" className="sr-only">Gemini API Key</Label>
                 <Input
                   id="api-key"
                   type="password"
