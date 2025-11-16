@@ -113,7 +113,7 @@ export default function Home() {
             <GraduationCap className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
-              <p className="text-sm text-muted-foreground">{user?.department}, {user?.university} - {user?.year}</p>
+              {user && <p className="text-sm text-muted-foreground">{user.department}, {user.university} - {user.year}</p>}
             </div>
           </div>
            <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-transparent dark:hover:bg-transparent md:hidden">
