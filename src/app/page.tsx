@@ -82,7 +82,7 @@ export default function Home() {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <Sidebar collapsible="icon" className="hidden md:block border-r">
+      <Sidebar collapsible="icon" className="border-r">
         <SidebarHeader>
           <div className="flex flex-col gap-2 p-2 items-center">
             <GraduationCap className="w-8 h-8 text-primary" />
@@ -112,14 +112,14 @@ export default function Home() {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
-             <SidebarTrigger className="md:hidden" />
+             <SidebarTrigger />
             <GraduationCap className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
               <p className="text-sm text-muted-foreground">{user?.university} - {user?.year}</p>
             </div>
           </div>
-           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-muted">
+           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-muted md:hidden">
             <Settings className="h-5 w-5" />
             <span className="sr-only">Open Settings</span>
           </Button>
