@@ -30,8 +30,9 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Loader2 } from 'lucide-react';
 import type { User } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 const steps = [
   {
@@ -68,6 +69,8 @@ type OnboardingProps = {
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Partial<User>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const currentStep = steps[step];
   const form = useForm({
@@ -77,7 +80,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = async (values: any) => {
     const updatedData = { ...formData, ...values };
     setFormData(updatedData);
 
@@ -85,7 +88,32 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       setStep(step + 1);
       form.reset({ [steps[step + 1].field]: '' });
     } else {
-      onComplete(updatedData as User);
+      setIsSubmitting(true);
+      const finalUserData = updatedData as User;
+      try {
+        const response = await fetch('https://abiola001.app.n8n.cloud/webhook-test/c03d0857-de29-4c90-bf8a-661f3f5e76c0', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(finalUserData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to send data to webhook.');
+        }
+
+        onComplete(finalUserData);
+
+      } catch (error) {
+        console.error("Webhook submission error:", error);
+        toast({
+          variant: "destructive",
+          title: "Submission Failed",
+          description: "Could not complete setup. Please try again.",
+        });
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -146,8 +174,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 />
               )}
               <DialogFooter>
-                <Button type="submit" className="w-full rounded-full">
-                  {step < steps.length - 1 ? 'Next' : 'Finish Setup'}
+                <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Finishing up...
+                    </>
+                  ) : step < steps.length - 1 ? (
+                    'Next'
+                  ) : (
+                    'Finish Setup'
+                  )}
                 </Button>
               </DialogFooter>
             </form>
