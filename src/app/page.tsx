@@ -87,10 +87,6 @@ export default function Home() {
         <SidebarHeader>
           <div className="flex flex-col gap-2 p-2 items-center">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <div className="text-center group-data-[collapsed=true]:hidden">
-              <span className="text-lg font-bold">{user?.name}</span>
-              <p className="text-xs text-muted-foreground">{user?.department}, {user?.university} - {user?.year}</p>
-            </div>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -120,7 +116,7 @@ export default function Home() {
               <p className="text-sm text-muted-foreground">{user?.department}, {user?.university} - {user?.year}</p>
             </div>
           </div>
-           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-muted md:hidden">
+           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-transparent dark:hover:bg-transparent md:hidden">
             <Settings className="h-5 w-5" />
             <span className="sr-only">Open Settings</span>
           </Button>
