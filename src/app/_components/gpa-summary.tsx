@@ -128,18 +128,11 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     }))
   }, [grades, selectedSemester, groupedGrades])
 
-  const semesterGpa =
-    trajectoryData.length > 0
-      ? trajectoryData[trajectoryData.length - 1]["SemesterGPA"].toFixed(2)
-      : "0.00"
-  const semesterCredits = useMemo(() => {
-    if (grades.length === 0) return 0
-    const lastSemesterName =
-      Object.keys(groupedGrades).sort()[
-        Object.keys(groupedGrades).length - 1
-      ]
-    return groupedGrades[lastSemesterName]?.totalCredits || 0
-  }, [grades, groupedGrades])
+  const semesterGpa = useMemo(() => {
+      if (trajectoryData.length === 0) return "0.00";
+      const lastSemester = trajectoryData[trajectoryData.length - 1];
+      return lastSemester ? lastSemester["SemesterGPA"].toFixed(2) : "0.00";
+  }, [trajectoryData]);
 
   const degreeClass = grades.length > 0 ? getDegreeClass(cgpa) : '--';
 
@@ -148,7 +141,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
     <>
       <div className="flex items-center gap-3">
         <LineChart className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-extrabold">Academic Snapshot</h2>
+        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 whitespace-nowrap">Academic Snapshot</h2>
       </div>
       <p className="text-muted-foreground -mt-6">
         Instantly visualize your progress and gain insights.
