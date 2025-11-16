@@ -170,22 +170,10 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       return;
     }
     
-    const headers = ["id", "name", "grade", "credits", "year", "session"];
-    const csvContent = [
-      headers.join(','),
-      ...grades.map(g => headers.map(header => {
-        const value = g[header as keyof Grade];
-        if (typeof value === 'string') {
-          // Escape quotes by doubling them
-          return `"${value.replace(/"/g, '""')}"`;
-        }
-        return value;
-      }).join(','))
-    ].join('\n');
+    const dataToExport = JSON.stringify(grades, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataToExport);
 
-    const dataUri = 'data:text/csv;charset=utf-8,'+ encodeURIComponent(csvContent);
-
-    const exportFileDefaultName = 'studentsavvy_grades.csv';
+    const exportFileDefaultName = 'studentsavvy_grades.json';
 
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -193,7 +181,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     linkElement.click();
     toast({
         title: "Export Successful",
-        description: "Your grades have been exported as a CSV file.",
+        description: "Your grades have been exported as a JSON file.",
     });
   }
 
@@ -492,7 +480,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                       return (
                         <div key={session} className="border rounded-md">
                           <div className="px-4 py-2 bg-muted/50 rounded-t-md">
-                            <div className="flex justify-between w-full items-center">
+                            <div className="flex flex-wrap justify-between w-full items-center gap-2">
                               <span className="font-semibold text-base">{session}</span>
                               <div className="flex items-center gap-4">
                                 <Badge variant="secondary" className="text-sm">GPA: {semesterGpa}</Badge>
@@ -591,3 +579,5 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     </>
   )
 }
+
+    
