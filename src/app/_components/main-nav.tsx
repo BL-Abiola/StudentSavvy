@@ -37,7 +37,7 @@ const navItems = [
 function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
   const { state } = useSidebar();
   return (
-    <nav className="flex flex-col gap-2 p-2">
+    <nav className={cn("flex flex-col gap-2 p-2", state === 'collapsed' && "px-1")}>
       {navItems.map((item) => {
         const isActive = activeScreen === item.id;
         return (
