@@ -50,7 +50,7 @@ function DesktopNav({ activeScreen, setActiveScreen }: MainNavProps) {
               isActive
                 ? 'bg-primary text-primary-foreground'
                 : 'text-gray-600 dark:text-gray-400 hover:bg-muted',
-              state === 'collapsed' && 'justify-center'
+              state === 'collapsed' && 'justify-center p-2'
             )}
           >
             <item.icon
