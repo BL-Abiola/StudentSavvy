@@ -109,6 +109,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         }
 
         onComplete(finalUserData);
+        toast({
+          title: `Welcome, ${finalUserData.name}!`,
+          description: "You're all set. Let's get started.",
+        });
 
       } catch (error) {
         console.error("Webhook submission error:", error);
