@@ -96,7 +96,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       setIsSubmitting(true);
       const finalUserData = updatedData as User;
       try {
-        const response = await fetch('https://abiola001.app.n8n.cloud/webhook-test/c03d0857-de29-4c90-bf8a-661f3f5e76c0', {
+        const response = await fetch('https://abiola001.app.n8n.cloud/webhook/c03d0857-de29-4c90-bf8a-661f3f5e76c0', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
