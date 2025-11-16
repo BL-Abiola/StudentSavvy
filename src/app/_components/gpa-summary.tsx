@@ -154,7 +154,7 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         Instantly visualize your progress and gain insights.
       </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="rounded-2xl">
           <CardHeader className="p-4">
             <CardDescription>Semester GPA</CardDescription>
