@@ -112,8 +112,10 @@ export default function Home() {
              <SidebarTrigger className="hidden md:flex hover:bg-transparent dark:hover:bg-transparent" />
             <GraduationCap className="w-8 h-8 text-primary md:hidden" />
             <div>
-              <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
-              {user && <p className="text-sm text-muted-foreground">{user.department} | {user.university} | {user.year}</p>}
+              <h1 className="text-lg font-bold leading-tight">{user ? user.name : '--'}</h1>
+              <p className="text-sm text-muted-foreground">
+                {user ? `${user.department} | ${user.university} | ${user.year}` : '--'}
+              </p>
             </div>
           </div>
            <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-transparent dark:hover:bg-transparent md:hidden">
