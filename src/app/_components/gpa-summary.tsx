@@ -213,14 +213,14 @@ export default function GpaSummary({ grades }: { grades: Grade[] }) {
         </Card>
         <Card className="rounded-2xl">
           <CardHeader>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <CardTitle>Grade Distribution</CardTitle>
                     <CardDescription>Breakdown of your grades.</CardDescription>
                 </div>
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="sm" className="rounded-full">
+                        <Button variant="secondary" size="sm" className="rounded-full w-full sm:w-auto">
                         {selectedSemester}
                         <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
