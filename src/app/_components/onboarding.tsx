@@ -41,6 +41,11 @@ const steps = [
     schema: z.object({ name: z.string().min(2, 'Please enter your name.') }),
   },
   {
+    title: "What's your email address?",
+    field: 'email',
+    schema: z.object({ email: z.string().email('Please enter a valid email address.') }),
+  },
+  {
     title: 'Which university do you attend?',
     field: 'university',
     schema: z.object({ university: z.string().min(3, 'University name is required.') }),
@@ -166,7 +171,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     <FormItem>
                       <FormLabel className="sr-only">{currentStep.title}</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
