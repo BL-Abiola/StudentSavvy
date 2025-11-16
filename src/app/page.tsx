@@ -109,8 +109,8 @@ export default function Home() {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
-             <SidebarTrigger className="hidden md:flex" />
-            <GraduationCap className="w-8 h-8 text-primary" />
+             <SidebarTrigger className="hidden md:flex hover:bg-transparent dark:hover:bg-transparent" />
+            <GraduationCap className="w-8 h-8 text-primary md:hidden" />
             <div>
               <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
               {user && <p className="text-sm text-muted-foreground">{user.department}, {user.university} - {user.year}</p>}
