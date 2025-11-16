@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
   useSidebar
 } from '@/components/ui/sidebar';
-import { GraduationCap, Settings, Lock } from 'lucide-react';
+import { GraduationCap, Settings } from 'lucide-react';
 import Dashboard from './_components/dashboard';
 import AiPremium from './_components/ai-premium';
 import GpaTracker from './_components/gpa-tracker';
@@ -69,20 +69,7 @@ export default function Home() {
       case 'dashboard':
         return <Dashboard />;
       case 'performance':
-        return (
-          <div className="relative">
-            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-2xl gap-4 p-4">
-              <Lock className="w-12 h-12 text-primary" />
-              <div className="text-center">
-                <h3 className="text-xl font-bold">Feature Under Development</h3>
-                <p className="text-muted-foreground">
-                  The GPA calculation logic is being refined. This section will be available soon!
-                </p>
-              </div>
-            </div>
-            <GpaTracker />
-          </div>
-        );
+        return <GpaTracker />;
       case 'ai-tools':
         return <AiPremium />;
       default:
