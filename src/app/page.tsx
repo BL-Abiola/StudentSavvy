@@ -12,6 +12,7 @@ import {
   SidebarInset,
   SidebarFooter,
   SidebarTrigger,
+  useSidebar
 } from '@/components/ui/sidebar';
 import { GraduationCap, Settings } from 'lucide-react';
 import Dashboard from './_components/dashboard';
@@ -88,7 +89,7 @@ export default function Home() {
             <GraduationCap className="w-8 h-8 text-primary" />
             <div className="text-center group-data-[collapsed=true]:hidden">
               <span className="text-lg font-bold">{user?.name}</span>
-              <p className="text-xs text-muted-foreground">{user?.department}, {user?.university} - {user?.year}</p>
+              <p className="text-xs text-muted-foreground">{user?.department} {user?.university} - {user?.year}</p>
             </div>
           </div>
         </SidebarHeader>
@@ -116,7 +117,7 @@ export default function Home() {
             <GraduationCap className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-lg font-bold leading-tight">{user?.name}</h1>
-              <p className="text-sm text-muted-foreground">{user?.department}, {user?.university} - {user?.year}</p>
+              <p className="text-sm text-muted-foreground">{user?.department} {user?.university} - {user?.year}</p>
             </div>
           </div>
            <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="hover:bg-muted md:hidden">
