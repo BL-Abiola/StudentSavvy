@@ -170,12 +170,12 @@ export default function AiPremium() {
               <div>
                 <h3 className="text-lg font-semibold mb-2">Courses to Model</h3>
                 {fields.map((field, index) => (
-                  <div key={field.id} className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-2 items-start">
+                  <div key={field.id} className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-2 items-start">
                     <FormField
                       control={gpaForm.control}
                       name={`courses.${index}.name`}
                       render={({ field }) => (
-                        <FormItem className="md:col-span-2">
+                        <FormItem className="sm:col-span-2">
                            <FormLabel className="sr-only">Course Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Course Name" {...field} />
@@ -300,5 +300,3 @@ export default function AiPremium() {
     </section>
   );
 }
-
-    
