@@ -146,7 +146,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 />
               )}
               <DialogFooter>
-                <Button type="submit" className="rounded-full px-8">
+                <Button type="submit" className="w-full rounded-full">
                   {step < steps.length - 1 ? 'Next' : 'Finish Setup'}
                 </Button>
               </DialogFooter>
