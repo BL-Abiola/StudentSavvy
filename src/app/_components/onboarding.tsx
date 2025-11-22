@@ -33,6 +33,8 @@ import {
 import { GraduationCap, Loader2 } from 'lucide-react';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { Combobox } from '@/components/ui/combobox';
+import { universities } from '@/lib/universities';
 
 const steps = [
   {
@@ -126,6 +128,77 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     }
   };
 
+  const renderField = () => {
+    switch (currentStep.field) {
+      case 'year':
+        return (
+          <FormField
+            control={form.control}
+            name="year"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">Year</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your current year" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Year 1">Year 1</SelectItem>
+                    <SelectItem value="Year 2">Year 2</SelectItem>
+                    <SelectItem value="Year 3">Year 3</SelectItem>
+                    <SelectItem value="Year 4">Year 4</SelectItem>
+                    <SelectItem value="Year 5">Year 5</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+      case 'university':
+        return (
+          <FormField
+            control={form.control}
+            name="university"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">University</FormLabel>
+                <FormControl>
+                  <Combobox
+                    options={universities}
+                    {...field}
+                    onChange={field.onChange}
+                    placeholder="Select your university"
+                    emptyMessage="No university found."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+      default:
+        return (
+          <FormField
+            control={form.control}
+            name={currentStep.field}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">{currentStep.title}</FormLabel>
+                <FormControl>
+                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+    }
+  }
+
+
   return (
     <Dialog open={true}>
       <DialogContent className="sm:max-w-[425px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
@@ -142,46 +215,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <h3 className="font-semibold text-lg mb-4">{currentStep.title}</h3>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {currentStep.field === 'year' ? (
-                <FormField
-                  control={form.control}
-                  name="year"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">Year</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your current year" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Year 1">Year 1</SelectItem>
-                          <SelectItem value="Year 2">Year 2</SelectItem>
-                          <SelectItem value="Year 3">Year 3</SelectItem>
-                          <SelectItem value="Year 4">Year 4</SelectItem>
-                          <SelectItem value="Year 5">Year 5</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <FormField
-                  control={form.control}
-                  name={currentStep.field}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">{currentStep.title}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              {renderField()}
               <DialogFooter>
                 <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
                   {isSubmitting ? (
