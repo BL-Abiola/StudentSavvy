@@ -95,34 +95,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     } else {
       setIsSubmitting(true);
       const finalUserData = updatedData as User;
-      try {
-        const response = await fetch('https://abiola001.app.n8n.cloud/webhook/c03d0857-de29-4c90-bf8a-661f3f5e76c0', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(finalUserData),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to send data to webhook.');
-        }
-
-        onComplete(finalUserData);
-        toast({
-          title: `Welcome, ${finalUserData.name}!`,
-          description: "You're all set. Let's get started.",
-        });
-
-      } catch (error) {
-        console.error("Webhook submission error:", error);
-        toast({
-          variant: "destructive",
-          title: "Submission Failed",
-          description: "Could not complete setup. Please try again.",
-        });
-        setIsSubmitting(false);
-      }
+      
+      onComplete(finalUserData);
+      toast({
+        title: `Welcome, ${finalUserData.name}!`,
+        description: "You're all set. Let's get started.",
+      });
     }
   };
 
@@ -177,7 +155,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   return (
     <Dialog open={true}>
-      <DialogContent className="sm:max-w-[425px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
+      <DialogContent className="sm:max-w-[425px] rounded-2xl top-1/2 -translate-y-1/2" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <GraduationCap className="w-8 h-8 text-primary" /> Welcome to StudentSavvy!
