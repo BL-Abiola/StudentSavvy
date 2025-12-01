@@ -33,8 +33,6 @@ import {
 import { GraduationCap, Loader2 } from 'lucide-react';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { Combobox } from '@/components/ui/combobox';
-import { universities } from '@/lib/universities';
 
 const steps = [
   {
@@ -152,28 +150,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     <SelectItem value="Year 5">Year 5</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-      case 'university':
-        return (
-          <FormField
-            control={form.control}
-            name="university"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="sr-only">University</FormLabel>
-                <FormControl>
-                  <Combobox
-                    options={universities}
-                    {...field}
-                    onChange={field.onChange}
-                    placeholder="Select your university"
-                    emptyMessage="No university found."
-                  />
-                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
