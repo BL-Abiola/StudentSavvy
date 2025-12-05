@@ -28,6 +28,7 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
     const savedScreen = localStorage.getItem('activeScreen');
@@ -38,25 +39,38 @@ export default function Home() {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+      setIsAppReady(true);
     } else {
-      // Small delay to prevent flash of onboarding screen if user is found
-      const timer = setTimeout(() => setShowOnboarding(true), 100);
+      const timer = setTimeout(() => {
+        setShowOnboarding(true);
+        setIsAppReady(true);
+      }, 100);
       return () => clearTimeout(timer);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('activeScreen', activeScreen);
-  }, [activeScreen]);
+    if (isAppReady) {
+      localStorage.setItem('activeScreen', activeScreen);
+    }
+  }, [activeScreen, isAppReady]);
 
   useEffect(() => {
-    if (user) {
+    if (user && isAppReady) {
       localStorage.setItem('user', JSON.stringify(user));
     }
-  }, [user]);
+  }, [user, isAppReady]);
 
-  const handleOnboardingComplete = (userData: User) => {
-    setUser(userData);
+  const handleOnboardingComplete = (userData: Partial<User>) => {
+    const defaultUser: User = {
+        name: 'Guest',
+        email: '',
+        university: '',
+        faculty: '',
+        department: '',
+        year: '',
+    };
+    setUser({ ...defaultUser, ...userData });
     setShowOnboarding(false);
   };
   
@@ -76,6 +90,10 @@ export default function Home() {
         return <GpaTracker />;
     }
   };
+
+  if (!isAppReady) {
+    return null; // Or a loading spinner
+  }
 
   if (showOnboarding) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
@@ -114,7 +132,7 @@ export default function Home() {
             <div>
               <h1 className="text-lg font-bold leading-tight">{user ? user.name : '--'}</h1>
               <p className="text-sm text-muted-foreground">
-                {user ? `${user.department} | ${user.university} | ${user.year}` : '--'}
+                {user ? [user.department, user.university, user.year].filter(Boolean).join(' | ') : '--'}
               </p>
             </div>
           </div>

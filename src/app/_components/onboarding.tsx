@@ -38,37 +38,37 @@ const steps = [
   {
     title: "What's your name?",
     field: 'name',
-    schema: z.object({ name: z.string().min(2, 'Please enter your name.') }),
+    schema: z.object({ name: z.string().min(2, 'Please enter your name.').optional().or(z.literal('')) }),
   },
   {
     title: "What's your email address?",
     field: 'email',
-    schema: z.object({ email: z.string().email('Please enter a valid email address.') }),
+    schema: z.object({ email: z.string().email('Please enter a valid email address.').optional().or(z.literal('')) }),
   },
   {
     title: 'Which university do you attend?',
     field: 'university',
-    schema: z.object({ university: z.string().min(3, 'University name is required.') }),
+    schema: z.object({ university: z.string().min(3, 'University name is required.').optional().or(z.literal('')) }),
   },
   {
     title: 'What is your faculty?',
     field: 'faculty',
-    schema: z.object({ faculty: z.string().min(2, 'Faculty is required.') }),
+    schema: z.object({ faculty: z.string().min(2, 'Faculty is required.').optional().or(z.literal('')) }),
   },
   {
     title: 'And your department?',
     field: 'department',
-    schema: z.object({ department: z.string().min(2, 'Department is required.') }),
+    schema: z.object({ department: z.string().min(2, 'Department is required.').optional().or(z.literal('')) }),
   },
   {
     title: 'What is your current year?',
     field: 'year',
-    schema: z.object({ year: z.string().min(1, 'Please select your year.') }),
+    schema: z.object({ year: z.string().min(1, 'Please select your year.').optional().or(z.literal('')) }),
   },
 ];
 
 type OnboardingProps = {
-  onComplete: (user: User) => void;
+  onComplete: (user: Partial<User>) => void;
 };
 
 export default function Onboarding({ onComplete }: OnboardingProps) {
@@ -85,6 +85,23 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
   });
 
+  const completeOnboarding = () => {
+    setIsSubmitting(true);
+    const finalUserData: User = {
+        name: formData.name || 'Guest',
+        email: formData.email || '',
+        university: formData.university || '',
+        faculty: formData.faculty || '',
+        department: formData.department || '',
+        year: formData.year || '',
+    };
+    onComplete(finalUserData);
+    toast({
+      title: `Welcome, ${finalUserData.name}!`,
+      description: "You're all set. Let's get started.",
+    });
+  }
+
   const onSubmit = async (values: any) => {
     const updatedData = { ...formData, ...values };
     setFormData(updatedData);
@@ -93,16 +110,19 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       setStep(step + 1);
       form.reset({ [steps[step + 1].field]: '' });
     } else {
-      setIsSubmitting(true);
-      const finalUserData = updatedData as User;
-      
-      onComplete(finalUserData);
-      toast({
-        title: `Welcome, ${finalUserData.name}!`,
-        description: "You're all set. Let's get started.",
-      });
+      completeOnboarding();
     }
   };
+
+  const handleSkip = () => {
+    if (step < steps.length - 1) {
+        setStep(step + 1);
+        form.reset({ [steps[step + 1].field]: '' });
+    } else {
+        completeOnboarding();
+    }
+  };
+
 
   const renderField = () => {
     switch (currentStep.field) {
@@ -142,7 +162,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               <FormItem>
                 <FormLabel className="sr-only">{currentStep.title}</FormLabel>
                 <FormControl>
-                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} />
+                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} placeholder={currentStep.field === 'name' ? 'e.g. John Doe' : ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -155,7 +175,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   return (
     <Dialog open={true}>
-      <DialogContent className="sm:max-w-[425px] rounded-2xl top-1/2 -translate-y-1/2" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
+      <DialogContent className="sm:max-w-[425px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <GraduationCap className="w-8 h-8 text-primary" /> Welcome to StudentSavvy!
@@ -170,8 +190,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
-              <DialogFooter>
-                <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+              <DialogFooter className="gap-2 sm:justify-between">
+                <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full">
+                  Skip
+                </Button>
+                <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
