@@ -85,15 +85,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
   });
 
-  const completeOnboarding = () => {
+  const completeOnboarding = (data: Partial<User>) => {
     setIsSubmitting(true);
     const finalUserData: User = {
-        name: formData.name || 'Guest',
-        email: formData.email || '',
-        university: formData.university || '',
-        faculty: formData.faculty || '',
-        department: formData.department || '',
-        year: formData.year || '',
+        name: data.name || 'Guest',
+        email: data.email || '',
+        university: data.university || '',
+        faculty: data.faculty || '',
+        department: data.department || '',
+        year: data.year || '',
     };
     onComplete(finalUserData);
     toast({
@@ -110,7 +110,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       setStep(step + 1);
       form.reset({ [steps[step + 1].field]: '' });
     } else {
-      completeOnboarding();
+      completeOnboarding(updatedData);
     }
   };
 
@@ -119,7 +119,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         setStep(step + 1);
         form.reset({ [steps[step + 1].field]: '' });
     } else {
-        completeOnboarding();
+        completeOnboarding(formData);
     }
   };
 
@@ -148,6 +148,22 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     <SelectItem value="Year 5">Year 5</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+      case 'university':
+         return (
+          <FormField
+            control={form.control}
+            name="university"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">{currentStep.title}</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="e.g. University of Example" />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -191,7 +207,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
               <DialogFooter className="gap-2 sm:justify-between">
-                <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full">
+                <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
                   Skip
                 </Button>
                 <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
