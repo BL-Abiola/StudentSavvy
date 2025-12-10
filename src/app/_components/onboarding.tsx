@@ -162,7 +162,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               <FormItem>
                 <FormLabel className="sr-only">{currentStep.title}</FormLabel>
                 <FormControl>
-                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} placeholder={currentStep.field === 'name' ? 'e.g. John Doe' : (currentStep.field === 'university' ? 'e.g. University of Example' : '')} />
+                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} placeholder={currentStep.field === 'name' ? 'e.g. John Doe' : (currentStep.field === 'email' ? 'e.g. john.doe@example.com' : (currentStep.field === 'university' ? 'e.g. University of Example' : ''))} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
