@@ -197,7 +197,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
-              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full pt-4">
+              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full pt-4 gap-2">
                 <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
                     Skip
                 </Button>
