@@ -175,7 +175,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               <FormItem>
                 <FormLabel className="sr-only">{currentStep.title}</FormLabel>
                 <FormControl>
-                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} placeholder={getPlaceholder()} />
+                  <Input {...field} type={'text'} placeholder={getPlaceholder()} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -189,8 +189,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   return (
     <Dialog open={true}>
       <DialogContent className="sm:max-w-[425px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()} hideCloseButton>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
+        <DialogHeader className="text-center">
+          <DialogTitle className="flex flex-col items-center justify-center text-center gap-2 text-2xl">
             <GraduationCap className="w-8 h-8 text-primary" /> Welcome to StudentSavvy!
           </DialogTitle>
           <DialogDescription>
