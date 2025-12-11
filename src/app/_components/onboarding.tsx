@@ -80,6 +80,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
   });
 
+  const fieldValue = form.watch(currentStep.field);
+
   const completeOnboarding = (data: Partial<User>) => {
     setIsSubmitting(true);
     const finalUserData: User = {
@@ -105,6 +107,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       form.reset({ [steps[step + 1].field]: updatedData[steps[step+1].field as keyof User] || '' });
     } else {
       completeOnboarding(updatedData);
+    }
+  };
+
+  const handleSkip = () => {
+    if (step < steps.length - 1) {
+      setStep(step + 1);
+      form.reset({ [steps[step + 1].field]: formData[steps[step+1].field as keyof User] || '' });
+    } else {
+      completeOnboarding(formData);
     }
   };
   
@@ -192,22 +203,29 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
-              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full">
-                <Button type="button" variant="ghost" onClick={handleBack} disabled={step === 0} className="rounded-full">
-                  Back
-                </Button>
-                <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Finishing up...
-                    </>
-                  ) : step < steps.length - 1 ? (
-                    'Next'
-                  ) : (
-                    'Finish Setup'
-                  )}
-                </Button>
+              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full pt-4">
+                 <div className="flex flex-col sm:flex-row gap-2">
+                    <Button type="button" variant="ghost" onClick={handleBack} disabled={step === 0} className="rounded-full">
+                        Back
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
+                        Skip
+                    </Button>
+                 </div>
+                 {fieldValue && (
+                    <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                        <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Finishing up...
+                        </>
+                    ) : step < steps.length - 1 ? (
+                        'Next'
+                    ) : (
+                        'Finish Setup'
+                    )}
+                    </Button>
+                 )}
               </DialogFooter>
             </form>
           </Form>
