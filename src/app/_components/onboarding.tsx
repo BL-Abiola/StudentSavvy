@@ -38,27 +38,27 @@ const steps = [
   {
     title: "What's your name?",
     field: 'name',
-    schema: z.object({ name: z.string().min(2, 'Please enter your name.').optional().or(z.literal('')) }),
+    schema: z.object({ name: z.string().min(2, 'Please enter your name.') }),
   },
   {
     title: 'Which university do you attend?',
     field: 'university',
-    schema: z.object({ university: z.string().min(3, 'University name is required.').optional().or(z.literal('')) }),
+    schema: z.object({ university: z.string().min(3, 'University name is required.') }),
   },
   {
     title: 'What is your faculty?',
     field: 'faculty',
-    schema: z.object({ faculty: z.string().min(2, 'Faculty is required.').optional().or(z.literal('')) }),
+    schema: z.object({ faculty: z.string().min(2, 'Faculty is required.') }),
   },
   {
     title: 'And your department?',
     field: 'department',
-    schema: z.object({ department: z.string().min(2, 'Department is required.').optional().or(z.literal('')) }),
+    schema: z.object({ department: z.string().min(2, 'Department is required.') }),
   },
   {
     title: 'What is your current year?',
     field: 'year',
-    schema: z.object({ year: z.string().min(1, 'Please select your year.').optional().or(z.literal('')) }),
+    schema: z.object({ year: z.string().min(1, 'Please select your year.') }),
   },
 ];
 
@@ -79,8 +79,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       [currentStep.field]: formData[currentStep.field as keyof User] || '',
     },
   });
-
-  const fieldValue = form.watch(currentStep.field);
 
   const completeOnboarding = (data: Partial<User>) => {
     setIsSubmitting(true);
@@ -204,7 +202,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
               <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full pt-4">
-                 <div className="flex flex-col sm:flex-row gap-2">
+                 <div className="flex gap-2">
                     <Button type="button" variant="ghost" onClick={handleBack} disabled={step === 0} className="rounded-full">
                         Back
                     </Button>
@@ -212,20 +210,18 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         Skip
                     </Button>
                  </div>
-                 {fieldValue && (
-                    <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                        <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Finishing up...
-                        </>
-                    ) : step < steps.length - 1 ? (
-                        'Next'
-                    ) : (
-                        'Finish Setup'
-                    )}
-                    </Button>
-                 )}
+                <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                    <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Finishing up...
+                    </>
+                ) : step < steps.length - 1 ? (
+                    'Next'
+                ) : (
+                    'Finish Setup'
+                )}
+                </Button>
               </DialogFooter>
             </form>
           </Form>
