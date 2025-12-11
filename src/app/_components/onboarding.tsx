@@ -75,10 +75,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const currentStep = steps[step];
   const form = useForm({
     resolver: zodResolver(currentStep.schema),
+    mode: 'onChange',
     defaultValues: {
       [currentStep.field]: formData[currentStep.field as keyof User] || '',
     },
   });
+
+  const inputValue = form.watch(currentStep.field);
 
   const completeOnboarding = (data: Partial<User>) => {
     setIsSubmitting(true);
@@ -114,13 +117,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       form.reset({ [steps[step + 1].field]: formData[steps[step+1].field as keyof User] || '' });
     } else {
       completeOnboarding(formData);
-    }
-  };
-  
-  const handleBack = () => {
-    if (step > 0) {
-      setStep(step - 1);
-       form.reset({ [steps[step - 1].field]: formData[steps[step-1].field as keyof User] || '' });
     }
   };
 
@@ -202,15 +198,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
               <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full pt-4">
-                 <div className="flex gap-2">
-                    <Button type="button" variant="ghost" onClick={handleBack} disabled={step === 0} className="rounded-full">
-                        Back
-                    </Button>
-                    <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
-                        Skip
-                    </Button>
-                 </div>
-                <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
+                <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
+                    Skip
+                </Button>
+                <Button type="submit" className="w-auto rounded-full" disabled={!inputValue || form.formState.isSubmitting}>
                 {isSubmitting ? (
                     <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
