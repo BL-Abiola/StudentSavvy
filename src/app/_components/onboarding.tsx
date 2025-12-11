@@ -125,6 +125,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
 
   const renderField = () => {
+    const getPlaceholder = () => {
+        switch (currentStep.field) {
+            case 'name': return 'e.g. John Doe';
+            case 'email': return 'e.g. john.doe@example.com';
+            case 'university': return 'e.g. University of Example';
+            case 'faculty': return 'e.g. Faculty of Engineering';
+            case 'department': return 'e.g. Computer Science';
+            default: return '';
+        }
+    }
+    
     switch (currentStep.field) {
       case 'year':
         return (
@@ -162,7 +173,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               <FormItem>
                 <FormLabel className="sr-only">{currentStep.title}</FormLabel>
                 <FormControl>
-                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} placeholder={currentStep.field === 'name' ? 'e.g. John Doe' : (currentStep.field === 'email' ? 'e.g. john.doe@example.com' : (currentStep.field === 'university' ? 'e.g. University of Example' : ''))} />
+                  <Input {...field} type={currentStep.field === 'email' ? 'email' : 'text'} placeholder={getPlaceholder()} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
