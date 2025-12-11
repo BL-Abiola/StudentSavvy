@@ -108,14 +108,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     }
   };
   
-  const handleBack = () => {
-    if (step > 0) {
-      setStep(step - 1);
-      const prevStepField = steps[step - 1].field as keyof Partial<User>;
-      form.reset({ [prevStepField]: formData[prevStepField] || '' });
-    }
-  };
-
 
   const handleSkip = () => {
     if (step < steps.length - 1) {
@@ -203,10 +195,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
-              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full">
-                 <Button type="button" variant="outline" onClick={handleBack} className="rounded-full" disabled={step === 0}>
-                    Back
-                 </Button>
+              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-end w-full">
                 <div className="flex justify-end gap-2">
                     <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
                         Skip
