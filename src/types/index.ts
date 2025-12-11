@@ -39,7 +39,6 @@ export type Screen = 'dashboard' | 'performance' | 'ai-tools';
 
 export type User = {
   name: string;
-  email: string;
   university: string;
   faculty: string;
   department: string;

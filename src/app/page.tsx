@@ -64,7 +64,6 @@ export default function Home() {
   const handleOnboardingComplete = (userData: Partial<User>) => {
     const defaultUser: User = {
         name: 'Guest',
-        email: '',
         university: '',
         faculty: '',
         department: '',

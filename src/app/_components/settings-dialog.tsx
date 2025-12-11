@@ -133,7 +133,8 @@ export default function SettingsDialog({
   };
   
   const handleProfileUpdate = (values: z.infer<typeof profileSchema>) => {
-    onUserUpdate(values);
+    if (!user) return;
+    onUserUpdate({ ...user, ...values });
     toast({
       title: 'Profile Updated',
       description: 'Your profile information has been saved.',

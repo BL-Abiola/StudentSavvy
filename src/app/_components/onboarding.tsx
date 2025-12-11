@@ -41,11 +41,6 @@ const steps = [
     schema: z.object({ name: z.string().min(2, 'Please enter your name.').optional().or(z.literal('')) }),
   },
   {
-    title: "What's your email address?",
-    field: 'email',
-    schema: z.object({ email: z.string().email('Please enter a valid email address.').optional().or(z.literal('')) }),
-  },
-  {
     title: 'Which university do you attend?',
     field: 'university',
     schema: z.object({ university: z.string().min(3, 'University name is required.').optional().or(z.literal('')) }),
@@ -89,7 +84,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     setIsSubmitting(true);
     const finalUserData: User = {
         name: data.name || 'Guest',
-        email: data.email || '',
         university: data.university || '',
         faculty: data.faculty || '',
         department: data.department || '',
@@ -113,6 +107,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       completeOnboarding(updatedData);
     }
   };
+  
+  const handleBack = () => {
+    if (step > 0) {
+      setStep(step - 1);
+      const prevStepField = steps[step - 1].field as keyof Partial<User>;
+      form.reset({ [prevStepField]: formData[prevStepField] || '' });
+    }
+  };
+
 
   const handleSkip = () => {
     if (step < steps.length - 1) {
@@ -128,7 +131,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     const getPlaceholder = () => {
         switch (currentStep.field) {
             case 'name': return 'e.g. John Doe';
-            case 'email': return 'e.g. john.doe@example.com';
             case 'university': return 'e.g. University of Example';
             case 'faculty': return 'e.g. Faculty of Engineering';
             case 'department': return 'e.g. Computer Science';
@@ -201,22 +203,27 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {renderField()}
-              <DialogFooter className="gap-2 sm:justify-between">
-                <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
-                  Skip
-                </Button>
-                <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Finishing up...
-                    </>
-                  ) : step < steps.length - 1 ? (
-                    'Next'
-                  ) : (
-                    'Finish Setup'
-                  )}
-                </Button>
+              <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between w-full">
+                 <Button type="button" variant="outline" onClick={handleBack} className="rounded-full" disabled={step === 0}>
+                    Back
+                 </Button>
+                <div className="flex justify-end gap-2">
+                    <Button type="button" variant="ghost" onClick={handleSkip} className="rounded-full hover:bg-secondary">
+                        Skip
+                    </Button>
+                    <Button type="submit" className="w-auto rounded-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                        <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Finishing up...
+                        </>
+                    ) : step < steps.length - 1 ? (
+                        'Next'
+                    ) : (
+                        'Finish Setup'
+                    )}
+                    </Button>
+                </div>
               </DialogFooter>
             </form>
           </Form>
