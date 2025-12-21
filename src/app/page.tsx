@@ -113,7 +113,7 @@ export default function Home() {
           />
         </SidebarContent>
         <SidebarFooter className="p-2">
-           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="w-full justify-start px-3 gap-3 hover:bg-muted rounded-2xl">
+           <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} className="w-full justify-start px-3 gap-3 rounded-2xl">
             <Settings className="h-5 w-5" />
             <span className={cn('transition-opacity duration-200', 'group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:w-0')}>
               Settings
