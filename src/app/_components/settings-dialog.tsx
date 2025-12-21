@@ -338,7 +338,7 @@ export default function SettingsDialog({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline" className="rounded-full">Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
