@@ -126,7 +126,7 @@ export default function Home() {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
-             <SidebarTrigger className="hidden md:flex hover:bg-primary hover:text-primary-foreground" />
+             <SidebarTrigger className="hidden md:flex hover:bg-primary hover:text-primary-foreground rounded-full" />
             <GraduationCap className="w-8 h-8 text-primary md:hidden" />
             <div>
               <h1 className="text-lg font-bold leading-tight">{user ? user.name : '--'}</h1>
