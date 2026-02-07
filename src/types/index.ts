@@ -6,7 +6,7 @@ export type Grade = {
   grade: number;
   credits: number;
   year: string;
-  session: string;
+  semester: string;
 };
 
 export type TaskPriority = 'urgent' | 'intermediate' | 'later';

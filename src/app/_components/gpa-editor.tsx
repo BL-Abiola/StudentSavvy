@@ -77,7 +77,7 @@ const gradeSchema = z.object({
     .max(5, "Grade must be between 0.0 and 5.0"),
   credits: z.coerce.number().min(0.5, "Credits must be a positive number"),
   year: z.string().min(1, "Year is required"),
-  session: z.string().min(1, "Session is required"),
+  semester: z.string().min(1, "Semester is required"),
 })
 
 function gpaToLetter(gpa: number): string {
@@ -104,7 +104,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
   const importInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [semesterToDelete, setSemesterToDelete] = useState<{ year: string; session: string } | null>(null);
+  const [semesterToDelete, setSemesterToDelete] = useState<{ year: string; semester: string } | null>(null);
   const [gradeToDelete, setGradeToDelete] = useState<number | null>(null);
 
   const form = useForm<z.infer<typeof gradeSchema>>({
@@ -114,7 +114,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       grade: undefined,
       credits: undefined,
       year: "",
-      session: "",
+      semester: "",
     },
   })
 
@@ -130,7 +130,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
       grade: undefined,
       credits: undefined,
       year: "",
-      session: "",
+      semester: "",
     });
   }
 
@@ -139,8 +139,8 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
     setGradeToDelete(null);
   }
 
-  function removeSemester(year: string, session: string) {
-    setGrades(grades.filter((g) => !(g.year === year && g.session === session)))
+  function removeSemester(year: string, semester: string) {
+    setGrades(grades.filter((g) => !(g.year === year && g.semester === semester)))
     setSemesterToDelete(null);
   }
   
@@ -228,20 +228,20 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
 
   const groupedGradesByYear = useMemo(() => {
     return grades.reduce((acc, grade) => {
-      const { year, session } = grade;
+      const { year, semester } = grade;
       if (!acc[year]) {
         acc[year] = {};
       }
-      if (!acc[year][session]) {
-        acc[year][session] = {
+      if (!acc[year][semester]) {
+        acc[year][semester] = {
           grades: [],
           totalCredits: 0,
           totalQualityPoints: 0,
         };
       }
-      acc[year][session].grades.push(grade);
-      acc[year][session].totalCredits += grade.credits;
-      acc[year][session].totalQualityPoints += grade.grade * grade.credits;
+      acc[year][semester].grades.push(grade);
+      acc[year][semester].totalCredits += grade.credits;
+      acc[year][semester].totalQualityPoints += grade.grade * grade.credits;
       return acc;
     }, {} as Record<string, Record<string, { grades: Grade[]; totalCredits: number; totalQualityPoints: number }>>);
   }, [grades]);
@@ -282,12 +282,12 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2"><TriangleAlert className="text-destructive" />Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete all grades for {semesterToDelete?.year} {semesterToDelete?.session}.
+              This action cannot be undone. This will permanently delete all grades for {semesterToDelete?.year} {semesterToDelete?.semester}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-full" onClick={() => setSemesterToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="rounded-full" onClick={() => semesterToDelete && removeSemester(semesterToDelete.year, semesterToDelete.session)}>
+            <AlertDialogAction className="rounded-full" onClick={() => semesterToDelete && removeSemester(semesterToDelete.year, semesterToDelete.semester)}>
               Yes, delete semester
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -367,17 +367,17 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                  <FormField
                   control={form.control}
-                  name="session"
+                  name="semester"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Session</FormLabel>
+                      <FormLabel>Semester</FormLabel>
                        <Select
                         onValueChange={field.onChange}
                         value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a session" />
+                            <SelectValue placeholder="Select a semester" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -472,16 +472,16 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                     {year}
                   </AccordionTrigger>
                   <AccordionContent className="p-2 space-y-2">
-                    {Object.entries(sessions).map(([session, data]) => {
+                    {Object.entries(sessions).map(([semester, data]) => {
                         const semesterGpa =
                         data.totalCredits > 0
                           ? (data.totalQualityPoints / data.totalCredits).toFixed(2)
                           : "0.00"
                       return (
-                        <div key={session} className="border rounded-md">
+                        <div key={semester} className="border rounded-md">
                           <div className="px-4 py-2 bg-muted/50 rounded-t-md">
                             <div className="flex flex-wrap justify-between w-full items-center gap-2">
-                              <span className="font-semibold text-base">{session}</span>
+                              <span className="font-semibold text-base">{semester}</span>
                               <div className="flex items-center gap-4">
                                 <Badge variant="secondary" className="text-sm">GPA: {semesterGpa}</Badge>
                                 <div className="flex items-center gap-1">
@@ -489,7 +489,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8"
-                                    onClick={() => handleGenerateQrCode(`${year} ${session}`, data)}
+                                    onClick={() => handleGenerateQrCode(`${year} ${semester}`, data)}
                                   >
                                     <QrCode className="h-4 w-4" />
                                   </Button>
@@ -497,7 +497,7 @@ export default function GpaEditor({ grades, setGrades }: GpaEditorProps) {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 text-destructive hover:text-destructive"
-                                    onClick={() => setSemesterToDelete({ year, session })}
+                                    onClick={() => setSemesterToDelete({ year, semester })}
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
